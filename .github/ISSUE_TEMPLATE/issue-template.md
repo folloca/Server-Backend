@@ -9,7 +9,7 @@ assignees: ''
 
 > ## Description
 
-> ## DUE DATE
+> ## Due Date
 `0000.00.00`
 
 > ## TODO
