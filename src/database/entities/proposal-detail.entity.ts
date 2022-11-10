@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { DefaultEntity } from './default.entity';
 import { ProposalEntity } from './proposal.entity';
 
@@ -29,17 +29,17 @@ export class ProposalDetailEntity extends DefaultEntity {
   @Column({
     name: 'map_numbering',
     type: 'integer',
-    nullable: false,
+    nullable: true,
     comment: '평면도 넘버링 번호',
   })
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   mapNumbering: number;
 
   @Column({
     name: 'detail_description',
-    type: 'varchar',
-    length: 150,
+    type: 'text',
+    length: 1200,
     nullable: false,
     comment: '구체화 내용',
   })
