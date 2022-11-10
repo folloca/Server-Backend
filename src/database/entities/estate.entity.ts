@@ -7,7 +7,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { DefaultEntity } from './default.entity';
 import { UserEntity } from './user.entity';
 import { ProposalEntity } from './proposal.entity';
@@ -40,6 +46,17 @@ export class EstateEntity extends DefaultEntity {
   @IsString()
   @IsNotEmpty()
   thumbnailPath: string;
+
+  @Column({
+    name: 'proposal_count',
+    type: 'integer',
+    nullable: false,
+    default: 0,
+    comment: '참여 기획수',
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  proposalCount: number;
 
   @Column({
     name: 'total_likes',
@@ -78,7 +95,7 @@ export class EstateEntity extends DefaultEntity {
     name: 'extent',
     type: 'float',
     nullable: false,
-    comment: '평수',
+    comment: '면적',
   })
   @IsNumber()
   @IsNotEmpty()
@@ -139,11 +156,11 @@ export class EstateEntity extends DefaultEntity {
   @Column({
     name: 'map_image_path',
     type: 'varchar',
-    nullable: false,
+    nullable: true,
     comment: '평면도 저장 경로',
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   mapImagePath: string;
 
   @Column({
