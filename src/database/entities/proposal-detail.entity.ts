@@ -39,7 +39,6 @@ export class ProposalDetailEntity extends DefaultEntity {
   @Column({
     name: 'detail_description',
     type: 'text',
-    length: 1200,
     nullable: false,
     comment: '구체화 내용',
   })
