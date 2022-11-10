@@ -11,8 +11,9 @@ import { EstatesModule } from './modules/estates/estates.module';
 import { ProposalsModule } from './modules/proposals/proposals.module';
 import { LinkingsModule } from './modules/linkings/linkings.module';
 import { AdminModule } from './modules/admin/admin.module';
-import configuration from './config/configuration';
+import { SearchesModule } from './modules/searches/searches.module';
 import { TypeormConfigOptions } from './config/typeorm.config';
+import configuration from './config/configuration';
 import * as Joi from 'joi';
 
 @Module({
@@ -35,6 +36,7 @@ import * as Joi from 'joi';
     ProposalsModule,
     LinkingsModule,
     AdminModule,
+    SearchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
