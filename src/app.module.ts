@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CommonModule } from './modules/common/common.module';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { EstatesModule } from './modules/estates/estates.module';
 import { ProposalsModule } from './modules/proposals/proposals.module';
 import { LinkingsModule } from './modules/linkings/linkings.module';
 import { AdminModule } from './modules/admin/admin.module';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
 import { TypeormConfigOptions } from './config/typeorm.config';
 import * as Joi from 'joi';
@@ -26,8 +27,9 @@ import * as Joi from 'joi';
       }),
     }),
     TypeOrmModule.forRootAsync(TypeormConfigOptions),
+    TerminusModule,
+    HttpModule,
     AuthModule,
-    CommonModule,
     UsersModule,
     EstatesModule,
     ProposalsModule,
