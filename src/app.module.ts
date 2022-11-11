@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
 import { AuthModule } from './modules/auth/auth.module';
@@ -28,6 +29,10 @@ import * as Joi from 'joi';
       }),
     }),
     TypeOrmModule.forRootAsync(TypeormConfigOptions),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 20,
+    }),
     TerminusModule,
     HttpModule,
     AuthModule,
