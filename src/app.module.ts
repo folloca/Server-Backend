@@ -1,17 +1,20 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CommonModule } from './modules/common/common.module';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { EstatesModule } from './modules/estates/estates.module';
 import { ProposalsModule } from './modules/proposals/proposals.module';
 import { LinkingsModule } from './modules/linkings/linkings.module';
 import { AdminModule } from './modules/admin/admin.module';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import configuration from './config/configuration';
+import { SearchesModule } from './modules/searches/searches.module';
 import { TypeormConfigOptions } from './config/typeorm.config';
+import configuration from './config/configuration';
 import * as Joi from 'joi';
 
 @Module({
@@ -26,13 +29,19 @@ import * as Joi from 'joi';
       }),
     }),
     TypeOrmModule.forRootAsync(TypeormConfigOptions),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 20,
+    }),
+    TerminusModule,
+    HttpModule,
     AuthModule,
-    CommonModule,
     UsersModule,
     EstatesModule,
     ProposalsModule,
     LinkingsModule,
     AdminModule,
+    SearchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -12,6 +12,7 @@ import {
   IsDate,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import { DefaultEntity } from './default.entity';
@@ -71,11 +72,11 @@ export class LinkingEntity extends DefaultEntity {
   @Column({
     name: 'thumbnail_path',
     type: 'varchar',
-    nullable: false,
+    nullable: true,
     comment: '대표 이미지 경로',
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   thumbnailPath: string;
 
   @Column({
@@ -165,11 +166,11 @@ export class LinkingEntity extends DefaultEntity {
   @Column({
     name: 'map_image_path',
     type: 'varchar',
-    nullable: false,
+    nullable: true,
     comment: '평면도 저장 경로',
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   mapImagePath: string;
 
   @OneToMany(
