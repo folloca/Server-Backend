@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -14,6 +14,7 @@ import { LinkingsModule } from './modules/linkings/linkings.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SearchesModule } from './modules/searches/searches.module';
 import { TypeormConfigOptions } from './config/typeorm.config';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 import configuration from './config/configuration';
 import * as Joi from 'joi';
 
@@ -46,4 +47,8 @@ import * as Joi from 'joi';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
