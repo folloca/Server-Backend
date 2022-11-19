@@ -156,11 +156,11 @@ export class UserEntity extends DefaultEntity {
     name: 'email_reception',
     type: 'boolean',
     nullable: false,
-    comment: '이메일 수신 동의 여부',
+    comment: '마케팅 수신 동의 여부',
   })
   @IsBoolean()
   @IsNotEmpty()
-  emailReception: boolean;
+  marketingReception: boolean;
 
   @OneToMany(() => EstateEntity, (estate: EstateEntity) => estate.ownerId, {
     cascade: true,
