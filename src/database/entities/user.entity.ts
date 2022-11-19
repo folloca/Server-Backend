@@ -71,14 +71,14 @@ export class UserEntity extends DefaultEntity {
   password: string;
 
   @Column({
-    name: 'subscription_method',
+    name: 'register_method',
     type: 'varchar',
     nullable: false,
-    comment: '가입 방법(이메일, 카카오, 구글)',
+    comment: '가입 방법(EMAIL, KAKAO, GOOGLE)',
   })
   @IsString()
   @IsNotEmpty()
-  subscriptionMethod: string;
+  registerMethod: string;
 
   @Column({
     name: 'contact_info_public',
