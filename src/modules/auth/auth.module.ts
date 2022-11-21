@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { TypeormRepositoryModule } from '../../database/typeorm-repository.module';
 import { UserRepository } from '../../database/repositories/user.repository';
 import { AdminRepository } from '../../database/repositories/admin.repository';
+import { SmtpConfig } from '../../config/smtp.config';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { AdminRepository } from '../../database/repositories/admin.repository';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, SmtpConfig],
 })
 export class AuthModule {}
