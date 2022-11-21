@@ -15,4 +15,24 @@ export class UserRepository extends Repository<UserEntity> {
       return userData.registerMethod;
     }
   }
+
+  async createUserData(
+    email: string,
+    password: string,
+    nickname: string,
+    marketingReception: boolean,
+    registerMethod: string,
+  ) {
+    await this.insert({
+      nickname,
+      email,
+      password,
+      registerMethod,
+      contactInfoPublic: true,
+      trendingPlanner: false,
+      trendingFielder: false,
+      trendingFinder: false,
+      marketingReception,
+    });
+  }
 }
