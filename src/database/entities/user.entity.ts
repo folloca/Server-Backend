@@ -43,7 +43,7 @@ export class UserEntity extends DefaultEntity {
     name: 'profile_image_path',
     type: 'varchar',
     nullable: false,
-    default: '가입 즉시 기본 프로필 이미지 경로로 설정할 것',
+    default: '../../../images/basicProfile.png',
     comment: '프로필 이미지 저장 경로',
   })
   @IsString()
