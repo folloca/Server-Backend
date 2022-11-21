@@ -49,11 +49,17 @@ export class AuthController {
         email: { type: 'string' },
         password: { type: 'string' },
         marketingReception: { type: 'boolean' },
+        nickname: { type: 'string' },
       },
     },
   })
   async signup(@Body() signupDto: SignupDto) {
-    const { email, password, marketingReception } = signupDto;
-    return this.authService.signup(email, password, marketingReception);
+    const { email, password, marketingReception, nickname } = signupDto;
+    return this.authService.signup(
+      email,
+      password,
+      marketingReception,
+      nickname,
+    );
   }
 }
