@@ -28,4 +28,13 @@ export class SignupDto {
   @IsBoolean()
   @IsNotEmpty()
   marketingReception: boolean;
+
+  @ApiProperty({
+    required: true,
+    type: String,
+    description: '닉네임',
+  })
+  @IsString()
+  @IsNotEmpty()
+  nickname: string;
 }
