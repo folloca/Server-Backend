@@ -8,7 +8,7 @@ import { SignupDto } from './dto/signup.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get('/email-check/:email')
+  @Get('/redundancy-check/:email')
   @ApiOperation({
     summary: '이메일 중복 확인',
     description: '이메일 중복 확인',
@@ -21,6 +21,21 @@ export class AuthController {
   })
   async emailCheck(@Param('email') email: string) {
     return this.authService.emailCheck(email);
+  }
+
+  @Get('/verification/:email')
+  @ApiOperation({
+    summary: '이메일 인증',
+    description: '작성한 이메일 주소로 인증 번호 발송',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description: '인증 번호 받을 이메일 주소',
+  })
+  async emailVerification(@Param('email') email: string) {
+    return this.authService.emailVerification(email);
   }
 
   @Post()
