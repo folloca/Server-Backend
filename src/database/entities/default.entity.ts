@@ -12,10 +12,9 @@ export abstract class DefaultEntity {
   @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamp',
-    default: null,
     comment: '수정 일자',
   })
-  updatedAt: Date | null;
+  updatedAt: Date;
 
   @Exclude()
   @DeleteDateColumn({

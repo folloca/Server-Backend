@@ -21,7 +21,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('/health-check')
+  @Get('/health-check/http')
   @HealthCheck()
   async httpCheck() {
     return this.health.check([
@@ -29,7 +29,7 @@ export class AppController {
     ]);
   }
 
-  @Get('/db-check')
+  @Get('/health-check/orm')
   @HealthCheck()
   async ormCheck() {
     return this.health.check([() => this.typeorm.pingCheck('database')]);

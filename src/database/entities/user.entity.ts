@@ -43,7 +43,7 @@ export class UserEntity extends DefaultEntity {
     name: 'profile_image_path',
     type: 'varchar',
     nullable: false,
-    default: '가입 즉시 기본 프로필 이미지 경로로 설정할 것',
+    default: '../../../images/basicProfile.png',
     comment: '프로필 이미지 저장 경로',
   })
   @IsString()
@@ -71,14 +71,14 @@ export class UserEntity extends DefaultEntity {
   password: string;
 
   @Column({
-    name: 'subscription_method',
+    name: 'register_method',
     type: 'varchar',
     nullable: false,
-    comment: '가입 방법(이메일, 카카오, 구글)',
+    comment: '가입 방법(EMAIL, KAKAO, GOOGLE)',
   })
   @IsString()
   @IsNotEmpty()
-  subscriptionMethod: string;
+  registerMethod: string;
 
   @Column({
     name: 'contact_info_public',
@@ -156,11 +156,11 @@ export class UserEntity extends DefaultEntity {
     name: 'email_reception',
     type: 'boolean',
     nullable: false,
-    comment: '이메일 수신 동의 여부',
+    comment: '마케팅 수신 동의 여부',
   })
   @IsBoolean()
   @IsNotEmpty()
-  emailReception: boolean;
+  marketingReception: boolean;
 
   @OneToMany(() => EstateEntity, (estate: EstateEntity) => estate.ownerId, {
     cascade: true,
