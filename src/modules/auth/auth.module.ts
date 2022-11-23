@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { TypeormRepositoryModule } from '../../database/typeorm-repository.module';
@@ -12,6 +12,7 @@ import { SmtpConfig } from '../../config/smtp.config';
       UserRepository,
       AdminRepository,
     ]),
+    CacheModule.register(),
   ],
   controllers: [AuthController],
   providers: [AuthService, SmtpConfig],
