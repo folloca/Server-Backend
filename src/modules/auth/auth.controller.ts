@@ -1,6 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SignupDto } from './dto/signup.dto';
 
 @ApiTags('auth')
@@ -36,6 +42,26 @@ export class AuthController {
   })
   async emailVerification(@Param('email') email: string) {
     return this.authService.emailVerification(email);
+  }
+
+  @Get('/auth-number')
+  @ApiOperation({
+    summary: '인증 번호 검수',
+    description: '이메일과 인증 번호로 인증 확인',
+  })
+  @ApiQuery({
+    name: 'email',
+    required: true,
+    description: '인증 번호 받은 이메일 주소',
+  })
+  @ApiQuery({
+    name: 'authNumber',
+    required: true,
+    description: '검수 인증 번호',
+  })
+  async authNumberCheck(@Query() query) {
+    const { email, authNumber } = query;
+    return this.authService.authNumberCheck(email, +authNumber);
   }
 
   @Post()
