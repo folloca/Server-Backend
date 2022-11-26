@@ -8,6 +8,7 @@ import { TypeormRepositoryModule } from '../../database/typeorm-repository.modul
 import { UserRepository } from '../../database/repositories/user.repository';
 import { AdminRepository } from '../../database/repositories/admin.repository';
 import { SmtpConfig } from '../../config/smtp.config';
+import { JwtStrategy } from './jwt/jwt.strategy';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { SmtpConfig } from '../../config/smtp.config';
     CacheModule.register(),
   ],
   controllers: [AuthController],
-  providers: [AuthService, SmtpConfig],
+  providers: [AuthService, SmtpConfig, JwtStrategy],
 })
 export class AuthModule {}
