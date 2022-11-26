@@ -35,4 +35,10 @@ export class UserRepository extends Repository<UserEntity> {
       marketingReception,
     });
   }
+
+  async findUserData(email) {
+    return await this.findOne({
+      where: { email: email },
+    });
+  }
 }
