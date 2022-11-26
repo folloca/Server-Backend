@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 
 export class LoginResDto {
+  @Expose()
   @ApiProperty({
     required: true,
     type: Number,
@@ -11,6 +13,7 @@ export class LoginResDto {
   @IsNotEmpty()
   userId: string;
 
+  @Expose()
   @ApiProperty({
     required: true,
     type: String,
@@ -20,6 +23,7 @@ export class LoginResDto {
   @IsNotEmpty()
   nickname: string;
 
+  @Expose()
   @ApiProperty({
     required: true,
     type: String,
