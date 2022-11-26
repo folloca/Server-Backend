@@ -12,7 +12,10 @@ export class UserRepository extends Repository<UserEntity> {
     if (!userData) {
       return false;
     } else {
-      return userData.registerMethod;
+      return {
+        userId: userData.userId,
+        registerMethod: userData.registerMethod,
+      };
     }
   }
 
@@ -36,9 +39,9 @@ export class UserRepository extends Repository<UserEntity> {
     });
   }
 
-  async findUserData(email) {
+  async getUserData(userId: number) {
     return await this.findOne({
-      where: { email: email },
+      where: { userId: userId },
     });
   }
 }
