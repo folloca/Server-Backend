@@ -1,14 +1,19 @@
 import {
+  BadRequestException,
   CACHE_MANAGER,
   HttpException,
   HttpStatus,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../../database/repositories/user.repository';
 import { SmtpConfig } from '../../config/smtp.config';
 import { Cache } from 'cache-manager';
+import { JwtService } from '@nestjs/jwt';
+import { plainToInstance } from 'class-transformer';
+import { LoginResDto } from './dto/res/login-res.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -19,6 +24,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private userRepository: UserRepository,
     private smtpConfig: SmtpConfig,
+    private jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -27,7 +33,7 @@ export class AuthService {
 
     if (accountInfo) {
       return {
-        message: `Email ${email} is already registered with ${accountInfo}`,
+        message: `Email ${email} is already registered with ${accountInfo.registerMethod}`,
       };
     } else {
       return { message: `No account with ${email}` };
@@ -82,5 +88,36 @@ export class AuthService {
       .catch((err) => {
         throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
       });
+  }
+
+  getAccessToken(userId: number, email: string) {
+    const payload = { userId, email };
+    return this.jwtService.sign(payload);
+  }
+
+  async login(email: string, password: string) {
+    const emailValidity = await this.userRepository.findAccountByEmail(email);
+
+    if (!emailValidity) {
+      throw new NotFoundException(`No account with ${email}`);
+    }
+
+    const userData = await this.userRepository.getUserData(
+      emailValidity.userId,
+    );
+    const passwordVerification = await bcrypt.compare(
+      password,
+      userData.password,
+    );
+
+    if (!passwordVerification) {
+      throw new BadRequestException('Invalid password');
+    } else {
+      const token = this.getAccessToken(userData.userId, userData.email);
+      const loginResData = plainToInstance(LoginResDto, userData, {
+        excludeExtraneousValues: true,
+      });
+      return { token, loginResData };
+    }
   }
 }

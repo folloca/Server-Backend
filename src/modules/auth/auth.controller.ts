@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ApiBody,
@@ -7,7 +7,8 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { SignupDto } from './dto/signup.dto';
+import { SignupReqDto } from './dto/req/signup-req.dto';
+import { LoginReqDto } from './dto/req/login-req.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -44,7 +45,7 @@ export class AuthController {
     return this.authService.emailVerification(email);
   }
 
-  @Get('/auth-number')
+  @Get('/number-check')
   @ApiOperation({
     summary: '인증 번호 검수',
     description: '이메일과 인증 번호로 인증 확인',
@@ -79,7 +80,7 @@ export class AuthController {
       },
     },
   })
-  async signup(@Body() signupDto: SignupDto) {
+  async signup(@Body() signupDto: SignupReqDto) {
     const { email, password, marketingReception, nickname } = signupDto;
     return this.authService.signup(
       email,
@@ -87,5 +88,33 @@ export class AuthController {
       marketingReception,
       nickname,
     );
+  }
+
+  @Post('/login')
+  @ApiOperation({
+    summary: '로그인',
+    description: '이메일로 로그인',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        email: { type: 'string' },
+        password: { type: 'string' },
+      },
+    },
+  })
+  async login(@Body() loginReqDto: LoginReqDto, @Res() res) {
+    const { email, password } = loginReqDto;
+    const { token, loginResData } = await this.authService.login(
+      email,
+      password,
+    );
+
+    res
+      .setHeader(
+        'Set-Cookie',
+        `Authentication=${token}; HttpOnly; Path=/; Max-Age=86400}`,
+      )
+      .send({ userData: loginResData, message: `User data of ${email}` });
   }
 }
