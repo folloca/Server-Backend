@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ApiBody,
@@ -115,6 +124,27 @@ export class AuthController {
         'Set-Cookie',
         `Authentication=${token}; HttpOnly; Path=/; Max-Age=86400}`,
       )
-      .send({ userData: loginResData, message: `User data of ${email}` });
+      .statusCode(HttpStatus.OK)
+      .send({ userData: loginResData, message: `Login success with ${email}` });
+  }
+
+  @Post('/logout')
+  @ApiOperation({
+    summary: '로그아웃',
+    description: '로그아웃',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        email: { type: 'string' },
+        password: { type: 'string' },
+      },
+    },
+  })
+  async logout(@Res() res) {
+    res
+      .setHeader('Set-Cookie', `Authentication=; HttpOnly; Path=/; Max-Age=0}`)
+      .statusCode(HttpStatus.OK)
+      .send({ message: `Logout success` });
   }
 }
