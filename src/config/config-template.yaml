@@ -11,6 +11,7 @@ local:
     password:
   auth:
     jwt_secret:
+    refresh_secret:
     kakao:
       client_id:
       client_secret:
@@ -23,6 +24,13 @@ local:
       service:
       user:
       password:
+  redis:
+    host:
+    port:
+    database:
+    username:
+    password:
+    prefix:
   database:
     type:
     host:
@@ -45,6 +53,7 @@ development:
     password:
   auth:
     jwt_secret:
+    refresh_secret:
     kakao:
       client_id:
       client_secret:
@@ -57,6 +66,13 @@ development:
       service:
       user:
       password:
+  redis:
+    host:
+    port:
+    database:
+    username:
+    password:
+    prefix:
   database:
     type:
     host:
@@ -79,6 +95,7 @@ production:
     password:
   auth:
     jwt_secret:
+    refresh_secret:
     kakao:
       client_id:
       client_secret:
@@ -91,6 +108,13 @@ production:
       service:
       user:
       password:
+  redis:
+    host:
+    port:
+    database:
+    username:
+    password:
+    prefix:
   database:
     type:
     host:
