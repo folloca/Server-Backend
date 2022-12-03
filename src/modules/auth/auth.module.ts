@@ -9,6 +9,7 @@ import { UserRepository } from '../../database/repositories/user.repository';
 import { AdminRepository } from '../../database/repositories/admin.repository';
 import { SmtpConfig } from '../../config/smtp.config';
 import { JwtStrategy } from './jwt/jwt.strategy';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [
@@ -24,8 +25,16 @@ import { JwtStrategy } from './jwt/jwt.strategy';
         signOptions: { expiresIn: '1d' },
       }),
     }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get(`${process.env.NODE_ENV}.redis.host`),
+        port: configService.get(`${process.env.NODE_ENV}.redis.port`),
+      }),
+    }),
     PassportModule,
-    CacheModule.register(),
   ],
   controllers: [AuthController],
   providers: [AuthService, SmtpConfig, JwtStrategy],
