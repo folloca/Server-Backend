@@ -114,15 +114,13 @@ export class AuthController {
   })
   async login(@Body() loginReqDto: LoginReqDto, @Res() res) {
     const { email, password } = loginReqDto;
-    const { token, loginResData } = await this.authService.login(
-      email,
-      password,
-    );
+    const { accessToken, refreshToken, loginResData } =
+      await this.authService.login(email, password);
 
     res
       .setHeader(
         'Set-Cookie',
-        `Authentication=${token}; HttpOnly; Path=/; Max-Age=86400}`,
+        `accessToken=${accessToken}; refreshToken=${refreshToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
       )
       .statusCode(HttpStatus.OK)
       .send({ userData: loginResData, message: `Login success with ${email}` });

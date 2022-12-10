@@ -14,6 +14,7 @@ import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import { LoginResDto } from './dto/res/login-res.dto';
+import { Redis } from 'ioredis';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -53,6 +54,7 @@ export class AuthService {
 
   async authNumberCheck(email: string, authNumber: number): Promise<object> {
     const value = await this.cacheManager.get(`authNum_${email}`);
+    console.log(value);
 
     let result: boolean;
     authNumber === value ? (result = true) : (result = false);
@@ -92,7 +94,18 @@ export class AuthService {
 
   getAccessToken(userId: number, email: string) {
     const payload = { userId, email };
-    return this.jwtService.sign(payload);
+    return this.jwtService.signAsync(payload);
+  }
+
+  getRefreshToken(userId: number, email: string) {
+    const payload = { userId, email };
+    return this.jwtService.signAsync(payload, { expiresIn: '30d' });
+  }
+
+  validateRefreshToken(userId, refreshToken) {
+    const userData = this.userRepository.getUserData(userId);
+
+    return true;
   }
 
   async login(email: string, password: string) {
@@ -113,11 +126,16 @@ export class AuthService {
     if (!passwordVerification) {
       throw new BadRequestException('Invalid password');
     } else {
-      const token = this.getAccessToken(userData.userId, userData.email);
+      const accessToken = this.getAccessToken(userData.userId, userData.email);
+      const refreshToken = this.getRefreshToken(
+        userData.userId,
+        userData.email,
+      );
       const loginResData = plainToInstance(LoginResDto, userData, {
         excludeExtraneousValues: true,
       });
-      return { token, loginResData };
+
+      return { accessToken, refreshToken, loginResData };
     }
   }
 }
