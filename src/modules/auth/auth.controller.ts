@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+   HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -16,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { KakaoStrategy } from './kakao.strategy';
 import { SignupReqDto } from './dto/req/signup-req.dto';
 import { LoginReqDto } from './dto/req/login-req.dto';
 
@@ -145,4 +147,32 @@ export class AuthController {
       .status(HttpStatus.OK)
       .send({ message: `Logout success` });
   }
+  
+  @Post('/kakao')
+  @HttpCode(200)
+  @ApiParam({
+    name: 'code',
+    type: String,
+    required: true,
+    description: '카카오 로그인 성공 이후 카카오로 부터 전달 받은 인가코드',
+  })
+  async requestKakaoLogin(@Body('code') code: string, @Res() res) {
+    const kakao = new KakaoStrategy();
+
+    const tokens = await kakao.getToken(code);
+    const userInfo = await kakao.getUserInfo(tokens.access_token);
+
+    const findUser = this.authService.kakaoCheck(String(userInfo.target_id));
+
+    // #12 merge 진행 가능 예정 login-res.dto.ts
+    // if (findUser) {
+    //   res.statusCode(HttpStatus.OK).send({
+    //     email: findUser.email,
+    //   });
+    // } else {
+    //   res.statusCode(HttpStatus.NOT_FOUND).send({
+    //     email: null,
+    //   });
+    // }
+    }
 }

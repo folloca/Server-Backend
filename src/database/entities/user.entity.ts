@@ -62,6 +62,17 @@ export class UserEntity extends DefaultEntity {
   email: string;
 
   @Column({
+    name: 'kakao_id',
+    type: 'varchar',
+    nullable: true,
+    unique: true,
+    comment: '카카오 유저 ID',
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  kakao_id: string;
+
+  @Column({
     name: 'password',
     type: 'varchar',
     nullable: true,

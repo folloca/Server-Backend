@@ -30,27 +30,14 @@ async function bootstrap() {
     await promises.readFile(join('.', 'package.json'), 'utf8'),
   );
 
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
   app.enableShutdownHooks();
   app.setGlobalPrefix(prefix);
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('FOLLOCA')
-    .setDescription('Swagger document for FOLLOCA API server')
-    .setVersion(pkg.version)
-    .build();
-
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup(`${prefix}/doc`, app, document);
-
   app.use(compression());
   app.use(cookieParser());
-  app.use(helmet());
+
   app.use(
-    [`${prefix}/doc`],
+    [`/${prefix}/doc`],
     expressBasicAuth({
       challenge: true,
       users: { [swaggerUser]: swaggerPassword },
@@ -63,6 +50,21 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('FOLLOCA')
+    .setDescription('Swagger document for FOLLOCA API server')
+    .setVersion(pkg.version)
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup(`${prefix}/doc`, app, document);
+
+  app.use(helmet());
 
   await app.listen(port).finally(() => {
     Logger.log(
