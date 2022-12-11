@@ -36,6 +36,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 
     const userData = this.authService.validateRefreshToken(
       payload.userId,
+      payload.email,
       data.refreshToken,
     );
 
