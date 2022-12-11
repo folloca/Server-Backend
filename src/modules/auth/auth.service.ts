@@ -14,7 +14,6 @@ import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import { LoginResDto } from './dto/res/login-res.dto';
-import { Redis } from 'ioredis';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -45,7 +44,7 @@ export class AuthService {
     const authNumber = Math.floor(Math.random() * 888888) + 111111;
     await this.smtpConfig.sendEmailVerification(email, authNumber);
 
-    await this.cacheManager.set(`authNum_${email}`, authNumber, 30000);
+    await this.cacheManager.set(`authNum_${email}`, authNumber, 180);
 
     return {
       message: `Verification email is sent to ${email}`,
@@ -57,7 +56,12 @@ export class AuthService {
     console.log(value);
 
     let result: boolean;
-    authNumber === value ? (result = true) : (result = false);
+    if (authNumber === value) {
+      result = true;
+      await this.cacheManager.del(`authNum_${email}`);
+    } else {
+      result = false;
+    }
 
     return {
       authNumberValidity: result,
@@ -97,12 +101,20 @@ export class AuthService {
     return this.jwtService.signAsync(payload);
   }
 
-  getRefreshToken(userId: number, email: string) {
+  async getRefreshToken(userId: number, email: string) {
     const payload = { userId, email };
-    return this.jwtService.signAsync(payload, { expiresIn: '30d' });
+    const refreshToken = this.jwtService.signAsync(payload, {
+      expiresIn: '14d',
+    });
+
+    await this.cacheManager.set(`refresh_${email}`, refreshToken, 1209600);
+
+    return refreshToken;
   }
 
-  validateRefreshToken(userId, refreshToken) {
+  async validateRefreshToken(userId, email, refreshToken) {
+    const tokenData = await this.cacheManager.get(`refresh_${email}`);
+
     const userData = this.userRepository.getUserData(userId);
 
     return true;
@@ -126,8 +138,11 @@ export class AuthService {
     if (!passwordVerification) {
       throw new BadRequestException('Invalid password');
     } else {
-      const accessToken = this.getAccessToken(userData.userId, userData.email);
-      const refreshToken = this.getRefreshToken(
+      const accessToken = await this.getAccessToken(
+        userData.userId,
+        userData.email,
+      );
+      const refreshToken = await this.getRefreshToken(
         userData.userId,
         userData.email,
       );
