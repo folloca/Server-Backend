@@ -11,6 +11,7 @@ import { SmtpConfig } from '../../config/smtp.config';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { RefreshStrategy } from './jwt/refresh.strategy';
 import * as redisStore from 'cache-manager-ioredis';
+// import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -26,18 +27,19 @@ import * as redisStore from 'cache-manager-ioredis';
         signOptions: { expiresIn: '1d' },
       }),
     }),
-    CacheModule.registerAsync({
+    CacheModule.register({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
         host: configService.get(`${process.env.NODE_ENV}.redis.host`),
         port: configService.get(`${process.env.NODE_ENV}.redis.port`),
+        // ttl: 0,
       }),
     }),
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, SmtpConfig, JwtStrategy, RefreshStrategy],
+  providers: [AuthService, SmtpConfig, JwtStrategy],
 })
 export class AuthModule {}
