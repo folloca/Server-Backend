@@ -120,9 +120,9 @@ export class AuthController {
     res
       .setHeader(
         'Set-Cookie',
-        `accessToken=${accessToken}; refreshToken=${refreshToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
+        `AccessToken=${accessToken}; RefreshToken=${refreshToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
       )
-      .statusCode(HttpStatus.OK)
+      .status(HttpStatus.OK)
       .send({ userData: loginResData, message: `Login success with ${email}` });
   }
 
@@ -142,7 +142,7 @@ export class AuthController {
   async logout(@Res() res) {
     res
       .setHeader('Set-Cookie', `Authentication=; HttpOnly; Path=/; Max-Age=0}`)
-      .statusCode(HttpStatus.OK)
+      .status(HttpStatus.OK)
       .send({ message: `Logout success` });
   }
 }
