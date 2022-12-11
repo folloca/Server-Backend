@@ -27,14 +27,14 @@ import * as redisStore from 'cache-manager-ioredis';
         signOptions: { expiresIn: '1d' },
       }),
     }),
-    CacheModule.register({
+    CacheModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
         host: configService.get(`${process.env.NODE_ENV}.redis.host`),
         port: configService.get(`${process.env.NODE_ENV}.redis.port`),
-        // ttl: 0,
+        ttl: 1209600,
       }),
     }),
     PassportModule,
