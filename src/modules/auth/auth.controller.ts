@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { KakaoStrategy } from './kakao.strategy';
+import { KakaoStrategy } from './jwt/kakao.strategy';
 import { SignupReqDto } from './dto/req/signup-req.dto';
 import { LoginReqDto } from './dto/req/login-req.dto';
 
