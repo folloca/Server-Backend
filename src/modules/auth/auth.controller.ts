@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Get,
-   HttpCode,
+  HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -121,8 +121,12 @@ export class AuthController {
 
     res
       .setHeader(
+        'Authorization',
+        `Bearer=${accessToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
+      )
+      .setHeader(
         'Set-Cookie',
-        `AccessToken=${accessToken}; RefreshToken=${refreshToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
+        `Refresh=${refreshToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
       )
       .status(HttpStatus.OK)
       .send({ userData: loginResData, message: `Login success with ${email}` });
@@ -147,7 +151,7 @@ export class AuthController {
       .status(HttpStatus.OK)
       .send({ message: `Logout success` });
   }
-  
+
   @Post('/kakao')
   @HttpCode(200)
   @ApiParam({
@@ -174,5 +178,5 @@ export class AuthController {
     //     email: null,
     //   });
     // }
-    }
+  }
 }
