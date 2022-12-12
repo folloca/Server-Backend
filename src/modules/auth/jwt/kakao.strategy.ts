@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import QueryString from 'qs';
-import { KakaoTokensResDto } from './dto/res/kakao-tokens-res.dto';
-import { KakaoUserInfosResDto } from './dto/res/kakao-userInfo-res.dto';
+import { KakaoTokensResDto } from '../dto/res/kakao-tokens-res.dto';
+import { KakaoUserInfosResDto } from '../dto/res/kakao-userInfo-res.dto';
 
 @Injectable()
 export class KakaoStrategy {
