@@ -120,14 +120,13 @@ export class AuthController {
       await this.authService.login(email, password);
 
     res
-      .setHeader(
-        'Authorization',
-        `Bearer=${accessToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
-      )
-      .setHeader(
-        'Set-Cookie',
-        `Refresh=${refreshToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
-      )
+      .setHeader('Authorization', `Bearer ${accessToken}`)
+      .cookie('refresh', refreshToken, {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
       .status(HttpStatus.OK)
       .send({ userData: loginResData, message: `Login success with ${email}` });
   }
