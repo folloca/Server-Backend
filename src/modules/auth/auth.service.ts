@@ -170,9 +170,9 @@ export class AuthService {
     }
   }
 
-  async kakaoCheck(kakao_id: string) {
+  async kakaoCheck(kakaoId: string) {
     const accountInfo = await this.userRepository.findAccountByKakaoId(
-      kakao_id,
+      kakaoId,
     );
 
     if (accountInfo) return accountInfo;
