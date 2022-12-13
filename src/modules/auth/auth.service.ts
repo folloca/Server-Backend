@@ -171,9 +171,7 @@ export class AuthService {
   }
 
   async kakaoCheck(kakaoId: string) {
-    const accountInfo = await this.userRepository.findAccountByKakaoId(
-      kakaoId,
-    );
+    const accountInfo = await this.userRepository.findAccountByKakaoId(kakaoId);
 
     if (accountInfo) return accountInfo;
     else return false;

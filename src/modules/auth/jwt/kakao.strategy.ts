@@ -41,6 +41,7 @@ export class KakaoStrategy {
 
     return response;
   };
+
   getUserInfo = async (accessToken: string): Promise<KakaoUserInfosResDto> => {
     let response: any;
 
