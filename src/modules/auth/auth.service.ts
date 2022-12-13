@@ -112,7 +112,10 @@ export class AuthService {
 
   async getRefreshToken(userId: number, email: string) {
     const payload = { userId, email };
-    const refreshToken = await this.jwtService.signAsync(payload, {
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get(
+        `${process.env.NODE_ENV}.auth.refresh_secret`,
+      ),
       expiresIn: '14d',
     });
     const hashedRefreshToken = await bcrypt.hash(refreshToken, this.SALT_ROUND);
