@@ -153,7 +153,7 @@ export class AuthService {
       return { accessToken, refreshToken, loginResData };
     }
   }
-  
+
   async kakaoCheck(kakao_id: string) {
     const accountInfo = await this.userRepository.findAccountByKakaoId(
       kakao_id,

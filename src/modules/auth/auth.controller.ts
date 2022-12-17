@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Get,
-   HttpCode,
+  HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -147,7 +147,7 @@ export class AuthController {
       .status(HttpStatus.OK)
       .send({ message: `Logout success` });
   }
-  
+
   @Post('/kakao')
   @HttpCode(200)
   @ApiParam({
@@ -174,5 +174,5 @@ export class AuthController {
     //     email: null,
     //   });
     // }
-    }
+  }
 }
