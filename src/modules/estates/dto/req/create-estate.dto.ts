@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateEstateDto {
   @ApiProperty({
@@ -71,7 +71,7 @@ export class CreateEstateDto {
     type: Date,
     description: '기획 모집 마감 일자',
   })
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   proposalDeadline: Date;
 
