@@ -36,3 +36,5 @@ lerna-debug.log*
 
 # Environment variables
 /src/config/config.yaml
+
+package-lock.json
