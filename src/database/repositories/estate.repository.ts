@@ -6,9 +6,46 @@ import {
   EstateLikeEntity,
   MapNumberingEntity,
 } from '../entities';
+import { CreateEstateDto } from '../../modules/estates/dto/req/create-estate.dto';
 
 @TypeormRepository(EstateEntity)
-export class EstateRepository extends Repository<EstateEntity> {}
+export class EstateRepository extends Repository<EstateEntity> {
+  getEstatesDataForTrending() {
+    return this.query(
+      `SELECT estate_id, proposal_count, total_likes, estate_name, estate_keyword, estate_use, proposal_deadline FROM estate`,
+    );
+  }
+
+  createEstateData(createEstateDto: CreateEstateDto) {
+    const {
+      ownerId,
+      estateName,
+      estateKeyword,
+      estateTheme,
+      extent,
+      capacity,
+      price,
+      estateUse,
+      proposalDeadline,
+      ownerMessage,
+    } = createEstateDto;
+    return this.query(
+      'INSERT INTO `estate`(`created_at`, `updated_at`, `deleted_at`, `estate_id`, `thumbnail_path`, `proposal_count`, `total_likes`, `estate_name`, `estate_keyword`, `extent`, `capacity`, `price`, `estate_theme`, `estate_use`, `proposal_deadline`, `map_image_path`, `owner_message`, `owner_id`) VALUES(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, DEFAULT, ?, ?)',
+      [
+        estateName,
+        estateKeyword,
+        extent,
+        capacity,
+        price,
+        estateTheme,
+        estateUse,
+        new Date(proposalDeadline),
+        ownerMessage,
+        ownerId,
+      ],
+    );
+  }
+}
 
 @TypeormRepository(MapNumberingEntity)
 export class MapNumberingRepository extends Repository<MapNumberingEntity> {}
