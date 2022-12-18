@@ -146,7 +146,7 @@ export class EstateEntity extends DefaultEntity {
 
   @Column({
     name: 'proposal_deadline',
-    type: 'timestamp',
+    type: 'datetime',
     nullable: false,
     comment: '기획 모집 마감 일자',
   })
