@@ -4,6 +4,15 @@ import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class CreateEstateDto {
   @ApiProperty({
     required: true,
+    type: Number,
+    description: '공간 소유자 id',
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  ownerId: number;
+
+  @ApiProperty({
+    required: true,
     type: String,
     maxLength: 8,
     description: '공간 이름',
