@@ -17,6 +17,15 @@ export class EstatesController {
     return this.estatesService.getEstateListByPopularity();
   }
 
+  @Get()
+  @ApiOperation({
+    summary: '필터 조회',
+    description: '공간 페이지 필터 조회',
+  })
+  async getEstateList() {
+    return this.estatesService.getEstateList();
+  }
+
   @Post()
   @ApiOperation({
     summary: '공간 등록',
