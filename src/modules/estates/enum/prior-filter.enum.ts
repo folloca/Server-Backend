@@ -1,5 +1,5 @@
 export enum PriorFilterEnum {
-  전체 = 'total',
-  진행중 = 'inProgress',
-  마감 = 'close',
+  'total' = '전체',
+  'inProgress' = '진행중',
+  'close' = '마감',
 }
