@@ -1,16 +1,15 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from '../../../database/repositories/user.repository';
 import { Request } from 'express';
 import { JwtPayload } from './jwt.payload';
-import { BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
+@Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   constructor(
     private readonly configService: ConfigService,
-    private readonly userRepository: UserRepository,
     private readonly authService: AuthService,
   ) {
     super({
@@ -22,28 +21,22 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
       secretOrKey: configService.get(
         `${process.env.NODE_ENV}.auth.refresh_secret`,
       ),
-      ignoreExpiration: true,
+      ignoreExpiration: false,
       passReqToCallback: true,
     });
   }
 
   async validate(req: Request, payload: JwtPayload) {
-    const data = req.cookies.Authentication;
+    const data = req.cookies?.refreshToken;
 
-    if (!data.refreshToken) {
-      throw new BadRequestException('Invalid Token');
-    }
-
-    const userData = this.authService.validateRefreshToken(
-      payload.userId,
-      payload.email,
-      data.refreshToken,
-    );
-
-    if (!userData) {
-      throw new BadRequestException('Expired Token');
+    if (!data) {
+      throw new BadRequestException('Empty Token');
     } else {
-      return userData;
+      return await this.authService.validateRefreshToken(
+        payload.userId,
+        payload.email,
+        data.refreshToken,
+      );
     }
   }
 }

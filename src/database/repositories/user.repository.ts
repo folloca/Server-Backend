@@ -4,9 +4,9 @@ import { UserEntity } from '../entities';
 
 @TypeormRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  async findAccountByKakaoId(kakao_id: string) {
+  async findAccountByKakaoId(kakaoId: string) {
     const userData = await this.findOne({
-      where: { kakao_id: kakao_id },
+      where: { kakaoId: kakaoId },
     });
     if (!userData) {
       return false;
