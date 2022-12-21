@@ -68,9 +68,9 @@ export class UserEntity extends DefaultEntity {
     unique: true,
     comment: '카카오 유저 ID',
   })
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
-  kakao_id: string;
+  kakaoId: string;
 
   @Column({
     name: 'password',

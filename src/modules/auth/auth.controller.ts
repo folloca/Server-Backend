@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { KakaoStrategy } from './kakao.strategy';
+import { KakaoStrategy } from './jwt/kakao.strategy';
 import { SignupReqDto } from './dto/req/signup-req.dto';
 import { LoginReqDto } from './dto/req/login-req.dto';
 
@@ -120,10 +120,13 @@ export class AuthController {
       await this.authService.login(email, password);
 
     res
-      .setHeader(
-        'Set-Cookie',
-        `AccessToken=${accessToken}; RefreshToken=${refreshToken}; Secure; HttpOnly; Path=/; SameSite=None}`,
-      )
+      .setHeader('Authorization', `Bearer ${accessToken}`)
+      .cookie('refresh', refreshToken, {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
       .status(HttpStatus.OK)
       .send({ userData: loginResData, message: `Login success with ${email}` });
   }

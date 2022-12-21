@@ -44,7 +44,9 @@ export class AuthService {
     const authNumber = Math.floor(Math.random() * 888888) + 111111;
     await this.smtpConfig.sendEmailVerification(email, authNumber);
 
-    await this.cacheManager.set(`authNum_${email}`, authNumber, 180);
+    const data = authNumber + '_' + new Date();
+
+    await this.cacheManager.set(`authNum_${email}`, data);
 
     return {
       message: `Verification email is sent to ${email}`,
@@ -52,15 +54,22 @@ export class AuthService {
   }
 
   async authNumberCheck(email: string, authNumber: number): Promise<object> {
-    const value = await this.cacheManager.get(`authNum_${email}`);
-    console.log(value);
+    const data = await this.cacheManager.get(`authNum_${email}`);
+    const value = +String(data).split('_')[0];
+    const savedTime = new Date(String(data).split('_')[1]);
+
+    const validTime = new Date();
+    validTime.setMinutes(validTime.getMinutes() - 3);
 
     let result: boolean;
-    if (authNumber === value) {
+    if (validTime > savedTime) {
+      result = false;
+      await this.cacheManager.del(`authNum_${email}`);
+    } else if (authNumber !== value) {
+      result = false;
+    } else {
       result = true;
       await this.cacheManager.del(`authNum_${email}`);
-    } else {
-      result = false;
     }
 
     return {
@@ -103,21 +112,28 @@ export class AuthService {
 
   async getRefreshToken(userId: number, email: string) {
     const payload = { userId, email };
-    const refreshToken = this.jwtService.signAsync(payload, {
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get(
+        `${process.env.NODE_ENV}.auth.refresh_secret`,
+      ),
       expiresIn: '14d',
     });
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, this.SALT_ROUND);
 
-    await this.cacheManager.set(`refresh_${email}`, refreshToken, 1209600);
+    await this.cacheManager.set(`refresh_${email}`, hashedRefreshToken);
 
     return refreshToken;
   }
 
   async validateRefreshToken(userId, email, refreshToken) {
-    const tokenData = await this.cacheManager.get(`refresh_${email}`);
+    const tokenData = await this.cacheManager.get<string>(`refresh_${email}`);
+    const tokenVerification = await bcrypt.compare(refreshToken, tokenData);
 
-    const userData = this.userRepository.getUserData(userId);
-
-    return true;
+    if (tokenVerification) {
+      return this.userRepository.getUserData(userId);
+    } else {
+      throw new BadRequestException('Invalid Token');
+    }
   }
 
   async login(email: string, password: string) {
@@ -154,10 +170,8 @@ export class AuthService {
     }
   }
 
-  async kakaoCheck(kakao_id: string) {
-    const accountInfo = await this.userRepository.findAccountByKakaoId(
-      kakao_id,
-    );
+  async kakaoCheck(kakaoId: string) {
+    const accountInfo = await this.userRepository.findAccountByKakaoId(kakaoId);
 
     if (accountInfo) return accountInfo;
     else return false;
