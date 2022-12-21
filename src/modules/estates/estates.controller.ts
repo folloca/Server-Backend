@@ -2,8 +2,14 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { EstatesService } from './estates.service';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
-import { PriorFilterEnum } from './enum/prior-filter.enum';
-import { PosteriorFilterEnum } from './enum/posterior-filter.enum';
+import {
+  PriorFilterEnumToKor,
+  PriorFilterEnumToEng,
+} from './enum/prior-filter.enum';
+import {
+  PosteriorFilterEnumToKor,
+  PosteriorFilterEnumToEng,
+} from './enum/posterior-filter.enum';
 
 @ApiTags('estates')
 @Controller('estates')
@@ -26,17 +32,20 @@ export class EstatesController {
   })
   @ApiQuery({
     name: 'priorFilter',
-    enum: PriorFilterEnum,
+    enum: PriorFilterEnumToKor,
     description: '기획 모집 마감 여부 필터링',
   })
   @ApiQuery({
     name: 'posteriorFilter',
-    enum: PosteriorFilterEnum,
+    enum: PosteriorFilterEnumToKor,
     description: '시간순 필터링',
   })
   async getEstateList(@Query() query) {
     const { priorFilter, posteriorFilter } = query;
-    return this.estatesService.getEstateList(priorFilter, posteriorFilter);
+    return this.estatesService.getEstateList(
+      PriorFilterEnumToEng[priorFilter],
+      PosteriorFilterEnumToEng[posteriorFilter],
+    );
   }
 
   @Post()
