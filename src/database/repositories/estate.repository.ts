@@ -16,6 +16,55 @@ export class EstateRepository extends Repository<EstateEntity> {
     );
   }
 
+  getTotalEstatesData(orderStandard: string, orderType: 'DESC' | 'ASC') {
+    return this.createQueryBuilder()
+      .select([
+        'estate_id',
+        'proposal_count',
+        'estate_name',
+        'estate_keyword',
+        'estate_use',
+        'proposal_deadline',
+      ])
+      .orderBy(orderStandard, orderType)
+      .addOrderBy('proposal_deadline', 'ASC')
+      .getRawMany();
+  }
+
+  getInProgressEstatesData(orderStandard: string, orderType: 'DESC' | 'ASC') {
+    const now = new Date();
+    return this.createQueryBuilder()
+      .select([
+        'estate_id',
+        'proposal_count',
+        'estate_name',
+        'estate_keyword',
+        'estate_use',
+        'proposal_deadline',
+      ])
+      .where('proposal_deadline > :date', { date: now })
+      .orderBy(orderStandard, orderType)
+      .addOrderBy('proposal_deadline', 'ASC')
+      .getRawMany();
+  }
+
+  getClosedEstatesData(orderStandard: string, orderType: 'DESC' | 'ASC') {
+    const now = new Date();
+    return this.createQueryBuilder()
+      .select([
+        'estate_id',
+        'proposal_count',
+        'estate_name',
+        'estate_keyword',
+        'estate_use',
+        'proposal_deadline',
+      ])
+      .where('proposal_deadline < :date', { date: now })
+      .orderBy(orderStandard, orderType)
+      .addOrderBy('proposal_deadline', 'ASC')
+      .getRawMany();
+  }
+
   createEstateData(createEstateDto: CreateEstateDto) {
     const {
       ownerId,
