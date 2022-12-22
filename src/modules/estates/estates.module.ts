@@ -9,6 +9,7 @@ import {
   MapNumberingRepository,
 } from '../../database/repositories/estate.repository';
 import { HashTagRepository } from '../../database/repositories/hash-tag.repository';
+import { ProposalRepository } from '../../database/repositories/proposal.repository';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { HashTagRepository } from '../../database/repositories/hash-tag.reposito
       MapNumberingRepository,
       EstateImageRepository,
       EstateLikeRepository,
+      ProposalRepository,
       HashTagRepository,
     ]),
   ],

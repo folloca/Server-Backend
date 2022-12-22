@@ -31,7 +31,7 @@ export class EstateEntity extends DefaultEntity {
   })
   estateId: number;
 
-  @ManyToOne(() => UserEntity, (user: UserEntity) => user.estates, {
+  @ManyToOne(() => UserEntity, (user: UserEntity) => user.userId, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'owner_id', referencedColumnName: 'userId' }])
@@ -41,6 +41,7 @@ export class EstateEntity extends DefaultEntity {
     name: 'thumbnail_path',
     type: 'varchar',
     nullable: false,
+    default: 'tmp',
     comment: '대표 이미지 경로',
   })
   @IsString()
@@ -145,7 +146,7 @@ export class EstateEntity extends DefaultEntity {
 
   @Column({
     name: 'proposal_deadline',
-    type: 'timestamp',
+    type: 'datetime',
     nullable: false,
     comment: '기획 모집 마감 일자',
   })
