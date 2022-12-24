@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateEstateDto {
+  @Type(() => Number)
   @ApiProperty({
     required: true,
     type: Number,
@@ -41,6 +43,7 @@ export class CreateEstateDto {
   @IsNotEmpty()
   estateTheme: string;
 
+  @Type(() => Number)
   @ApiProperty({
     required: false,
     type: Number,
@@ -49,6 +52,7 @@ export class CreateEstateDto {
   @IsNumber()
   extent: number;
 
+  @Type(() => Number)
   @ApiProperty({
     required: false,
     type: Number,
@@ -57,6 +61,7 @@ export class CreateEstateDto {
   @IsNumber()
   capacity: number;
 
+  @Type(() => Number)
   @ApiProperty({
     required: false,
     type: Number,
@@ -93,4 +98,12 @@ export class CreateEstateDto {
   @IsString()
   @IsNotEmpty()
   ownerMessage: string;
+
+  @ApiProperty({
+    required: false,
+    type: Array,
+    format: 'binary',
+  })
+  @IsString()
+  images: Express.Multer.File;
 }
