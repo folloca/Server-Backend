@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { EstatesService } from './estates.service';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
@@ -10,6 +18,7 @@ import {
   PosteriorFilterEnumToKor,
   PosteriorFilterEnumToEng,
 } from './enum/posterior-filter.enum';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('estates')
 @Controller('estates')
@@ -56,7 +65,17 @@ export class EstatesController {
   @ApiBody({
     type: CreateEstateDto,
   })
-  async createEstate(@Body() createEstateDto: CreateEstateDto) {
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'images', maxCount: 7 },
+      { name: 'map', maxCount: 1 },
+    ]),
+  )
+  async createEstate(
+    @Body() createEstateDto: CreateEstateDto,
+    @UploadedFiles()
+    files: { images?: Express.Multer.File[]; map?: Express.Multer.File[] },
+  ) {
     return this.estatesService.createEstate(createEstateDto);
   }
 }
