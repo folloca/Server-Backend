@@ -42,6 +42,10 @@ local:
     synchronize: true
     autoLoadEntities: true
     keepConnectionAlive: true
+  image:
+    profile:
+    estate:
+    proposal:
 
 ## 개발
 development:
@@ -84,6 +88,10 @@ development:
     synchronize: true
     autoLoadEntities: true
     keepConnectionAlive: true
+  image:
+    profile:
+    estate:
+    proposal:
 
 ## 배포
 production:
@@ -126,3 +134,7 @@ production:
     synchronize: false
     autoLoadEntities: true
     keepConnectionAlive: true
+  image:
+    profile:
+    estate:
+    proposal:
