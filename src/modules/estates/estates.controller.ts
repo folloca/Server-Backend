@@ -7,7 +7,13 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { EstatesService } from './estates.service';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
 import {
@@ -19,11 +25,22 @@ import {
   PosteriorFilterEnumToEng,
 } from './enum/posterior-filter.enum';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from '../../utilities/multer.options';
+import { ConfigService } from '@nestjs/config';
+
+let estateImagePath;
 
 @ApiTags('estates')
 @Controller('estates')
 export class EstatesController {
-  constructor(private estatesService: EstatesService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private estatesService: EstatesService,
+  ) {
+    estateImagePath = this.configService.get<string>(
+      `${process.env.NODE_ENV}.images.estate`,
+    );
+  }
 
   @Get('/popularity')
   @ApiOperation({
@@ -65,17 +82,24 @@ export class EstatesController {
   @ApiBody({
     type: CreateEstateDto,
   })
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'images', maxCount: 7 },
-      { name: 'map', maxCount: 1 },
-    ]),
+    FileFieldsInterceptor(
+      [
+        { name: 'images', maxCount: 7 },
+        { name: 'map', maxCount: 1 },
+      ],
+      multerOptions('estate'),
+    ),
   )
   async createEstate(
-    @Body() createEstateDto: CreateEstateDto,
     @UploadedFiles()
     files: { images?: Express.Multer.File[]; map?: Express.Multer.File[] },
+    @Body() createEstateDto: CreateEstateDto,
   ) {
+    console.log(new Date());
+    console.log(estateImagePath);
+    console.log(files);
     return this.estatesService.createEstate(createEstateDto);
   }
 }
