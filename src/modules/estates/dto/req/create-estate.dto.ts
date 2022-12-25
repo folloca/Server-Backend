@@ -101,8 +101,24 @@ export class CreateEstateDto {
 
   @ApiProperty({
     required: false,
+    type: String,
+    format: 'binary',
+  })
+  @IsString()
+  thumbnail: Express.Multer.File;
+
+  @ApiProperty({
+    required: false,
     type: Array,
     format: 'binary',
   })
   images: Express.Multer.File;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+    format: 'binary',
+  })
+  @IsString()
+  map: Express.Multer.File;
 }

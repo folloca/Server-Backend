@@ -76,7 +76,7 @@ export class EstatesController {
 
   @Post()
   @ApiOperation({
-    summary: '공간 등록',
+    summary: '공간 등록(미완료)',
     description: '공간 등록',
   })
   @ApiBody({
@@ -86,7 +86,8 @@ export class EstatesController {
   @UseInterceptors(
     FileFieldsInterceptor(
       [
-        { name: 'images', maxCount: 7 },
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'images', maxCount: 6 },
         { name: 'map', maxCount: 1 },
       ],
       multerOptions('estate'),
@@ -97,9 +98,6 @@ export class EstatesController {
     files: { images?: Express.Multer.File[]; map?: Express.Multer.File[] },
     @Body() createEstateDto: CreateEstateDto,
   ) {
-    console.log(new Date());
-    console.log(estateImagePath);
-    console.log(files);
     return this.estatesService.createEstate(createEstateDto);
   }
 }
