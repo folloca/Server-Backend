@@ -104,6 +104,5 @@ export class CreateEstateDto {
     type: Array,
     format: 'binary',
   })
-  @IsString()
   images: Express.Multer.File;
 }
