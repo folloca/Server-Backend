@@ -1,6 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { Type } from 'class-transformer';
+
+export class MapCoordinates {
+  @IsNumber()
+  numberingTag: number;
+
+  @IsArray()
+  coordinates: [number, number];
+}
 
 export class CreateEstateDto {
   @Type(() => Number)
@@ -103,6 +117,7 @@ export class CreateEstateDto {
     required: false,
     type: String,
     format: 'binary',
+    description: '공간 섬네일',
   })
   @IsString()
   thumbnail: Express.Multer.File;
@@ -111,6 +126,7 @@ export class CreateEstateDto {
     required: false,
     type: Array,
     format: 'binary',
+    description: '공간 이미지',
   })
   images: Express.Multer.File;
 
@@ -118,7 +134,15 @@ export class CreateEstateDto {
     required: false,
     type: String,
     format: 'binary',
+    description: '평면도',
   })
   @IsString()
   map: Express.Multer.File;
+
+  @ApiProperty({
+    required: false,
+    type: MapCoordinates,
+    description: '평면도 넘버링 태그 좌표',
+  })
+  coordinates: MapCoordinates[];
 }
