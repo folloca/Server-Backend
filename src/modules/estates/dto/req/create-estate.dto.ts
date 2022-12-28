@@ -84,6 +84,7 @@ export class CreateEstateDto {
   @IsNumber()
   price: number;
 
+  @Type(() => Number)
   @ApiProperty({
     required: true,
     type: Number,
@@ -120,6 +121,16 @@ export class CreateEstateDto {
   })
   images: Express.Multer.File;
 
+  @Type(() => Number)
+  @ApiProperty({
+    required: true,
+    type: Number,
+    description: '섬네일 이미지 인덱스',
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  thumbnailIdx: number;
+
   @ApiProperty({
     required: false,
     type: String,
@@ -133,5 +144,6 @@ export class CreateEstateDto {
     type: MapCoordinates,
     description: '평면도 넘버링 태그 좌표',
   })
-  coordinates: MapCoordinates[];
+  @IsNotEmpty()
+  numberingCoordinates: MapCoordinates[];
 }
