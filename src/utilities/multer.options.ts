@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
-const imageRootPath = path.join(__dirname, '..', '..', '..', `images`);
+const imageRootPath = path.join(__dirname, '..', '..', '..', `storage`);
 
 const createDir = (uploadType: string) => {
   const imageDirPath = path.join(imageRootPath, uploadType);
@@ -20,6 +20,7 @@ const createDir = (uploadType: string) => {
 
 const storage = (uploadType: string): multer.StorageEngine => {
   createDir(uploadType);
+
   return multer.diskStorage({
     destination(req, file, cb) {
       const imageDirPath = path.join(imageRootPath, uploadType);
