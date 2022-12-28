@@ -27,19 +27,20 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../../utilities/multer.options';
 import { ConfigService } from '@nestjs/config';
-
-let estateImagePath;
+import * as os from 'os';
 
 @ApiTags('estates')
 @Controller('estates')
 export class EstatesController {
+  private readonly estateImagePath;
   constructor(
     private readonly configService: ConfigService,
     private estatesService: EstatesService,
   ) {
-    estateImagePath = this.configService.get<string>(
-      `${process.env.NODE_ENV}.images.estate`,
+    const storagePath = this.configService.get<string>(
+      `${process.env.NODE_ENV}.storage.estate`,
     );
+    this.estateImagePath = storagePath.replace('user.home', os.homedir());
   }
 
   @Get('/popularity')
@@ -86,8 +87,7 @@ export class EstatesController {
   @UseInterceptors(
     FileFieldsInterceptor(
       [
-        { name: 'thumbnail', maxCount: 1 },
-        { name: 'images', maxCount: 6 },
+        { name: 'images', maxCount: 7 },
         { name: 'map', maxCount: 1 },
       ],
       multerOptions('estate'),
