@@ -42,7 +42,7 @@ local:
     synchronize: true
     autoLoadEntities: true
     keepConnectionAlive: true
-  image:
+  storage:
     profile:
     estate:
     proposal:
@@ -88,7 +88,7 @@ development:
     synchronize: true
     autoLoadEntities: true
     keepConnectionAlive: true
-  image:
+  storage:
     profile:
     estate:
     proposal:
@@ -134,7 +134,7 @@ production:
     synchronize: false
     autoLoadEntities: true
     keepConnectionAlive: true
-  image:
+  storage:
     profile:
     estate:
     proposal:
