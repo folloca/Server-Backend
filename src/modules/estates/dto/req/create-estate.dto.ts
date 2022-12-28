@@ -10,7 +10,7 @@ import { Type } from 'class-transformer';
 
 export class MapCoordinates {
   @IsNumber()
-  numberingTag: number;
+  tagNumber: number;
 
   @IsArray()
   coordinates: [number, number];
@@ -86,13 +86,12 @@ export class CreateEstateDto {
 
   @ApiProperty({
     required: true,
-    type: String,
-    maxLength: 30,
-    description: '공간 유형',
+    type: Number,
+    description: '공간 유형(0: 팝업, 1: 전시)',
   })
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  estateUse: string;
+  estateUse: number;
 
   @ApiProperty({
     required: true,
@@ -115,15 +114,6 @@ export class CreateEstateDto {
 
   @ApiProperty({
     required: false,
-    type: String,
-    format: 'binary',
-    description: '공간 섬네일',
-  })
-  @IsString()
-  thumbnail: Express.Multer.File;
-
-  @ApiProperty({
-    required: false,
     type: Array,
     format: 'binary',
     description: '공간 이미지',
@@ -136,7 +126,6 @@ export class CreateEstateDto {
     format: 'binary',
     description: '평면도',
   })
-  @IsString()
   map: Express.Multer.File;
 
   @ApiProperty({
