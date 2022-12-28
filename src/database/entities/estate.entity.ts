@@ -135,14 +135,13 @@ export class EstateEntity extends DefaultEntity {
 
   @Column({
     name: 'estate_use',
-    type: 'varchar',
-    length: 2,
+    type: 'integer',
     nullable: false,
-    comment: '사용 용도(팝업, 전시)',
+    comment: '공간 유형(0: 팝업, 1: 전시)',
   })
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  estateUse: string;
+  estateUse: number;
 
   @Column({
     name: 'proposal_deadline',
