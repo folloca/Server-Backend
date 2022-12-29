@@ -82,7 +82,7 @@ export class EstatesService {
     };
   }
 
-  async createEstate(createEstateDto: CreateEstateDto) {
-    await this.estateRepository.createEstateData(createEstateDto);
+  async createEstate(ownerId: number, createEstateDto: CreateEstateDto) {
+    await this.estateRepository.createEstateData(ownerId, createEstateDto);
   }
 }

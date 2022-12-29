@@ -17,15 +17,15 @@ export class MapCoordinates {
 }
 
 export class CreateEstateDto {
-  @Type(() => Number)
-  @ApiProperty({
-    required: true,
-    type: Number,
-    description: '공간 소유자 id',
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  ownerId: number;
+  // @Type(() => Number)
+  // @ApiProperty({
+  //   required: true,
+  //   type: Number,
+  //   description: '공간 소유자 id',
+  // })
+  // @IsNumber()
+  // @IsNotEmpty()
+  // ownerId: number;
 
   @ApiProperty({
     required: true,

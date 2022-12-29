@@ -65,9 +65,8 @@ export class EstateRepository extends Repository<EstateEntity> {
       .getRawMany();
   }
 
-  createEstateData(createEstateDto: CreateEstateDto) {
+  createEstateData(ownerId: number, createEstateDto: CreateEstateDto) {
     const {
-      ownerId,
       estateName,
       estateKeyword,
       estateTheme,

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   UploadedFiles,
@@ -11,6 +12,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -75,10 +77,16 @@ export class EstatesController {
     );
   }
 
-  @Post()
+  @Post(`/:ownerId`)
   @ApiOperation({
     summary: '공간 등록(미완료)',
     description: '공간 등록',
+  })
+  @ApiParam({
+    name: 'ownerId',
+    type: String,
+    required: true,
+    description: '공간 등록자 id',
   })
   @ApiBody({
     type: CreateEstateDto,
@@ -96,8 +104,9 @@ export class EstatesController {
   async createEstate(
     @UploadedFiles()
     files: { images?: Express.Multer.File[]; map?: Express.Multer.File[] },
+    @Param('ownerId') ownerId: string,
     @Body() createEstateDto: CreateEstateDto,
   ) {
-    return this.estatesService.createEstate(createEstateDto);
+    return this.estatesService.createEstate(+ownerId, createEstateDto);
   }
 }
