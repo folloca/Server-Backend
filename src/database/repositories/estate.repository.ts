@@ -12,7 +12,7 @@ import { CreateEstateDto } from '../../modules/estates/dto/req/create-estate.dto
 export class EstateRepository extends Repository<EstateEntity> {
   getEstatesDataForTrending() {
     return this.query(
-      `SELECT estate_id, proposal_count, total_likes, estate_name, estate_keyword, estate_use, proposal_deadline FROM estate ORDER BY proposal_count * 2 + total_likes DESC`,
+      `SELECT estate_id, proposal_count, total_likes, estate_name, estate_keyword, estate_use, proposal_deadline FROM estate ORDER BY proposal_count * 2 + total_likes DESC, estate_keyword ASC`,
     );
   }
 
