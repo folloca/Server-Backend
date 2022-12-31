@@ -27,7 +27,7 @@ export class EstateRepository extends Repository<EstateEntity> {
         'proposal_deadline',
       ])
       .orderBy(orderStandard, orderType)
-      .addOrderBy('proposal_deadline', 'ASC')
+      .addOrderBy('estate_keyword', 'ASC')
       .getRawMany();
   }
 
@@ -44,7 +44,7 @@ export class EstateRepository extends Repository<EstateEntity> {
       ])
       .where('proposal_deadline > :date', { date: now })
       .orderBy(orderStandard, orderType)
-      .addOrderBy('proposal_deadline', 'ASC')
+      .addOrderBy('estate_keyword', 'ASC')
       .getRawMany();
   }
 
@@ -61,7 +61,7 @@ export class EstateRepository extends Repository<EstateEntity> {
       ])
       .where('proposal_deadline < :date', { date: now })
       .orderBy(orderStandard, orderType)
-      .addOrderBy('proposal_deadline', 'ASC')
+      .addOrderBy('estate_keyword', 'ASC')
       .getRawMany();
   }
 
