@@ -4,13 +4,17 @@ import { ProposalRepository } from '../../database/repositories/proposal.reposit
 import { CreateEstateDto } from './dto/req/create-estate.dto';
 import { PriorFilterEnumToKor } from './enum/prior-filter.enum';
 import { PosteriorFilterEnumToKor } from './enum/posterior-filter.enum';
+import Redis from 'ioredis';
 
 @Injectable()
 export class EstatesService {
+  private redis;
   constructor(
     private estateRepository: EstateRepository,
     private proposalRepository: ProposalRepository,
-  ) {}
+  ) {
+    this.redis = new Redis();
+  }
 
   async getEstateListByPopularity() {
     const data = await this.estateRepository.getEstatesDataForTrending();
@@ -92,5 +96,25 @@ export class EstatesService {
 
   async createEstate(createEstateDto: CreateEstateDto) {
     await this.estateRepository.createEstateData(createEstateDto);
+  }
+
+  async estateLikeUnlike(estateId: string, userId: string) {
+    const likeCheck = await this.likeStatus(estateId, userId);
+
+    let action;
+    if (likeCheck) {
+      await this.redis.srem(`like_estate_${estateId}`, userId);
+      action = 'Cancel';
+    } else {
+      await this.redis.sadd(`like_estate_${estateId}`, userId);
+      action = 'Add';
+    }
+
+    return { message: `${action} LIKE of estate ${estateId} from ${userId}` };
+  }
+
+  async likeStatus(estateId: string, userId: string): Promise<boolean> {
+    const likesOfEstate = await this.redis.smembers(`like_estate_${estateId}`);
+    return !!likesOfEstate.includes(userId);
   }
 }
