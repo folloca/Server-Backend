@@ -1,5 +1,11 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { EstatesService } from './estates.service';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
 import {
@@ -58,5 +64,20 @@ export class EstatesController {
   })
   async createEstate(@Body() createEstateDto: CreateEstateDto) {
     return this.estatesService.createEstate(createEstateDto);
+  }
+
+  @Post('/like/:estateId')
+  @ApiOperation({
+    summary: '공간 좋아요/취소',
+    description: '공간 게시물 id를 받아 좋아요 추가 및 취소',
+  })
+  @ApiParam({
+    name: 'estateId',
+    type: String,
+    required: true,
+    description: '공간 id',
+  })
+  async estateLikeUnlike(@Param('estateId') estateId: string) {
+    return this.estatesService.estateLikeUnlike(+estateId);
   }
 }
