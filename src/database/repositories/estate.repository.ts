@@ -94,6 +94,13 @@ export class EstateRepository extends Repository<EstateEntity> {
       ],
     );
   }
+
+  async updateTotalLikes(estateId: number, variation: number) {
+    return this.query(
+      `UPDATE estate SET total_likes = total_likes +(?) WHERE estate_id = ?`,
+      [variation, estateId],
+    );
+  }
 }
 
 @TypeormRepository(MapNumberingEntity)

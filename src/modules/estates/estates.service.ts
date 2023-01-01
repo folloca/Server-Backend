@@ -104,9 +104,11 @@ export class EstatesService {
     let action;
     if (likeCheck) {
       await this.redis.srem(`like_estate_${estateId}`, userId);
+      await this.estateRepository.updateTotalLikes(+estateId, -1);
       action = 'Cancel';
     } else {
       await this.redis.sadd(`like_estate_${estateId}`, userId);
+      await this.estateRepository.updateTotalLikes(+estateId, 1);
       action = 'Add';
     }
 
