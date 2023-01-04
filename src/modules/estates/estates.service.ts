@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EstateRepository } from '../../database/repositories/estate.repository';
 import { ProposalRepository } from '../../database/repositories/proposal.repository';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
 import { PriorFilterEnumToKor } from './enum/prior-filter.enum';
 import { PosteriorFilterEnumToKor } from './enum/posterior-filter.enum';
 import Redis from 'ioredis';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EstatesService {
@@ -15,7 +15,10 @@ export class EstatesService {
     private estateRepository: EstateRepository,
     private proposalRepository: ProposalRepository,
   ) {
-    this.redis = new Redis();
+    this.redis = new Redis({
+      host: configService.get(`${process.env.NODE_ENV}.redis.host`),
+      port: configService.get(`${process.env.NODE_ENV}.redis.port`),
+    });
   }
 
   async getEstateListByPopularity() {
