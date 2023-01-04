@@ -15,30 +15,7 @@ export class EstatesService {
     private estateRepository: EstateRepository,
     private proposalRepository: ProposalRepository,
   ) {
-    this.redis = new Redis.Cluster(
-      [
-        {
-          port: this.configService.get<number>(
-            `${process.env.NODE_ENV}.redis_1.port`,
-          ),
-          host: this.configService.get<string>(
-            `${process.env.NODE_ENV}.redis_1.host`,
-          ),
-        },
-        {
-          port: this.configService.get<number>(
-            `${process.env.NODE_ENV}.redis_2.port`,
-          ),
-          host: this.configService.get<string>(
-            `${process.env.NODE_ENV}.redis_2.host`,
-          ),
-        },
-      ],
-      {
-        scaleReads: 'slave',
-        enableReadyCheck: false,
-      },
-    );
+    this.redis = new Redis();
   }
 
   async getEstateListByPopularity() {
