@@ -24,14 +24,6 @@ export class EstatesService {
   async getEstateListByPopularity() {
     const data = await this.estateRepository.getEstatesDataForTrending();
 
-    data.sort((a, b) => {
-      return (
-        b.proposal_count * 2 +
-        b.total_likes -
-        (a.proposal_count * 2 + a.total_likes)
-      );
-    });
-
     return {
       data,
       message: 'Estate list arranged by popularity(참여기획수:좋아요수_2:1)',
@@ -99,8 +91,8 @@ export class EstatesService {
     };
   }
 
-  async createEstate(createEstateDto: CreateEstateDto) {
-    await this.estateRepository.createEstateData(createEstateDto);
+  async createEstate(ownerId: number, createEstateDto: CreateEstateDto) {
+    await this.estateRepository.createEstateData(ownerId, createEstateDto);
   }
 
   async estateLikeUnlike(estateId: string, userId: string) {

@@ -50,6 +50,8 @@ export const TypeormConfigOptions = {
         ProposalImageEntity,
         ProposalLikeEntity,
       ],
+      timezone: 'z',
+      charset: 'utf8mb4',
       logging: configService.get(`${process.env.NODE_ENV}.database.logging`),
       synchronize: configService.get(
         `${process.env.NODE_ENV}.database.synchronize`,
