@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -131,7 +132,7 @@ export class AuthController {
       .send({ userData: loginResData, message: `Login success with ${email}` });
   }
 
-  @Post('/logout')
+  @Delete('/logout')
   @ApiOperation({
     summary: '로그아웃',
     description: '로그아웃',
@@ -140,13 +141,19 @@ export class AuthController {
     schema: {
       properties: {
         email: { type: 'string' },
-        password: { type: 'string' },
       },
     },
   })
-  async logout(@Res() res) {
+  async logout(@Res() res, @Body() body) {
+    await this.authService.deleteRefreshToken(body.email);
     res
-      .setHeader('Set-Cookie', `Authentication=; HttpOnly; Path=/; Max-Age=0}`)
+      .setHeader('Authorization')
+      .cookie('refresh', {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
       .status(HttpStatus.OK)
       .send({ message: `Logout success` });
   }
