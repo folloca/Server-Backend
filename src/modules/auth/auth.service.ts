@@ -170,6 +170,9 @@ export class AuthService {
     }
   }
 
+  async deleteRefreshToken(email: string) {
+    await this.cacheManager.del(`refresh_${email}`);
+  }
   async kakaoCheck(kakaoId: string) {
     const accountInfo = await this.userRepository.findAccountByKakaoId(kakaoId);
 
