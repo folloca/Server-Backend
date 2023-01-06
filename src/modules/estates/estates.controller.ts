@@ -109,4 +109,26 @@ export class EstatesController {
   ) {
     return this.estatesService.createEstate(+ownerId, createEstateDto);
   }
+
+  @Post('/like')
+  @ApiOperation({
+    summary: '공간 좋아요/취소',
+    description: '공간 게시물 id를 받아 좋아요 추가 및 취소',
+  })
+  @ApiQuery({
+    name: 'estateId',
+    type: String,
+    required: true,
+    description: '공간 id',
+  })
+  @ApiQuery({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: '사용자 id',
+  })
+  async estateLikeUnlike(@Query() query) {
+    const { estateId, userId } = query;
+    return this.estatesService.estateLikeUnlike(estateId, userId);
+  }
 }

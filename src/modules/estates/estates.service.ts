@@ -1,16 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EstateRepository } from '../../database/repositories/estate.repository';
 import { ProposalRepository } from '../../database/repositories/proposal.repository';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
 import { PriorFilterEnumToKor } from './enum/prior-filter.enum';
 import { PosteriorFilterEnumToKor } from './enum/posterior-filter.enum';
+import Redis from 'ioredis';
 
 @Injectable()
 export class EstatesService {
+  private redis;
   constructor(
+    private readonly configService: ConfigService,
     private estateRepository: EstateRepository,
     private proposalRepository: ProposalRepository,
-  ) {}
+  ) {
+    this.redis = new Redis({
+      host: configService.get(`${process.env.NODE_ENV}.redis.host`),
+      port: configService.get(`${process.env.NODE_ENV}.redis.port`),
+    });
+  }
 
   async getEstateListByPopularity() {
     const data = await this.estateRepository.getEstatesDataForTrending();
@@ -84,5 +93,27 @@ export class EstatesService {
 
   async createEstate(ownerId: number, createEstateDto: CreateEstateDto) {
     await this.estateRepository.createEstateData(ownerId, createEstateDto);
+  }
+
+  async estateLikeUnlike(estateId: string, userId: string) {
+    const likeCheck = await this.likeStatus(estateId, userId);
+
+    let action;
+    if (likeCheck) {
+      await this.redis.srem(`like_estate_${estateId}`, userId);
+      await this.estateRepository.updateTotalLikes(+estateId, -1);
+      action = 'Cancel';
+    } else {
+      await this.redis.sadd(`like_estate_${estateId}`, userId);
+      await this.estateRepository.updateTotalLikes(+estateId, 1);
+      action = 'Add';
+    }
+
+    return { message: `${action} LIKE of estate ${estateId} from ${userId}` };
+  }
+
+  async likeStatus(estateId: string, userId: string): Promise<boolean> {
+    const likesOfEstate = await this.redis.smembers(`like_estate_${estateId}`);
+    return !!likesOfEstate.includes(userId);
   }
 }
