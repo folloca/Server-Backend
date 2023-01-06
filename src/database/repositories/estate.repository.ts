@@ -12,7 +12,7 @@ import { CreateEstateDto } from '../../modules/estates/dto/req/create-estate.dto
 export class EstateRepository extends Repository<EstateEntity> {
   getEstatesDataForTrending() {
     return this.query(
-      `SELECT estate_id, proposal_count, total_likes, estate_name, estate_keyword, estate_use, proposal_deadline FROM estate`,
+      `SELECT estate_id, proposal_count, total_likes, estate_name, estate_keyword, estate_use, proposal_deadline FROM estate ORDER BY proposal_count * 2 + total_likes DESC, estate_keyword ASC`,
     );
   }
 
@@ -27,7 +27,7 @@ export class EstateRepository extends Repository<EstateEntity> {
         'proposal_deadline',
       ])
       .orderBy(orderStandard, orderType)
-      .addOrderBy('proposal_deadline', 'ASC')
+      .addOrderBy('estate_keyword', 'ASC')
       .getRawMany();
   }
 
@@ -44,7 +44,7 @@ export class EstateRepository extends Repository<EstateEntity> {
       ])
       .where('proposal_deadline > :date', { date: now })
       .orderBy(orderStandard, orderType)
-      .addOrderBy('proposal_deadline', 'ASC')
+      .addOrderBy('estate_keyword', 'ASC')
       .getRawMany();
   }
 
@@ -61,13 +61,12 @@ export class EstateRepository extends Repository<EstateEntity> {
       ])
       .where('proposal_deadline < :date', { date: now })
       .orderBy(orderStandard, orderType)
-      .addOrderBy('proposal_deadline', 'ASC')
+      .addOrderBy('estate_keyword', 'ASC')
       .getRawMany();
   }
 
-  createEstateData(createEstateDto: CreateEstateDto) {
+  createEstateData(ownerId: number, createEstateDto: CreateEstateDto) {
     const {
-      ownerId,
       estateName,
       estateKeyword,
       estateTheme,
