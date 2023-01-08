@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EstateRepository } from '../../database/repositories/estate.repository';
+import {
+  EstateLikeRepository,
+  EstateRepository,
+} from '../../database/repositories/estate.repository';
 import { ProposalRepository } from '../../database/repositories/proposal.repository';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
 import { PriorFilterEnumToKor } from './enum/prior-filter.enum';
@@ -13,6 +16,7 @@ export class EstatesService {
   constructor(
     private readonly configService: ConfigService,
     private estateRepository: EstateRepository,
+    private estateLikeRepository: EstateLikeRepository,
     private proposalRepository: ProposalRepository,
   ) {
     this.redis = new Redis({
@@ -102,10 +106,12 @@ export class EstatesService {
     if (likeCheck) {
       await this.redis.srem(`like_estate_${estateId}`, userId);
       await this.estateRepository.updateTotalLikes(+estateId, -1);
+      await this.estateLikeRepository.cancelLike(+userId, +estateId);
       action = 'Cancel';
     } else {
       await this.redis.sadd(`like_estate_${estateId}`, userId);
       await this.estateRepository.updateTotalLikes(+estateId, 1);
+      await this.estateLikeRepository.addLike(+userId, +estateId);
       action = 'Add';
     }
 
@@ -114,6 +120,7 @@ export class EstatesService {
 
   async likeStatus(estateId: string, userId: string): Promise<boolean> {
     const likesOfEstate = await this.redis.smembers(`like_estate_${estateId}`);
+    console.log(likesOfEstate);
     return !!likesOfEstate.includes(userId);
   }
 }
