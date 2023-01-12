@@ -22,6 +22,7 @@ export class UsersService {
     const random = Math.floor(Math.random() * array.length);
     return array[random];
   }
+
   async getRandomNickname() {
     const adjective = this.pickRandomKeyword(adjectives);
     const noun = this.pickRandomKeyword(nouns);
