@@ -36,4 +36,15 @@ export class UsersService {
       await this.getRandomNickname();
     }
   }
+
+  async updateNickname(userId: number, nickname: string) {
+    const nicknameValidity = await this.userRepository.findNickname(nickname);
+
+    if (nicknameValidity) {
+      return { message: `Nickname ${nickname} already exists` };
+    } else {
+      await this.userRepository.updateNickname(userId, nickname);
+      return { message: `Updated nickname ${nickname}` };
+    }
+  }
 }
