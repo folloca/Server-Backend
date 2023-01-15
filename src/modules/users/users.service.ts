@@ -37,6 +37,16 @@ export class UsersService {
     }
   }
 
+  async checkNickname(nickname: string) {
+    const checkResult = await this.userRepository.findNickname(nickname);
+
+    if (checkResult) {
+      return { message: `Nickname ${nickname} already exists` };
+    } else {
+      return { message: `Nickname ${nickname} does not exist` };
+    }
+  }
+
   async updateNickname(userId: number, nickname: string) {
     const nicknameValidity = await this.userRepository.findNickname(nickname);
 

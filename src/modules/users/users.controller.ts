@@ -22,8 +22,8 @@ export class UsersController {
 
   @Patch('/nickname')
   @ApiOperation({
-    summary: '닉네임 등록 또는 변경',
-    description: '회원가입 시 닉네임 신규 등록 & 기존 닉네임 변경 시 모두 사용',
+    summary: '닉네임 변경',
+    description: '기존에 등록된 닉네임 변경 및 데이터 저장 시 중복 검사 수행',
   })
   @ApiQuery({
     name: 'userId',
@@ -40,5 +40,20 @@ export class UsersController {
   async updateNickname(@Query() query) {
     const { userId, nickname } = query;
     return this.usersService.updateNickname(+userId, nickname);
+  }
+
+  @Get('nickname/check')
+  @ApiOperation({
+    summary: '닉네임 중복 검사',
+    description: '닉네임 데이터 중복 검사',
+  })
+  @ApiQuery({
+    name: 'nickname',
+    type: String,
+    required: true,
+    description: '검사하고자 하는 닉네임',
+  })
+  async checkNickname(@Query() query) {
+    return this.usersService.checkNickname(query.nickname);
   }
 }
