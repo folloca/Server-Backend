@@ -10,6 +10,7 @@ import { AdminRepository } from '../../database/repositories/admin.repository';
 import { SmtpConfig } from '../../config/smtp.config';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { RefreshStrategy } from './jwt/refresh.strategy';
+import { KakaoStrategy } from './jwt/kakao.strategy';
 import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
@@ -39,6 +40,12 @@ import * as redisStore from 'cache-manager-ioredis';
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, SmtpConfig, JwtStrategy, RefreshStrategy],
+  providers: [
+    AuthService,
+    SmtpConfig,
+    JwtStrategy,
+    RefreshStrategy,
+    KakaoStrategy,
+  ],
 })
 export class AuthModule {}
