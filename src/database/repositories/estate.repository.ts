@@ -109,4 +109,18 @@ export class MapNumberingRepository extends Repository<MapNumberingEntity> {}
 export class EstateImageRepository extends Repository<EstateImageEntity> {}
 
 @TypeormRepository(EstateLikeEntity)
-export class EstateLikeRepository extends Repository<EstateLikeEntity> {}
+export class EstateLikeRepository extends Repository<EstateLikeEntity> {
+  async addLike(userId, estateId) {
+    return this.query(
+      'INSERT INTO `estate_like`(`created_at`, `updated_at`, `deleted_at`, `estate_like_id`, `user_id`, `estate_id`) VALUES(DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?, ?)',
+      [userId, estateId],
+    );
+  }
+
+  async cancelLike(userId, estateId) {
+    return this.query(
+      'DELETE FROM `estate_like` WHERE `user_id` = ? AND `estate_id` = ?',
+      [userId, estateId],
+    );
+  }
+}
