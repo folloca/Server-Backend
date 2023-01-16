@@ -4,10 +4,11 @@ import { UserEntity } from '../entities';
 
 @TypeormRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  async findAccountByKakaoId(kakaoId: string) {
+  async findAccountByKakaoId(oauthId: string) {
     const userData = await this.findOne({
-      where: { kakaoId: kakaoId },
+      where: { oauthId: oauthId, registerMethod: 'KAKAO' },
     });
+
     if (!userData) {
       return false;
     } else {
@@ -60,5 +61,25 @@ export class UserRepository extends Repository<UserEntity> {
 
   async updateNickname(userId: number, nickname: string) {
     return await this.update({ userId }, { nickname });
+  }
+
+  async createUserKakaoData(
+    email: string,
+    oauthId: string,
+    nickname: string,
+    marketingReception: boolean,
+    registerMethod: string,
+  ) {
+    await this.insert({
+      nickname,
+      email,
+      oauthId,
+      registerMethod,
+      contactInfoPublic: true,
+      trendingPlanner: false,
+      trendingFielder: false,
+      trendingFinder: false,
+      marketingReception,
+    });
   }
 }

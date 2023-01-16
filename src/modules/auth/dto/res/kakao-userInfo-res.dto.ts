@@ -6,7 +6,7 @@ export class KakaoUserInfosResDto {
     type: Number,
     description: 'kakao_id',
   })
-  target_id: number;
+  id: number;
 
   @ApiProperty({
     type: String,

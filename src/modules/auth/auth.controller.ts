@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -18,9 +17,9 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { KakaoStrategy } from './jwt/kakao.strategy';
 import { SignupReqDto } from './dto/req/signup-req.dto';
 import { LoginReqDto } from './dto/req/login-req.dto';
+import { OauthSignupReqDto } from './dto/req/oAuthSignup-req.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -158,31 +157,63 @@ export class AuthController {
       .send({ message: `Logout success` });
   }
 
-  @Post('/kakao')
-  @HttpCode(200)
+  @Get('/kakao/callback')
+  @ApiOperation({
+    summary: '카카오 로그인',
+    description: '카카오 로그인 이후 로직, folloca 유저가 아닐 시 404',
+  })
   @ApiParam({
     name: 'code',
     type: String,
     required: true,
     description: '카카오 로그인 성공 이후 카카오로 부터 전달 받은 인가코드',
   })
-  async requestKakaoLogin(@Body('code') code: string, @Res() res) {
-    const kakao = new KakaoStrategy();
+  async requestKakaoLogin(@Query('code') code: string, @Res() res) {
+    try {
+      const { accessToken, refreshToken, loginResData } =
+        await this.authService.kakaoLoginLogic(code);
 
-    const tokens = await kakao.getToken(code);
-    const userInfo = await kakao.getUserInfo(tokens.access_token);
+      res
+        .setHeader('Authorization', `Bearer ${accessToken}`)
+        .cookie('refresh', refreshToken, {
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+        })
+        .status(HttpStatus.OK)
+        .send({ userData: loginResData, message: `Login success with kakao` });
+    } catch (error) {
+      res.status(HttpStatus.NOT_FOUND).send({ userData: error.message });
+    }
+  }
 
-    const findUser = this.authService.kakaoCheck(String(userInfo.target_id));
+  @Post('/oauth/register')
+  @ApiOperation({
+    summary: '회원가입',
+    description: '카카오/구글 회원가입',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        oauthId: { type: 'string' },
+        registerMethod: { type: 'string' },
+        email: { type: 'string' },
+        marketingReception: { type: 'boolean' },
+        nickname: { type: 'string' },
+      },
+    },
+  })
+  async kakaoSignup(@Body() signupDto: OauthSignupReqDto) {
+    const { oauthId, registerMethod, email, marketingReception, nickname } =
+      signupDto;
 
-    // #12 merge 진행 가능 예정 login-res.dto.ts
-    // if (findUser) {
-    //   res.statusCode(HttpStatus.OK).send({
-    //     email: findUser.email,
-    //   });
-    // } else {
-    //   res.statusCode(HttpStatus.NOT_FOUND).send({
-    //     email: null,
-    //   });
-    // }
+    return this.authService.oAuthSignup(
+      oauthId,
+      registerMethod,
+      email,
+      marketingReception,
+      nickname,
+    );
   }
 }
