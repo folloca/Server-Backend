@@ -14,7 +14,7 @@ export class UserRepository extends Repository<UserEntity> {
       return userData;
     }
   }
-  
+
   async findAccountByEmail(email) {
     const userData = await this.findOne({
       where: { email: email },
@@ -51,8 +51,14 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   async getUserData(userId: number) {
-    return await this.findOne({
-      where: { userId: userId },
-    });
+    return await this.findOne({ where: { userId: userId } });
+  }
+
+  async findNickname(nickname: string) {
+    return await this.findOneBy({ nickname: nickname });
+  }
+
+  async updateNickname(userId: number, nickname: string) {
+    return await this.update({ userId }, { nickname });
   }
 }
