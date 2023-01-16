@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import { LoginResDto } from './dto/res/login-res.dto';
 import * as bcrypt from 'bcrypt';
+import { KakaoStrategy } from './jwt/kakao.strategy';
 
 @Injectable()
 export class AuthService {
@@ -105,6 +106,22 @@ export class AuthService {
       });
   }
 
+  async oAuthSignup(
+    oauthId: string,
+    registerMethod: string,
+    email: string,
+    marketingReception: boolean,
+    nickname: string,
+  ) {
+    await this.userRepository.createUserKakaoData(
+      email,
+      oauthId,
+      nickname,
+      marketingReception,
+      registerMethod,
+    );
+  }
+
   getAccessToken(userId: number, email: string) {
     const payload = { userId, email };
     return this.jwtService.signAsync(payload);
@@ -173,10 +190,37 @@ export class AuthService {
   async deleteRefreshToken(email: string) {
     await this.cacheManager.del(`refresh_${email}`);
   }
+
   async kakaoCheck(kakaoId: string) {
     const accountInfo = await this.userRepository.findAccountByKakaoId(kakaoId);
 
-    if (accountInfo) return accountInfo;
-    else return false;
+    if (accountInfo) {
+      const accessToken = await this.getAccessToken(
+        accountInfo.userId,
+        accountInfo.email,
+      );
+      const refreshToken = await this.getRefreshToken(
+        accountInfo.userId,
+        accountInfo.email,
+      );
+      const loginResData = plainToInstance(LoginResDto, accountInfo, {
+        excludeExtraneousValues: true,
+      });
+
+      return { accessToken, refreshToken, loginResData };
+    } else throw new NotFoundException(kakaoId);
+  }
+
+  async kakaoLoginLogic(code: string) {
+    const kakao = new KakaoStrategy(this.configService);
+
+    const tokens = await kakao.getToken(code);
+    const userInfo = await kakao.getUserInfo(tokens.access_token);
+
+    const { accessToken, refreshToken, loginResData } = await this.kakaoCheck(
+      String(userInfo.id),
+    );
+
+    return { accessToken, refreshToken, loginResData };
   }
 }
