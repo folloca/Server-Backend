@@ -1,7 +1,7 @@
-import { Controller, Get, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Query } from "@nestjs/common";
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('users')
 @Controller('users')
@@ -42,7 +42,7 @@ export class UsersController {
     return this.usersService.updateNickname(+userId, nickname);
   }
 
-  @Get('nickname/check')
+  @Get('/nickname/check')
   @ApiOperation({
     summary: '닉네임 중복 검사',
     description: '닉네임 데이터 중복 검사',
@@ -55,5 +55,27 @@ export class UsersController {
   })
   async checkNickname(@Query() query) {
     return this.usersService.checkNickname(query.nickname);
+  }
+
+  @Patch()
+  @ApiOperation({
+    summary: '회원정보 수정',
+    description: '회원정보 수정',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        introduce: { type: 'string' },
+        website: { type: 'string' },
+        sns: { type: 'string' },
+        contactInfoPublic: { type: 'boolean' },
+        nickname: { type: 'string' },
+        password: { type: 'string' },
+        marketingReception: { type: 'boolean' },
+      },
+    },
+  })
+  async updateUserInfo(@Body() body) {
+    return await this.usersService.updateUserinfo(body);
   }
 }
