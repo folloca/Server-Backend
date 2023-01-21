@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Patch, Query } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
-import { ApiBody, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -57,25 +58,47 @@ export class UsersController {
     return this.usersService.checkNickname(query.nickname);
   }
 
+  @Get('/edit-page')
+  @ApiOperation({
+    summary: '회원정보 수정 페이지 데이터',
+    description: '회원정보 수정 페이지 접속 시 기존 데이터',
+  })
+  @ApiQuery({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: '사용자 인덱스',
+  })
+  async getEditPageUserInfo(@Query('userId') userId) {
+    return this.usersService.getEditPageUserInfo(+userId);
+  }
+
+  @Post('/password')
+  @ApiOperation({
+    summary: '현재 비밀번호 확인',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: { type: 'number' },
+        password: { type: 'string' },
+      },
+    },
+  })
+  async checkPassword(@Body() body) {
+    const { userId, password } = body;
+    return await this.usersService.checkPassword(userId, password);
+  }
+
   @Patch()
   @ApiOperation({
     summary: '회원정보 수정',
     description: '회원정보 수정',
   })
   @ApiBody({
-    schema: {
-      properties: {
-        introduce: { type: 'string' },
-        website: { type: 'string' },
-        sns: { type: 'string' },
-        contactInfoPublic: { type: 'boolean' },
-        nickname: { type: 'string' },
-        password: { type: 'string' },
-        marketingReception: { type: 'boolean' },
-      },
-    },
+    type: UpdateUserinfoReqDto,
   })
-  async updateUserInfo(@Body() body) {
-    return await this.usersService.updateUserinfo(body);
+  async updateUserInfo(@Body() updateUserinfoReqDto: UpdateUserinfoReqDto) {
+    return await this.usersService.updateUserInfo(updateUserinfoReqDto);
   }
 }
