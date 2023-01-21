@@ -1,8 +1,24 @@
-import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
-import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from '../../utilities/multer.options';
 
 @ApiTags('users')
 @Controller('users')
@@ -58,7 +74,7 @@ export class UsersController {
     return this.usersService.checkNickname(query.nickname);
   }
 
-  @Get('/edit-page')
+  @Get('/edit')
   @ApiOperation({
     summary: '회원정보 수정 페이지 데이터',
     description: '회원정보 수정 페이지 접속 시 기존 데이터',
@@ -73,7 +89,7 @@ export class UsersController {
     return this.usersService.getEditPageUserInfo(+userId);
   }
 
-  @Post('/password')
+  @Post('/password/check')
   @ApiOperation({
     summary: '현재 비밀번호 확인',
   })
@@ -90,7 +106,7 @@ export class UsersController {
     return await this.usersService.checkPassword(userId, password);
   }
 
-  @Patch()
+  @Post('edit')
   @ApiOperation({
     summary: '회원정보 수정',
     description: '회원정보 수정',
@@ -98,6 +114,13 @@ export class UsersController {
   @ApiBody({
     type: UpdateUserinfoReqDto,
   })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [{ name: 'images', maxCount: 1 }],
+      multerOptions('profile'),
+    ),
+  )
   async updateUserInfo(@Body() updateUserinfoReqDto: UpdateUserinfoReqDto) {
     return await this.usersService.updateUserInfo(updateUserinfoReqDto);
   }
