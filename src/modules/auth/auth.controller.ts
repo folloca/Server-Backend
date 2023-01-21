@@ -107,12 +107,7 @@ export class AuthController {
     description: '이메일로 로그인',
   })
   @ApiBody({
-    schema: {
-      properties: {
-        email: { type: 'string' },
-        password: { type: 'string' },
-      },
-    },
+    type: LoginReqDto,
   })
   async login(@Body() loginReqDto: LoginReqDto, @Res() res) {
     const { email, password } = loginReqDto;
