@@ -5,6 +5,7 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -17,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../../utilities/multer.options';
 
 @ApiTags('users')
@@ -111,17 +112,21 @@ export class UsersController {
     summary: '회원정보 수정',
     description: '회원정보 수정',
   })
+  @ApiQuery({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: '사용자 id',
+  })
   @ApiBody({
     type: UpdateUserinfoReqDto,
   })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileFieldsInterceptor(
-      [{ name: 'images', maxCount: 1 }],
-      multerOptions('profile'),
-    ),
-  )
-  async updateUserInfo(@Body() updateUserinfoReqDto: UpdateUserinfoReqDto) {
+  @UseInterceptors(FileInterceptor('profileImage', multerOptions('profile')))
+  async updateUserInfo(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateUserinfoReqDto: UpdateUserinfoReqDto,
+  ) {
     return await this.usersService.updateUserInfo(updateUserinfoReqDto);
   }
 }
