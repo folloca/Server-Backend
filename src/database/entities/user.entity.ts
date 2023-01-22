@@ -43,7 +43,7 @@ export class UserEntity extends DefaultEntity {
     name: 'profile_image_path',
     type: 'varchar',
     nullable: false,
-    default: '../../../images/basicProfile.png',
+    default: '../../../../storage/profile/basicProfile.png',
     comment: '프로필 이미지 저장 경로',
   })
   @IsString()
@@ -92,7 +92,7 @@ export class UserEntity extends DefaultEntity {
 
   @Column({
     name: 'contact_info_public',
-    type: 'boolean',
+    type: Boolean,
     nullable: false,
     default: true,
     comment: '연락처 공개 여부',
@@ -131,7 +131,7 @@ export class UserEntity extends DefaultEntity {
 
   @Column({
     name: 'trending_planner',
-    type: 'boolean',
+    type: Boolean,
     nullable: false,
     default: false,
     comment: '트렌딩 플래너 여부',
@@ -142,7 +142,7 @@ export class UserEntity extends DefaultEntity {
 
   @Column({
     name: 'trending_fielder',
-    type: 'boolean',
+    type: Boolean,
     nullable: false,
     default: false,
     comment: '트렌딩 필더 여부',
@@ -153,7 +153,7 @@ export class UserEntity extends DefaultEntity {
 
   @Column({
     name: 'trending_finder',
-    type: 'boolean',
+    type: Boolean,
     nullable: false,
     default: false,
     comment: '트렌딩 파인더 여부',
@@ -164,7 +164,7 @@ export class UserEntity extends DefaultEntity {
 
   @Column({
     name: 'email_reception',
-    type: 'boolean',
+    type: Boolean,
     nullable: false,
     comment: '마케팅 수신 동의 여부',
   })
