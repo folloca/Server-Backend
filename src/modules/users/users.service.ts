@@ -1,12 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../../database/repositories/user.repository';
 import { adjectives, nouns } from './nickname-keywords';
+import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
+import * as bcrypt from 'bcrypt';
 import Redis from 'ioredis';
 
 @Injectable()
 export class UsersService {
   private redis;
+  private readonly profileImageStorage;
 
   constructor(
     private readonly configService: ConfigService,
@@ -16,6 +24,9 @@ export class UsersService {
       host: configService.get(`${process.env.NODE_ENV}.redis.host`),
       port: configService.get(`${process.env.NODE_ENV}.redis.port`),
     });
+    this.profileImageStorage = this.configService.get(
+      `${process.env.NODE_ENV}.storage.profile`,
+    );
   }
 
   pickRandomKeyword(array): string {
@@ -55,6 +66,87 @@ export class UsersService {
     } else {
       await this.userRepository.updateNickname(userId, nickname);
       return { message: `Updated nickname ${nickname}` };
+    }
+  }
+
+  async getEditPageUserInfo(userId: number) {
+    const userData = await this.userRepository.getUserData(userId);
+
+    if (!userData) {
+      throw new BadRequestException(`Wrong user Id: ${userId}`);
+    } else {
+      const {
+        nickname,
+        profileImagePath,
+        email,
+        contactInfoPublic,
+        websiteUrl,
+        baseIntroduction,
+        marketingReception,
+      } = userData;
+
+      return {
+        data: {
+          nickname,
+          profileImagePath,
+          email,
+          contactInfoPublic,
+          websiteUrl,
+          baseIntroduction,
+          marketingReception,
+        },
+        message: `User information of user ${userId} for editing page`,
+      };
+    }
+  }
+
+  async checkPassword(userId: number, password: string) {
+    const userData = await this.userRepository.getUserData(userId);
+
+    if (!userData) {
+      throw new BadRequestException(`Wrong user Id: ${userId}`);
+    }
+
+    const { password: hashedPassword } = userData;
+    const validatePassword = await bcrypt.compare(password, hashedPassword);
+
+    if (!validatePassword) {
+      throw new UnauthorizedException('Wrong password');
+    } else {
+      return { message: 'Password correct' };
+    }
+  }
+
+  async updateUserInfo(updateUserinfoReqDto: UpdateUserinfoReqDto) {
+    const {
+      userId,
+      profileImage,
+      baseIntroduction,
+      websiteUrl,
+      snsUrl,
+      contactInfoPublic,
+      nickname,
+      password,
+      marketingReception,
+    } = updateUserinfoReqDto;
+    const updateResult = await this.userRepository.updateUserinfo(
+      userId,
+      profileImage,
+      baseIntroduction,
+      websiteUrl,
+      snsUrl,
+      contactInfoPublic,
+      nickname,
+      password,
+      marketingReception,
+    );
+
+    if (!updateResult) {
+      throw new InternalServerErrorException(`Fail to update user information`);
+    } else {
+      return {
+        message: `Updated user information of user ${userId}`,
+      };
     }
   }
 }
