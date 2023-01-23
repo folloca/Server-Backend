@@ -1,7 +1,8 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -49,9 +50,9 @@ export class UsersService {
   }
 
   async checkNickname(nickname: string) {
-    const checkResult = await this.userRepository.findNickname(nickname);
+    const nicknameValidity = await this.userRepository.findNickname(nickname);
 
-    if (checkResult) {
+    if (nicknameValidity) {
       return { message: `Nickname ${nickname} already exists` };
     } else {
       return { message: `Nickname ${nickname} does not exist` };
@@ -100,13 +101,18 @@ export class UsersService {
     }
   }
 
-  async checkPassword(userId: number, password: string) {
+  async getUserData(userId: number) {
     const userData = await this.userRepository.getUserData(userId);
 
     if (!userData) {
       throw new BadRequestException(`Wrong user Id: ${userId}`);
+    } else {
+      return userData;
     }
+  }
 
+  async checkPassword(userId: number, password: string) {
+    const userData = await this.getUserData(userId);
     const { password: hashedPassword } = userData;
     const validatePassword = await bcrypt.compare(password, hashedPassword);
 
@@ -140,9 +146,13 @@ export class UsersService {
       password,
       marketingReception,
     );
+    await this.getUserData(+userId);
 
     if (!updateResult) {
-      throw new InternalServerErrorException(`Fail to update user information`);
+      throw new HttpException(
+        'Failed to update user information',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } else {
       return {
         message: `Updated user information of user ${userId}`,
