@@ -28,8 +28,7 @@ const storage = (uploadType: string): multer.StorageEngine => {
     },
     filename(req, file, cb) {
       const ext = path.extname(file.originalname);
-      const fileName = `${req.query.ownerId}_${Date.now()}${ext}`;
-
+      const fileName = `${req.query.userId}_${uploadType}_${Date.now()}${ext}`;
       cb(null, fileName);
     },
   });

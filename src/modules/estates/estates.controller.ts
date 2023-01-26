@@ -81,7 +81,7 @@ export class EstatesController {
     description: '공간 등록',
   })
   @ApiQuery({
-    name: 'ownerId',
+    name: 'userId',
     type: String,
     required: true,
     description: '공간 등록자 id',

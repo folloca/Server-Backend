@@ -82,4 +82,30 @@ export class UserRepository extends Repository<UserEntity> {
       marketingReception,
     });
   }
+
+  async updateUserinfo(
+    userId,
+    profileImagePath,
+    baseIntroduction,
+    websiteUrl,
+    snsUrl,
+    contactInfoPublic,
+    nickname,
+    password,
+    marketingReception,
+  ) {
+    return await this.update(
+      { userId },
+      {
+        nickname,
+        profileImagePath,
+        password,
+        contactInfoPublic,
+        websiteUrl,
+        snsUrl,
+        baseIntroduction,
+        marketingReception,
+      },
+    );
+  }
 }
