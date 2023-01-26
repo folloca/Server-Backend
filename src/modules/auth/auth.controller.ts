@@ -159,7 +159,7 @@ export class AuthController {
       .send({ message: `Logout success` });
   }
 
-  @Post('/kakao/callback')
+  @Get('/kakao/callback')
   @ApiOperation({
     summary: '카카오 로그인',
     description: '카카오 로그인 성공시 ',
@@ -183,7 +183,7 @@ export class AuthController {
     status: 409,
     description: '카카오 로그인 성공은 성공했으나 동일 이메일 주소가 있음',
   })
-  async requestKakaoLogin(@Body('code') code: string, @Res() res) {
+  async requestKakaoLogin(@Query('code') code: string, @Res() res) {
     try {
       const { accessToken, refreshToken, loginResData } =
         await this.authService.kakaoLoginLogic(code);
@@ -215,7 +215,7 @@ export class AuthController {
           break;
       }
 
-      res.status(HttpStatus.NOT_FOUND).send({
+      res.status(error.status).send({
         userData: userData,
         message: message,
       });
