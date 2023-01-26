@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   CACHE_MANAGER,
+  ConflictException,
   HttpException,
   HttpStatus,
   Inject,
@@ -16,6 +17,7 @@ import { plainToInstance } from 'class-transformer';
 import { LoginResDto } from './dto/res/login-res.dto';
 import * as bcrypt from 'bcrypt';
 import { KakaoStrategy } from './jwt/kakao.strategy';
+import { KakaoUserInfosResDto } from './dto/res/kakao-userInfo-res.dto';
 
 @Injectable()
 export class AuthService {
@@ -191,8 +193,10 @@ export class AuthService {
     await this.cacheManager.del(`refresh_${email}`);
   }
 
-  async kakaoCheck(kakaoId: string) {
-    const accountInfo = await this.userRepository.findAccountByKakaoId(kakaoId);
+  async kakaoCheck(userInfo: KakaoUserInfosResDto) {
+    const accountInfo = await this.userRepository.findAccountByKakaoId(
+      String(userInfo.id),
+    );
 
     if (accountInfo) {
       const accessToken = await this.getAccessToken(
@@ -208,7 +212,35 @@ export class AuthService {
       });
 
       return { accessToken, refreshToken, loginResData };
-    } else throw new NotFoundException(kakaoId);
+    } else {
+      const { id } = userInfo;
+
+      const email = userInfo.kakao_account.email
+        ? userInfo.kakao_account.email
+        : null;
+
+      if (email != null) {
+        const existUser = await this.userRepository.findAccountByEmail(email);
+        if (existUser) {
+          throw new ConflictException({
+            userId: existUser.userId,
+            email: existUser.email,
+          });
+        }
+      }
+
+      const profile_image_url =
+        userInfo.kakao_account.profile &&
+        !userInfo.kakao_account.profile.is_default_image
+          ? userInfo.kakao_account.profile.profile_image_url
+          : null;
+
+      throw new NotFoundException({
+        id: id,
+        email: email,
+        profileImageUrl: profile_image_url,
+      });
+    }
   }
 
   async kakaoLoginLogic(code: string) {
@@ -218,7 +250,7 @@ export class AuthService {
     const userInfo = await kakao.getUserInfo(tokens.access_token);
 
     const { accessToken, refreshToken, loginResData } = await this.kakaoCheck(
-      String(userInfo.id),
+      userInfo,
     );
 
     return { accessToken, refreshToken, loginResData };
