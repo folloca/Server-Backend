@@ -1,7 +1,25 @@
-import { Controller, Get, Patch, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from '../../utilities/multer.options';
 
 @ApiTags('users')
 @Controller('users')
@@ -42,7 +60,7 @@ export class UsersController {
     return this.usersService.updateNickname(+userId, nickname);
   }
 
-  @Get('nickname/check')
+  @Get('/nickname/check')
   @ApiOperation({
     summary: '닉네임 중복 검사',
     description: '닉네임 데이터 중복 검사',
@@ -55,5 +73,60 @@ export class UsersController {
   })
   async checkNickname(@Query() query) {
     return this.usersService.checkNickname(query.nickname);
+  }
+
+  @Get('/edit')
+  @ApiOperation({
+    summary: '회원정보 수정 페이지 데이터',
+    description: '회원정보 수정 페이지 접속 시 기존 데이터',
+  })
+  @ApiQuery({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: '사용자 인덱스',
+  })
+  async getEditPageUserInfo(@Query('userId') userId) {
+    return this.usersService.getEditPageUserInfo(+userId);
+  }
+
+  @Post('/password/check')
+  @ApiOperation({
+    summary: '현재 비밀번호 확인',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: { type: 'number' },
+        password: { type: 'string' },
+      },
+    },
+  })
+  async checkPassword(@Body() body) {
+    const { userId, password } = body;
+    return await this.usersService.checkPassword(userId, password);
+  }
+
+  @Post('edit')
+  @ApiOperation({
+    summary: '회원정보 수정',
+    description: '회원정보 수정',
+  })
+  @ApiQuery({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: '사용자 id',
+  })
+  @ApiBody({
+    type: UpdateUserinfoReqDto,
+  })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profileImage', multerOptions('profile')))
+  async updateUserInfo(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateUserinfoReqDto: UpdateUserinfoReqDto,
+  ) {
+    return await this.usersService.updateUserInfo(updateUserinfoReqDto);
   }
 }
