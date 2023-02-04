@@ -29,7 +29,7 @@ export class UsersController {
     private usersService: UsersService,
   ) {}
 
-  @Get('/nickname/random')
+  @Get('/nickname')
   @ApiOperation({
     summary: '닉네임 랜덤 추천',
     description: '아직 등록되지 않은 닉네임 조합으로 추천',
@@ -50,14 +50,20 @@ export class UsersController {
     description: '사용자 인덱스',
   })
   @ApiQuery({
-    name: 'nickname',
+    name: 'newName',
     type: String,
     required: true,
     description: '새로운 닉네임',
   })
+  @ApiQuery({
+    name: 'oldName',
+    type: String,
+    required: true,
+    description: '이전 닉네임',
+  })
   async updateNickname(@Query() query) {
-    const { userId, nickname } = query;
-    return this.usersService.updateNickname(+userId, nickname);
+    const { userId, newName, oldName } = query;
+    return this.usersService.updateNickname(+userId, newName, oldName);
   }
 
   @Get('/nickname/check')
