@@ -1,4 +1,4 @@
-import { TypeormRepository } from '../typeorm-repository.decorator';
+import { TypeormRepository } from '../database/typeorm-repository.decorator';
 import { Repository } from 'typeorm';
 import {
   OpinionEntity,
@@ -6,7 +6,7 @@ import {
   ProposalEntity,
   ProposalImageEntity,
   ProposalLikeEntity,
-} from '../entities';
+} from '../database/entities';
 
 @TypeormRepository(ProposalEntity)
 export class ProposalRepository extends Repository<ProposalEntity> {}

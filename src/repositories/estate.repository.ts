@@ -1,12 +1,12 @@
-import { TypeormRepository } from '../typeorm-repository.decorator';
+import { TypeormRepository } from '../database/typeorm-repository.decorator';
 import { Repository } from 'typeorm';
 import {
   EstateEntity,
   EstateImageEntity,
   EstateLikeEntity,
   MapNumberingEntity,
-} from '../entities';
-import { CreateEstateDto } from '../../modules/estates/dto/req/create-estate.dto';
+} from '../database/entities';
+import { CreateEstateDto } from '../modules/estates/dto/req/create-estate.dto';
 
 @TypeormRepository(EstateEntity)
 export class EstateRepository extends Repository<EstateEntity> {
