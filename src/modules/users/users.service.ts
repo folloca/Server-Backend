@@ -59,14 +59,16 @@ export class UsersService {
     }
   }
 
-  async updateNickname(userId: number, nickname: string) {
-    const nicknameValidity = await this.userRepository.findNickname(nickname);
+  async updateNickname(userId: number, newName: string, oldName: string) {
+    const nicknameValidity = await this.userRepository.findNickname(newName);
 
     if (nicknameValidity) {
-      return { message: `Nickname ${nickname} already exists` };
+      return { message: `Nickname ${newName} already exists` };
     } else {
-      await this.userRepository.updateNickname(userId, nickname);
-      return { message: `Updated nickname ${nickname}` };
+      await this.userRepository.updateNickname(userId, newName);
+      await this.redis.srem('registered_nicknames', oldName);
+      await this.redis.sadd('registered_nicknames', newName);
+      return { message: `Updated nickname ${newName}` };
     }
   }
 
