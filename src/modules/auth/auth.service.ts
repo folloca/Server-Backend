@@ -32,12 +32,22 @@ export class AuthService {
   async emailCheck(email: string) {
     const accountInfo = await this.userRepository.findAccountByEmail(email);
 
-    if (accountInfo) {
+    if (!accountInfo) {
+      throw new HttpException(`No account with ${email}`, HttpStatus.NOT_FOUND);
+    } else {
       return {
         message: `Email ${email} is already registered with ${accountInfo.registerMethod}`,
       };
+    }
+  }
+
+  async forgotPassword(email: string) {
+    const accountInfo = await this.userRepository.findAccountByEmail(email);
+
+    if (!accountInfo) {
+      throw new HttpException(`No account with ${email}`, HttpStatus.NOT_FOUND);
     } else {
-      return { message: `No account with ${email}` };
+      await this.emailVerification(email);
     }
   }
 

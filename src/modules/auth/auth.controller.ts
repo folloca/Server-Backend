@@ -41,9 +41,24 @@ export class AuthController {
     return this.authService.emailCheck(email);
   }
 
+  @Get('/forgot-password')
+  @ApiOperation({
+    summary: '비밀번호 찾기',
+    description: '비밀번호 찾기 전에 이메일 주소 확인 후 맞으면 인증번호 발송',
+  })
+  @ApiQuery({
+    name: 'email',
+    type: String,
+    required: true,
+    description: '비밀번호 찾기 요청하는 이메일 주소',
+  })
+  async forgotPassword(@Query('email') email: string) {
+    return await this.authService.forgotPassword(email);
+  }
+
   @Get('/verification/:email')
   @ApiOperation({
-    summary: '이메일 인증',
+    summary: '이메일 인증 번호 발송',
     description: '작성한 이메일 주소로 인증 번호 발송',
   })
   @ApiParam({
