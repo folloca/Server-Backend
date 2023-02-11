@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import {
   EstateLikeRepository,
   EstateRepository,
-} from '../../database/repositories/estate.repository';
-import { ProposalRepository } from '../../database/repositories/proposal.repository';
+} from '../../repositories/estate.repository';
+import { ProposalRepository } from '../../repositories/proposal.repository';
 import { CreateEstateDto } from './dto/req/create-estate.dto';
 import { PriorFilterEnumToKor } from './enum/prior-filter.enum';
 import { PosteriorFilterEnumToKor } from './enum/posterior-filter.enum';

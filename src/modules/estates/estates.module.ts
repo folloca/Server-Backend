@@ -7,9 +7,9 @@ import {
   EstateLikeRepository,
   EstateRepository,
   MapNumberingRepository,
-} from '../../database/repositories/estate.repository';
-import { HashTagRepository } from '../../database/repositories/hash-tag.repository';
-import { ProposalRepository } from '../../database/repositories/proposal.repository';
+} from '../../repositories/estate.repository';
+import { HashTagRepository } from '../../repositories/hash-tag.repository';
+import { ProposalRepository } from '../../repositories/proposal.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 

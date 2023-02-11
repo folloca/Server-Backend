@@ -1,6 +1,6 @@
-import { TypeormRepository } from '../typeorm-repository.decorator';
+import { TypeormRepository } from '../database/typeorm-repository.decorator';
 import { Repository } from 'typeorm';
-import { AdminEntity, BannerEntity } from '../entities';
+import { AdminEntity, BannerEntity } from '../database/entities';
 
 @TypeormRepository(AdminEntity)
 export class AdminRepository extends Repository<AdminEntity> {}

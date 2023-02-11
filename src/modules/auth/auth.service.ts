@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from '../../database/repositories/user.repository';
+import { UserRepository } from '../../repositories/user.repository';
 import { SmtpConfig } from '../../config/smtp.config';
 import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';

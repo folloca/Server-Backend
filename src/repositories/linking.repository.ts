@@ -1,11 +1,11 @@
-import { TypeormRepository } from '../typeorm-repository.decorator';
+import { TypeormRepository } from '../database/typeorm-repository.decorator';
 import { Repository } from 'typeorm';
 import {
   LinkingEntity,
   LinkingImageEntity,
   LinkingLikeEntity,
   LinkingRequestEntity,
-} from '../entities';
+} from '../database/entities';
 
 @TypeormRepository(LinkingEntity)
 export class LinkingRepository extends Repository<LinkingEntity> {}

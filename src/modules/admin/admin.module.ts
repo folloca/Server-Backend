@@ -5,9 +5,9 @@ import { TypeormRepositoryModule } from '../../database/typeorm-repository.modul
 import {
   AdminRepository,
   BannerRepository,
-} from '../../database/repositories/admin.repository';
-import { UserRepository } from '../../database/repositories/user.repository';
-import { HashTagRepository } from '../../database/repositories/hash-tag.repository';
+} from '../../repositories/admin.repository';
+import { UserRepository } from '../../repositories/user.repository';
+import { HashTagRepository } from '../../repositories/hash-tag.repository';
 
 @Module({
   imports: [

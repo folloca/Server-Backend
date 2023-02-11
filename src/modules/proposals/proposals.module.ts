@@ -8,8 +8,8 @@ import {
   ProposalImageRepository,
   ProposalLikeRepository,
   ProposalRepository,
-} from '../../database/repositories/proposal.repository';
-import { HashTagRepository } from '../../database/repositories/hash-tag.repository';
+} from '../../repositories/proposal.repository';
+import { HashTagRepository } from '../../repositories/hash-tag.repository';
 
 @Module({
   imports: [

@@ -7,8 +7,8 @@ import {
   LinkingLikeRepository,
   LinkingRepository,
   LinkingRequestRepository,
-} from '../../database/repositories/linking.repository';
-import { HashTagRepository } from '../../database/repositories/hash-tag.repository';
+} from '../../repositories/linking.repository';
+import { HashTagRepository } from '../../repositories/hash-tag.repository';
 
 @Module({
   imports: [
