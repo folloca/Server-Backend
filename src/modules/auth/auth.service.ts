@@ -221,7 +221,7 @@ export class AuthService {
 
       if (email != null) {
         const existUser = await this.userRepository.findAccountByEmail(email);
-        if (existUser) {
+        if (existUser && existUser.registerMethod !== 'KAKAO') {
           throw new ConflictException({
             userId: existUser.userId,
             email: existUser.email,
