@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { SignupReqDto } from './dto/req/signup-req.dto';
 import { LoginReqDto } from './dto/req/login-req.dto';
-import { OauthSignupReqDto } from './dto/req/oAuthSignup-req.dto';
+import { OauthSignupReqDto } from './dto/req/oauth-signup-req.dto';
 import { LoginResDto } from './dto/res/login-res.dto';
 
 @ApiTags('auth')
