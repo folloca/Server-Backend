@@ -180,7 +180,7 @@ export class AuthController {
   })
   async requestKakaoLogin(@Body('code') code: string, @Res() res) {
     try {
-      const { accessToken, refreshToken, loginResData } =
+      const { type, accessToken, refreshToken, loginResData } =
         await this.authService.kakaoLoginLogic(code);
 
       res
@@ -191,7 +191,7 @@ export class AuthController {
           secure: true,
           sameSite: 'none',
         })
-        .status(HttpStatus.OK)
+        .status(type === 'login' ? HttpStatus.OK : HttpStatus.CREATED)
         .send({ userData: loginResData, message: `Login success with kakao` });
     } catch (error) {
       let message = '';

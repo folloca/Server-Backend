@@ -67,8 +67,8 @@ export class UserRepository extends Repository<UserEntity> {
   async createUserKakaoData(
     email: string,
     oauthId: string,
-    nickname: string,
-    marketingReception: boolean,
+    nickname = '닉네임을입력해주세요',
+    marketingReception = false,
     registerMethod: string,
   ) {
     await this.insert({

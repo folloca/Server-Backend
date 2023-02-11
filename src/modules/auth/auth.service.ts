@@ -112,8 +112,8 @@ export class AuthService {
     oauthId: string,
     registerMethod: string,
     email: string,
-    marketingReception: boolean,
-    nickname: string,
+    marketingReception?: boolean,
+    nickname?: string,
   ) {
     await this.userRepository.createUserKakaoData(
       email,
@@ -211,7 +211,7 @@ export class AuthService {
         excludeExtraneousValues: true,
       });
 
-      return { accessToken, refreshToken, loginResData };
+      return { type: 'login', accessToken, refreshToken, loginResData };
     } else {
       const { id } = userInfo;
 
@@ -226,6 +226,26 @@ export class AuthService {
             userId: existUser.userId,
             email: existUser.email,
           });
+        } else {
+          await this.oAuthSignup(id.toString(), 'KAKAO', email);
+          const createdUser = await this.userRepository.findAccountByKakaoId(
+            String(userInfo.id),
+          );
+          if (createdUser) {
+            const accessToken = await this.getAccessToken(
+              createdUser.userId,
+              email,
+            );
+            const refreshToken = await this.getRefreshToken(
+              createdUser.userId,
+              email,
+            );
+            const loginResData = plainToInstance(LoginResDto, createdUser, {
+              excludeExtraneousValues: true,
+            });
+
+            return { type: 'regist', accessToken, refreshToken, loginResData };
+          }
         }
       }
 
@@ -249,10 +269,9 @@ export class AuthService {
     const tokens = await kakao.getToken(code);
     const userInfo = await kakao.getUserInfo(tokens.access_token);
 
-    const { accessToken, refreshToken, loginResData } = await this.kakaoCheck(
-      userInfo,
-    );
+    const { type, accessToken, refreshToken, loginResData } =
+      await this.kakaoCheck(userInfo);
 
-    return { accessToken, refreshToken, loginResData };
+    return { type, accessToken, refreshToken, loginResData };
   }
 }
