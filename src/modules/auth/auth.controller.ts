@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpStatus,
-  Param,
   Post,
   Query,
   Res,
@@ -28,33 +27,48 @@ import { LoginResDto } from './dto/res/login-res.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get('/redundancy-check/:email')
+  @Get('/redundancy')
   @ApiOperation({
     summary: '이메일 중복 확인',
     description: '이메일 중복 확인',
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'email',
     type: String,
     required: true,
     description: '중복 검사하고자 하는 이메일 주소',
   })
-  async emailCheck(@Param('email') email: string) {
+  async emailCheck(@Query('email') email: string) {
     return this.authService.emailCheck(email);
   }
 
-  @Get('/verification/:email')
+  @Get('/forgot-password')
   @ApiOperation({
-    summary: '이메일 인증',
+    summary: '비밀번호 찾기',
+    description: '비밀번호 찾기 전에 이메일 주소 확인 후 맞으면 인증번호 발송',
+  })
+  @ApiQuery({
+    name: 'email',
+    type: String,
+    required: true,
+    description: '비밀번호 찾기 요청하는 이메일 주소',
+  })
+  async forgotPassword(@Query('email') email: string) {
+    return await this.authService.forgotPassword(email);
+  }
+
+  @Get('/verification')
+  @ApiOperation({
+    summary: '이메일 인증 번호 발송',
     description: '작성한 이메일 주소로 인증 번호 발송',
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'email',
     type: String,
     required: true,
     description: '인증 번호 받을 이메일 주소',
   })
-  async emailVerification(@Param('email') email: string) {
+  async emailVerification(@Query('email') email: string) {
     return this.authService.emailVerification(email);
   }
 
@@ -217,9 +231,9 @@ export class AuthController {
     }
   }
 
-  @Post('/oauth/register')
+  @Post('/oauth')
   @ApiOperation({
-    summary: '회원가입',
+    summary: 'OAuth 회원가입',
     description: '카카오/구글 회원가입',
   })
   @ApiBody({
