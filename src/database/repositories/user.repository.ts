@@ -16,7 +16,7 @@ export class UserRepository extends Repository<UserEntity> {
     }
   }
 
-  async findAccountByEmail(email) {
+  async findAccountByEmail(email: string) {
     const userData = await this.findOne({
       where: { email: email },
     });
@@ -27,6 +27,7 @@ export class UserRepository extends Repository<UserEntity> {
       return {
         userId: userData.userId,
         registerMethod: userData.registerMethod,
+        email: userData.email,
       };
     }
   }
@@ -66,8 +67,8 @@ export class UserRepository extends Repository<UserEntity> {
   async createUserKakaoData(
     email: string,
     oauthId: string,
-    nickname: string,
-    marketingReception: boolean,
+    nickname = '닉네임을입력해주세요',
+    marketingReception = false,
     registerMethod: string,
   ) {
     await this.insert({

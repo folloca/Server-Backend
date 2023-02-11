@@ -9,8 +9,14 @@ export class KakaoUserInfosResDto {
   id: number;
 
   @ApiProperty({
-    type: String,
-    description: '엑세스 토큰 유효시간',
+    type: Object,
+    description: 'kakao_account_info',
   })
-  properties: string[];
+  kakao_account: {
+    email: string | null;
+    profile: {
+      is_default_image: boolean;
+      profile_image_url: string | null;
+    };
+  };
 }

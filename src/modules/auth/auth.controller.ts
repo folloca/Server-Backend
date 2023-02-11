@@ -15,11 +15,13 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { SignupReqDto } from './dto/req/signup-req.dto';
 import { LoginReqDto } from './dto/req/login-req.dto';
 import { OauthSignupReqDto } from './dto/req/oauth-signup-req.dto';
+import { LoginResDto } from './dto/res/login-res.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -152,10 +154,10 @@ export class AuthController {
       .send({ message: `Logout success` });
   }
 
-  @Get('/kakao/callback')
+  @Post('/kakao/callback')
   @ApiOperation({
     summary: '카카오 로그인',
-    description: '카카오 로그인 이후 로직, folloca 유저가 아닐 시 404',
+    description: '카카오 로그인 성공시 ',
   })
   @ApiParam({
     name: 'code',
@@ -163,9 +165,22 @@ export class AuthController {
     required: true,
     description: '카카오 로그인 성공 이후 카카오로 부터 전달 받은 인가코드',
   })
-  async requestKakaoLogin(@Query('code') code: string, @Res() res) {
+  @ApiResponse({
+    status: 200,
+    description: '카카오 로그인 성공',
+    type: LoginResDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: '카카오 로그인 성공은 성공했으나 Folloca User가 아님',
+  })
+  @ApiResponse({
+    status: 409,
+    description: '카카오 로그인 성공은 성공했으나 동일 이메일 주소가 있음',
+  })
+  async requestKakaoLogin(@Body('code') code: string, @Res() res) {
     try {
-      const { accessToken, refreshToken, loginResData } =
+      const { type, accessToken, refreshToken, loginResData } =
         await this.authService.kakaoLoginLogic(code);
 
       res
@@ -176,10 +191,29 @@ export class AuthController {
           secure: true,
           sameSite: 'none',
         })
-        .status(HttpStatus.OK)
+        .status(type === 'login' ? HttpStatus.OK : HttpStatus.CREATED)
         .send({ userData: loginResData, message: `Login success with kakao` });
     } catch (error) {
-      res.status(HttpStatus.NOT_FOUND).send({ userData: error.message });
+      let message = '';
+
+      const userData = error.response;
+
+      switch (error.status) {
+        case 404:
+          message = `Login fail with kakao`;
+          break;
+        case 409:
+          message = `Already Exist User with Email`;
+          break;
+        default:
+          message = `Unknown error occurred during Kakao Login`;
+          break;
+      }
+
+      res.status(error.status).send({
+        userData: userData,
+        message: message,
+      });
     }
   }
 

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   CACHE_MANAGER,
+  ConflictException,
   HttpException,
   HttpStatus,
   Inject,
@@ -16,6 +17,7 @@ import { plainToInstance } from 'class-transformer';
 import { LoginResDto } from './dto/res/login-res.dto';
 import * as bcrypt from 'bcrypt';
 import { KakaoStrategy } from './jwt/kakao.strategy';
+import { KakaoUserInfosResDto } from './dto/res/kakao-userInfo-res.dto';
 
 @Injectable()
 export class AuthService {
@@ -110,8 +112,8 @@ export class AuthService {
     oauthId: string,
     registerMethod: string,
     email: string,
-    marketingReception: boolean,
-    nickname: string,
+    marketingReception?: boolean,
+    nickname?: string,
   ) {
     await this.userRepository.createUserKakaoData(
       email,
@@ -191,8 +193,10 @@ export class AuthService {
     await this.cacheManager.del(`refresh_${email}`);
   }
 
-  async kakaoCheck(kakaoId: string) {
-    const accountInfo = await this.userRepository.findAccountByKakaoId(kakaoId);
+  async kakaoCheck(userInfo: KakaoUserInfosResDto) {
+    const accountInfo = await this.userRepository.findAccountByKakaoId(
+      String(userInfo.id),
+    );
 
     if (accountInfo) {
       const accessToken = await this.getAccessToken(
@@ -207,8 +211,56 @@ export class AuthService {
         excludeExtraneousValues: true,
       });
 
-      return { accessToken, refreshToken, loginResData };
-    } else throw new NotFoundException(kakaoId);
+      return { type: 'login', accessToken, refreshToken, loginResData };
+    } else {
+      const { id } = userInfo;
+
+      const email = userInfo.kakao_account.email
+        ? userInfo.kakao_account.email
+        : null;
+
+      if (email != null) {
+        const existUser = await this.userRepository.findAccountByEmail(email);
+        if (existUser && existUser.registerMethod !== 'KAKAO') {
+          throw new ConflictException({
+            userId: existUser.userId,
+            email: existUser.email,
+          });
+        } else {
+          await this.oAuthSignup(id.toString(), 'KAKAO', email);
+          const createdUser = await this.userRepository.findAccountByKakaoId(
+            String(userInfo.id),
+          );
+          if (createdUser) {
+            const accessToken = await this.getAccessToken(
+              createdUser.userId,
+              email,
+            );
+            const refreshToken = await this.getRefreshToken(
+              createdUser.userId,
+              email,
+            );
+            const loginResData = plainToInstance(LoginResDto, createdUser, {
+              excludeExtraneousValues: true,
+            });
+
+            return { type: 'regist', accessToken, refreshToken, loginResData };
+          }
+        }
+      }
+
+      const profile_image_url =
+        userInfo.kakao_account.profile &&
+        !userInfo.kakao_account.profile.is_default_image
+          ? userInfo.kakao_account.profile.profile_image_url
+          : null;
+
+      throw new NotFoundException({
+        id: id,
+        email: email,
+        profileImageUrl: profile_image_url,
+      });
+    }
   }
 
   async kakaoLoginLogic(code: string) {
@@ -217,10 +269,9 @@ export class AuthService {
     const tokens = await kakao.getToken(code);
     const userInfo = await kakao.getUserInfo(tokens.access_token);
 
-    const { accessToken, refreshToken, loginResData } = await this.kakaoCheck(
-      String(userInfo.id),
-    );
+    const { type, accessToken, refreshToken, loginResData } =
+      await this.kakaoCheck(userInfo);
 
-    return { accessToken, refreshToken, loginResData };
+    return { type, accessToken, refreshToken, loginResData };
   }
 }
