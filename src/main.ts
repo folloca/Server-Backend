@@ -59,6 +59,10 @@ async function bootstrap() {
     .setTitle('FOLLOCA')
     .setDescription('Swagger document for FOLLOCA API server')
     .setVersion(pkg.version)
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

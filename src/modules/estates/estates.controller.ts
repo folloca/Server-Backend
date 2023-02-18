@@ -8,6 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
@@ -30,6 +31,7 @@ import { ConfigService } from '@nestjs/config';
 import * as os from 'os';
 
 @ApiTags('estates')
+@ApiBearerAuth('access-token')
 @Controller('estates')
 export class EstatesController {
   private readonly estateImagePath;

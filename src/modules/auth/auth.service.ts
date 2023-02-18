@@ -134,9 +134,17 @@ export class AuthService {
     );
   }
 
-  getAccessToken(userId: number, email: string) {
+  async getAccessToken(userId: number, email: string) {
     const payload = { userId, email };
-    return this.jwtService.signAsync(payload);
+    return await this.jwtService.signAsync(payload);
+  }
+
+  async validateAccessToken(accessToken: string) {
+    try {
+      return await this.jwtService.verifyAsync(accessToken);
+    } catch (e) {
+      throw new BadRequestException('Invalid access token');
+    }
   }
 
   async getRefreshToken(userId: number, email: string) {
