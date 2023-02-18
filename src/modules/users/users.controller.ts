@@ -11,6 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './users.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
@@ -22,6 +23,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../../utilities/multer.options';
 
 @ApiTags('users')
+@ApiBearerAuth('access-token')
 @Controller('users')
 export class UsersController {
   constructor(
