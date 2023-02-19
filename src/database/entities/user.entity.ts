@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { EstateEntity } from './estate.entity';
 import { EstateLikeEntity } from './estate-like.entity';
 import { ProposalEntity } from './proposal.entity';
@@ -17,7 +17,7 @@ import {
 } from 'class-validator';
 
 @Entity('user')
-export class UserEntity extends DefaultEntity {
+export class UserEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'user_id',
     type: 'integer',

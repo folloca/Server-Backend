@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsNumber } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { EstateEntity } from './estate.entity';
 
 @Entity('map_numbering')
-export class MapNumberingEntity extends DefaultEntity {
+export class MapNumberingEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'map_numbering_id',
     type: 'integer',

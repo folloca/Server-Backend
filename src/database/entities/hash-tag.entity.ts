@@ -6,13 +6,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { EstateEntity } from './estate.entity';
 import { ProposalEntity } from './proposal.entity';
 import { LinkingEntity } from './linking.entity';
 
 @Entity('hash_tag')
-export class HashTagEntity extends DefaultEntity {
+export class HashTagEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'hash_tag_id',
     type: 'integer',

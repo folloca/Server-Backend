@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { ProposalEntity } from './proposal.entity';
 
 @Entity('proposal_detail')
-export class ProposalDetailEntity extends DefaultEntity {
+export class ProposalDetailEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'proposal_detail_id',
     type: 'integer',

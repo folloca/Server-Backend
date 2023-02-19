@@ -1,7 +1,7 @@
 import { CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
-export abstract class DefaultEntity {
+export abstract class DateColumnEntity {
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',

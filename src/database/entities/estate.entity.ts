@@ -14,7 +14,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { ProposalEntity } from './proposal.entity';
 import { MapNumberingEntity } from './map-numbering.entity';
@@ -23,7 +23,7 @@ import { EstateLikeEntity } from './estate-like.entity';
 import { HashTagEntity } from './hash-tag.entity';
 
 @Entity('estate')
-export class EstateEntity extends DefaultEntity {
+export class EstateEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'estate_id',
     type: 'integer',

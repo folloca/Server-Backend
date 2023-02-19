@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { ProposalEntity } from './proposal.entity';
 
 @Entity('proposal_image')
-export class ProposalImageEntity extends DefaultEntity {
+export class ProposalImageEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'proposal_image_id',
     type: 'integer',

@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { EstateEntity } from './estate.entity';
 import { ProposalDetailEntity } from './proposal-detail.entity';
@@ -18,7 +18,7 @@ import { OpinionEntity } from './opinion.entity';
 import { HashTagEntity } from './hash-tag.entity';
 
 @Entity('proposal')
-export class ProposalEntity extends DefaultEntity {
+export class ProposalEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'proposal_id',
     type: 'integer',

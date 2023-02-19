@@ -15,7 +15,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { LinkingRequestEntity } from './linking-request.entity';
 import { LinkingImageEntity } from './linking-image.entity';
@@ -23,7 +23,7 @@ import { LinkingLikeEntity } from './linking-like.entity';
 import { HashTagEntity } from './hash-tag.entity';
 
 @Entity('linking')
-export class LinkingEntity extends DefaultEntity {
+export class LinkingEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'linking_id',
     type: 'integer',
