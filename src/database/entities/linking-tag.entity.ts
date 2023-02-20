@@ -13,7 +13,7 @@ export class LinkingTagEntity {
 
   @ManyToOne(
     () => HashTagEntity,
-    (hashTag: HashTagEntity) => hashTag.hashTagId,
+    (hashTag: HashTagEntity) => hashTag.linkingTags,
     {
       onDelete: 'CASCADE',
     },

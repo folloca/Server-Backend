@@ -13,7 +13,7 @@ export class ProposalTagEntity {
 
   @ManyToOne(
     () => HashTagEntity,
-    (hashTag: HashTagEntity) => hashTag.hashTagId,
+    (hashTag: HashTagEntity) => hashTag.proposalTags,
     {
       onDelete: 'CASCADE',
     },
