@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -20,7 +19,7 @@ import { ProposalEntity } from './proposal.entity';
 import { MapNumberingEntity } from './map-numbering.entity';
 import { EstateImageEntity } from './estate-image.entity';
 import { EstateLikeEntity } from './estate-like.entity';
-import { HashTagEntity } from './hash-tag.entity';
+import { EstateTagEntity } from './estate-tag.entity';
 
 @Entity('estate')
 export class EstateEntity extends DateColumnEntity {
@@ -202,6 +201,10 @@ export class EstateEntity extends DateColumnEntity {
   )
   estateLikes: EstateLikeEntity[];
 
-  @ManyToMany(() => HashTagEntity, (hashTag: HashTagEntity) => hashTag.estates)
-  hashTags: HashTagEntity[];
+  @OneToMany(
+    () => EstateTagEntity,
+    (estate_tag: EstateTagEntity) => estate_tag.estateId,
+    { cascade: true },
+  )
+  estateTags: EstateTagEntity[];
 }

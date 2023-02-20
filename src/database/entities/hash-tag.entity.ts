@@ -1,15 +1,9 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { DateColumnEntity } from './date-column.entity';
-import { EstateEntity } from './estate.entity';
-import { ProposalEntity } from './proposal.entity';
-import { LinkingEntity } from './linking.entity';
+import { EstateTagEntity } from './estate-tag.entity';
+import { ProposalTagEntity } from './proposal-tag.entity';
+import { LinkingTagEntity } from './linking-tag.entity';
 
 @Entity('hash_tag')
 export class HashTagEntity extends DateColumnEntity {
@@ -31,48 +25,24 @@ export class HashTagEntity extends DateColumnEntity {
   @IsNotEmpty()
   word: string;
 
-  @ManyToMany(() => EstateEntity, (estate: EstateEntity) => estate.hashTags)
-  @JoinTable({
-    name: 'estate_tag',
-    joinColumn: {
-      name: 'hash_tag_id',
-      referencedColumnName: 'hashTagId',
-    },
-    inverseJoinColumn: {
-      name: 'estate_id',
-      referencedColumnName: 'estateId',
-    },
-  })
-  estates: EstateEntity[];
-
-  @ManyToMany(
-    () => ProposalEntity,
-    (proposal: ProposalEntity) => proposal.hashTags,
+  @OneToMany(
+    () => EstateTagEntity,
+    (estate_tag: EstateTagEntity) => estate_tag.hashTagId,
+    { cascade: true },
   )
-  @JoinTable({
-    name: 'proposal_tag',
-    joinColumn: {
-      name: 'hash_tag_id',
-      referencedColumnName: 'hashTagId',
-    },
-    inverseJoinColumn: {
-      name: 'proposal_id',
-      referencedColumnName: 'proposalId',
-    },
-  })
-  proposals: ProposalEntity[];
+  estateTags: EstateTagEntity[];
 
-  @ManyToMany(() => LinkingEntity, (linking: LinkingEntity) => linking.hashTags)
-  @JoinTable({
-    name: 'linking_tag',
-    joinColumn: {
-      name: 'hash_tag_id',
-      referencedColumnName: 'hashTagId',
-    },
-    inverseJoinColumn: {
-      name: 'linking_id',
-      referencedColumnName: 'linkingId',
-    },
-  })
-  linkings: LinkingEntity[];
+  @OneToMany(
+    () => ProposalTagEntity,
+    (proposal_tag: ProposalTagEntity) => proposal_tag.hashTagId,
+    { cascade: true },
+  )
+  proposalTags: ProposalTagEntity[];
+
+  @OneToMany(
+    () => LinkingTagEntity,
+    (linking_tag: LinkingTagEntity) => linking_tag.linkingTagId,
+    { cascade: true },
+  )
+  linkingTags: LinkingTagEntity[];
 }

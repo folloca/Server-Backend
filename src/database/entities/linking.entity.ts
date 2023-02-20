@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -20,7 +19,7 @@ import { UserEntity } from './user.entity';
 import { LinkingRequestEntity } from './linking-request.entity';
 import { LinkingImageEntity } from './linking-image.entity';
 import { LinkingLikeEntity } from './linking-like.entity';
-import { HashTagEntity } from './hash-tag.entity';
+import { LinkingTagEntity } from './linking-tag.entity';
 
 @Entity('linking')
 export class LinkingEntity extends DateColumnEntity {
@@ -182,18 +181,22 @@ export class LinkingEntity extends DateColumnEntity {
 
   @OneToMany(
     () => LinkingImageEntity,
-    (linkingImage: LinkingImageEntity) => linkingImage.linkingId,
+    (linking_image: LinkingImageEntity) => linking_image.linkingId,
     { cascade: true },
   )
   linkingImages: LinkingImageEntity[];
 
   @OneToMany(
     () => LinkingLikeEntity,
-    (linkingLike: LinkingLikeEntity) => linkingLike.linkingId,
+    (linking_like: LinkingLikeEntity) => linking_like.linkingId,
     { cascade: true },
   )
   linkingLikes: LinkingLikeEntity[];
 
-  @ManyToMany(() => HashTagEntity, (hashTag: HashTagEntity) => hashTag.linkings)
-  hashTags: HashTagEntity[];
+  @OneToMany(
+    () => LinkingTagEntity,
+    (linking_tag: LinkingTagEntity) => linking_tag.linkingId,
+    { cascade: true },
+  )
+  linkingTags: LinkingTagEntity[];
 }

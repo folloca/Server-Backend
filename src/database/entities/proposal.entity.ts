@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -15,7 +14,7 @@ import { ProposalDetailEntity } from './proposal-detail.entity';
 import { ProposalImageEntity } from './proposal-image.entity';
 import { ProposalLikeEntity } from './proposal-like.entity';
 import { OpinionEntity } from './opinion.entity';
-import { HashTagEntity } from './hash-tag.entity';
+import { ProposalTagEntity } from './proposal-tag.entity';
 
 @Entity('proposal')
 export class ProposalEntity extends DateColumnEntity {
@@ -129,9 +128,10 @@ export class ProposalEntity extends DateColumnEntity {
   )
   opinions: OpinionEntity[];
 
-  @ManyToMany(
-    () => HashTagEntity,
-    (hashTag: HashTagEntity) => hashTag.proposals,
+  @OneToMany(
+    () => ProposalTagEntity,
+    (proposal_tag: ProposalTagEntity) => proposal_tag.proposalId,
+    { cascade: true },
   )
-  hashTags: HashTagEntity[];
+  proposalTags: ProposalTagEntity[];
 }
