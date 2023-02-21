@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { LinkingEntity } from './linking.entity';
 
 @Entity('linking_image')
-export class LinkingImageEntity extends DefaultEntity {
+export class LinkingImageEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'linking_image_id',
     type: 'integer',

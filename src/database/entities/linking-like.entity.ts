@@ -1,10 +1,10 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { LinkingEntity } from './linking.entity';
 
 @Entity('linking_like')
-export class LinkingLikeEntity extends DefaultEntity {
+export class LinkingLikeEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'linking_like_id',
     type: 'integer',

@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { BannerEntity } from './banner.entity';
 
 @Entity('admin')
-export class AdminEntity extends DefaultEntity {
+export class AdminEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'admin_id',
     type: 'integer',

@@ -1,10 +1,10 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { ProposalEntity } from './proposal.entity';
 
 @Entity('proposal_like')
-export class ProposalLikeEntity extends DefaultEntity {
+export class ProposalLikeEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'proposal_like_id',
     type: 'integer',

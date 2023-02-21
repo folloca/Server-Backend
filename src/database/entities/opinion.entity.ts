@@ -6,12 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { ProposalEntity } from './proposal.entity';
 
 @Entity('opinion')
-export class OpinionEntity extends DefaultEntity {
+export class OpinionEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'opinion_id',
     type: 'integer',

@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { EstateEntity } from './estate.entity';
 
 @Entity('estate_image')
-export class EstateImageEntity extends DefaultEntity {
+export class EstateImageEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'estate_image_id',
     type: 'integer',

@@ -5,12 +5,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { AdminEntity } from './admin.entity';
 
 @Entity('banner')
-export class BannerEntity extends DefaultEntity {
+export class BannerEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'banner_id',
     type: 'integer',

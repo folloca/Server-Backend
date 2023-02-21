@@ -1,10 +1,10 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { EstateEntity } from './estate.entity';
 
 @Entity('estate_like')
-export class EstateLikeEntity extends DefaultEntity {
+export class EstateLikeEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'estate_like_id',
     type: 'integer',

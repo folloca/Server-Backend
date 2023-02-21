@@ -2,23 +2,22 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { DefaultEntity } from './default.entity';
+import { DateColumnEntity } from './date-column.entity';
 import { UserEntity } from './user.entity';
 import { EstateEntity } from './estate.entity';
 import { ProposalDetailEntity } from './proposal-detail.entity';
 import { ProposalImageEntity } from './proposal-image.entity';
 import { ProposalLikeEntity } from './proposal-like.entity';
 import { OpinionEntity } from './opinion.entity';
-import { HashTagEntity } from './hash-tag.entity';
+import { ProposalTagEntity } from './proposal-tag.entity';
 
 @Entity('proposal')
-export class ProposalEntity extends DefaultEntity {
+export class ProposalEntity extends DateColumnEntity {
   @PrimaryGeneratedColumn({
     name: 'proposal_id',
     type: 'integer',
@@ -129,9 +128,10 @@ export class ProposalEntity extends DefaultEntity {
   )
   opinions: OpinionEntity[];
 
-  @ManyToMany(
-    () => HashTagEntity,
-    (hashTag: HashTagEntity) => hashTag.proposals,
+  @OneToMany(
+    () => ProposalTagEntity,
+    (proposal_tag: ProposalTagEntity) => proposal_tag.proposalId,
+    { cascade: true },
   )
-  hashTags: HashTagEntity[];
+  proposalTags: ProposalTagEntity[];
 }
