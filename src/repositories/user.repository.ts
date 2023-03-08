@@ -64,7 +64,7 @@ export class UserRepository extends Repository<UserEntity> {
     return await this.update({ userId }, { nickname });
   }
 
-  async createUserKakaoData(
+  async createUserOauthData(
     email: string,
     oauthId: string,
     nickname = '닉네임을입력해주세요',

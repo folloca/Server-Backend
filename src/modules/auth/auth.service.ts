@@ -126,7 +126,7 @@ export class AuthService {
     marketingReception?: boolean,
     nickname?: string,
   ) {
-    await this.userRepository.createUserKakaoData(
+    await this.userRepository.createUserOauthData(
       email,
       oauthId,
       nickname,
