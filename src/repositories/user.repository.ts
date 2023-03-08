@@ -4,9 +4,9 @@ import { UserEntity } from '../database/entities';
 
 @TypeormRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  async findAccountByKakaoId(oauthId: string) {
+  async findAccountByOauthId(oauthId: string, registerMethod: string) {
     const userData = await this.findOne({
-      where: { oauthId: oauthId, registerMethod: 'KAKAO' },
+      where: { oauthId: oauthId, registerMethod: registerMethod },
     });
 
     if (!userData) {
