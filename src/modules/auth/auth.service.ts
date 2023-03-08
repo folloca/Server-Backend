@@ -18,6 +18,7 @@ import { LoginResDto } from './dto/res/login-res.dto';
 import * as bcrypt from 'bcrypt';
 import { KakaoStrategy } from './jwt/kakao.strategy';
 import { KakaoUserInfosResDto } from './dto/res/kakao-userInfo-res.dto';
+import { GoogleStrategy } from './jwt/google.strategy';
 
 @Injectable()
 export class AuthService {
@@ -204,8 +205,9 @@ export class AuthService {
   }
 
   async kakaoCheck(userInfo: KakaoUserInfosResDto) {
-    const accountInfo = await this.userRepository.findAccountByKakaoId(
+    const accountInfo = await this.userRepository.findAccountByOauthId(
       String(userInfo.id),
+      'KAKAO',
     );
 
     if (accountInfo) {
@@ -238,8 +240,9 @@ export class AuthService {
           });
         } else {
           await this.oAuthSignup(id.toString(), 'KAKAO', email);
-          const createdUser = await this.userRepository.findAccountByKakaoId(
+          const createdUser = await this.userRepository.findAccountByOauthId(
             String(userInfo.id),
+            'KAKAO',
           );
           if (createdUser) {
             const accessToken = await this.getAccessToken(
@@ -283,5 +286,80 @@ export class AuthService {
       await this.kakaoCheck(userInfo);
 
     return { type, accessToken, refreshToken, loginResData };
+  }
+
+  async googleLoginLogin(idToken: string) {
+    const google = new GoogleStrategy(this.configService);
+
+    const { oauthId, email, profile_image } = await google.getUserId(idToken);
+
+    const { type, accessToken, refreshToken, loginResData } =
+      await this.googleCheck(oauthId, email, profile_image);
+
+    return { type, accessToken, refreshToken, loginResData };
+  }
+
+  async googleCheck(oauthId: string, email: string, profile_image: string) {
+    const accountInfo = await this.userRepository.findAccountByOauthId(
+      String(oauthId),
+      'GOOGLE',
+    );
+
+    if (accountInfo) {
+      const accessToken = await this.getAccessToken(
+        +accountInfo.oauthId,
+        accountInfo.email,
+      );
+      const refreshToken = await this.getRefreshToken(
+        +accountInfo.oauthId,
+        accountInfo.email,
+      );
+      const loginResData = plainToInstance(LoginResDto, accountInfo, {
+        excludeExtraneousValues: true,
+      });
+
+      return { type: 'login', accessToken, refreshToken, loginResData };
+    } else {
+      // const { id } = userInfo;
+
+      if (email != null) {
+        const existUser = await this.userRepository.findAccountByEmail(email);
+        if (existUser && existUser.registerMethod !== 'GOOGLE') {
+          throw new ConflictException({
+            userId: existUser.userId,
+            email: existUser.email,
+          });
+        } else {
+          await this.oAuthSignup(oauthId, 'GOOGLE', email);
+          const createdUser = await this.userRepository.findAccountByOauthId(
+            oauthId,
+            'GOOGLE',
+          );
+          if (createdUser) {
+            const accessToken = await this.getAccessToken(
+              createdUser.userId,
+              email,
+            );
+            const refreshToken = await this.getRefreshToken(
+              createdUser.userId,
+              email,
+            );
+            const loginResData = plainToInstance(LoginResDto, createdUser, {
+              excludeExtraneousValues: true,
+            });
+
+            return { type: 'regist', accessToken, refreshToken, loginResData };
+          }
+        }
+      }
+
+      const profile_image_url = profile_image ? profile_image : null;
+
+      throw new NotFoundException({
+        id: oauthId,
+        email: email,
+        profileImageUrl: profile_image_url,
+      });
+    }
   }
 }
