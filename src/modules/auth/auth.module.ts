@@ -12,6 +12,7 @@ import { JwtStrategy } from './jwt/jwt.strategy';
 import { RefreshStrategy } from './jwt/refresh.strategy';
 import { KakaoStrategy } from './jwt/kakao.strategy';
 import * as redisStore from 'cache-manager-ioredis';
+import { GoogleStrategy } from './jwt/google.strategy';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import * as redisStore from 'cache-manager-ioredis';
     JwtStrategy,
     RefreshStrategy,
     KakaoStrategy,
+    GoogleStrategy,
   ],
 })
 export class AuthModule {}

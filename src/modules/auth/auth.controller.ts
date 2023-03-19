@@ -231,6 +231,46 @@ export class AuthController {
     }
   }
 
+  @Post('/google/callback')
+  async requestGoogleLogin(@Body('tokenId') tokenId: string, @Res() res) {
+    try {
+      const { type, accessToken, refreshToken, loginResData } =
+        await this.authService.googleLoginLogin(tokenId);
+
+      res
+        .setHeader('Authorization', `Bearer ${accessToken}`)
+        .cookie('refresh', refreshToken, {
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+        })
+        .status(type === 'login' ? HttpStatus.OK : HttpStatus.CREATED)
+        .send({ userData: loginResData, message: `Login success with google` });
+    } catch (error) {
+      let message = '';
+
+      const userData = error.response;
+
+      switch (error.status) {
+        case 404:
+          message = `Login fail with google`;
+          break;
+        case 409:
+          message = `Already Exist User with Email`;
+          break;
+        default:
+          message = `Unknown error occurred during Google Login`;
+          break;
+      }
+
+      res.status(error.status).send({
+        userData: userData,
+        message: message,
+      });
+    }
+  }
+
   @Post('/oauth')
   @ApiOperation({
     summary: 'OAuth 회원가입',
