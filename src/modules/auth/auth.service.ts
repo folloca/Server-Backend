@@ -370,4 +370,8 @@ export class AuthService {
       });
     }
   }
+
+  async withdrawal(email: string) {
+    await this.userRepository.deleteAccountByEmail(email);
+  }
 }
