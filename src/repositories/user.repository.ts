@@ -109,4 +109,8 @@ export class UserRepository extends Repository<UserEntity> {
       },
     );
   }
+
+  async deleteAccountByEmail(email: string) {
+    return await this.softDelete({ email: email });
+  }
 }

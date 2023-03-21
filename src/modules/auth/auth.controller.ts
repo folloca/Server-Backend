@@ -299,4 +299,32 @@ export class AuthController {
       nickname,
     );
   }
+
+  @Delete('/withdrawal')
+  @ApiOperation({
+    summary: '회원 탈퇴',
+    description: '유저 회원 탈퇴',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        email: { type: 'string' },
+      },
+    },
+  })
+  async withdrawal(@Res() res, @Body() body) {
+    await this.authService.deleteRefreshToken(body.email);
+    await this.authService.withdrawal(body.email);
+
+    res
+      .setHeader('Authorization')
+      .cookie('refresh', {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .status(HttpStatus.OK)
+      .send({ message: `Withdrawal success` });
+  }
 }
