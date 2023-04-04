@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeormRepositoryModule } from '../../database/typeorm-repository.module';
@@ -17,6 +17,12 @@ import {
   LinkingRepository,
   LinkingRequestRepository,
 } from '../../repositories/linking.repository';
+import { AuthService } from '../auth/auth.service';
+import { SmtpConfig } from '../../config/smtp.config';
+import { JwtStrategy } from '../auth/jwt/jwt.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [
@@ -31,9 +37,27 @@ import {
       LinkingRequestRepository,
       LinkingLikeRepository,
     ]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get(`${process.env.NODE_ENV}.auth.jwt_secret`),
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get(`${process.env.NODE_ENV}.redis.host`),
+        port: configService.get(`${process.env.NODE_ENV}.redis.port`),
+        ttl: 1209600,
+      }),
+    }),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, AuthService, SmtpConfig, JwtStrategy],
   exports: [UsersService],
 })
 export class UsersModule {}
