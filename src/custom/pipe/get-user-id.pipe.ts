@@ -1,6 +1,7 @@
-import { PipeTransform } from '@nestjs/common';
+import { Injectable, PipeTransform } from '@nestjs/common';
 import { AuthService } from '../../modules/auth/auth.service';
 
+@Injectable()
 export class GetUserIdPipe implements PipeTransform {
   constructor(private authService: AuthService) {}
 
