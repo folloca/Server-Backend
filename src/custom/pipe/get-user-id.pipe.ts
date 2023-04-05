@@ -1,13 +1,13 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
-import { AuthService } from '../../modules/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class GetUserIdPipe implements PipeTransform {
-  constructor(private authService: AuthService) {}
+  constructor(private jwtService: JwtService) {}
 
   async transform(value: any) {
     const token = value.replace('Bearer', '').trim();
-    const { userId } = await this.authService.validateAccessToken(token);
+    const { userId } = await this.jwtService.verifyAsync(token);
     return userId;
   }
 }
