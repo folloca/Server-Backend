@@ -11,7 +11,7 @@ export class UpdateUserinfoReqDto {
   profileImage: Express.Multer.File;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     maxLength: 50,
     description: '한 줄 소개',
@@ -19,14 +19,14 @@ export class UpdateUserinfoReqDto {
   baseIntroduction?: string;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     description: '개인 웹 사이트',
   })
   websiteUrl?: string;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     description: 'sns url',
   })
