@@ -23,9 +23,6 @@ import {
   LinkingRepository,
   LinkingRequestRepository,
 } from '../../repositories/linking.repository';
-import { AuthService } from '../auth/auth.service';
-import { SmtpConfig } from '../../config/smtp.config';
-import { JwtStrategy } from '../auth/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterUserIdMiddleware } from '../../middleware/multer-user-id.middleware';
@@ -64,7 +61,7 @@ import * as redisStore from 'cache-manager-ioredis';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, AuthService, SmtpConfig, JwtStrategy],
+  providers: [UsersService],
   exports: [UsersService],
 })
 export class UsersModule implements NestModule {
