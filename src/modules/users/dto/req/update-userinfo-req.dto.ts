@@ -4,14 +4,6 @@ import { IsBooleanString, IsNotEmpty } from 'class-validator';
 export class UpdateUserinfoReqDto {
   @ApiProperty({
     required: true,
-    type: Number,
-    description: '사용자 인덱스',
-  })
-  @IsNotEmpty()
-  userId: number;
-
-  @ApiProperty({
-    required: true,
     type: String,
     format: 'binary',
     description: '프로필 이미지',
@@ -24,24 +16,21 @@ export class UpdateUserinfoReqDto {
     maxLength: 50,
     description: '한 줄 소개',
   })
-  @IsNotEmpty()
-  baseIntroduction: string;
+  baseIntroduction?: string;
 
   @ApiProperty({
     required: true,
     type: String,
     description: '개인 웹 사이트',
   })
-  @IsNotEmpty()
-  websiteUrl: string;
+  websiteUrl?: string;
 
   @ApiProperty({
     required: true,
     type: String,
     description: 'sns url',
   })
-  @IsNotEmpty()
-  snsUrl: string;
+  snsUrl?: string;
 
   @ApiProperty({
     required: true,
@@ -49,7 +38,6 @@ export class UpdateUserinfoReqDto {
     description: '연락처 공개 여부',
   })
   @IsBooleanString()
-  @IsNotEmpty()
   contactInfoPublic: boolean;
 
   @ApiProperty({
@@ -60,14 +48,6 @@ export class UpdateUserinfoReqDto {
   })
   @IsNotEmpty()
   nickname: string;
-
-  @ApiProperty({
-    required: true,
-    type: String,
-    description: '비밀번호',
-  })
-  @IsNotEmpty()
-  password: string;
 
   @ApiProperty({
     required: true,
