@@ -1,4 +1,10 @@
-import { CacheModule, Module } from '@nestjs/common';
+import {
+  CacheModule,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeormRepositoryModule } from '../../database/typeorm-repository.module';
@@ -22,6 +28,7 @@ import { SmtpConfig } from '../../config/smtp.config';
 import { JwtStrategy } from '../auth/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MulterUserIdMiddleware } from '../../middleware/multer-user-id.middleware';
 import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
@@ -60,4 +67,11 @@ import * as redisStore from 'cache-manager-ioredis';
   providers: [UsersService, AuthService, SmtpConfig, JwtStrategy],
   exports: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MulterUserIdMiddleware).forRoutes({
+      path: 'users/edit',
+      method: RequestMethod.PATCH,
+    });
+  }
+}
