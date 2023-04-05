@@ -31,7 +31,6 @@ import { ConfigService } from '@nestjs/config';
 import * as os from 'os';
 
 @ApiTags('estates')
-@ApiBearerAuth('access-token')
 @Controller('estates')
 export class EstatesController {
   private readonly estateImagePath;
@@ -78,6 +77,7 @@ export class EstatesController {
   }
 
   @Post()
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '공간 등록(미완료)',
     description: '공간 등록',
@@ -111,6 +111,7 @@ export class EstatesController {
   }
 
   @Post('/like')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '공간 좋아요/취소',
     description: '공간 게시물 id를 받아 좋아요 추가 및 취소',

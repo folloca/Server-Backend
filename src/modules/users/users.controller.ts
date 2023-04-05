@@ -24,7 +24,6 @@ import { multerOptions } from '../../utilities/multer.options';
 import { GetUserId } from '../../custom/decorator/user-id.decorator';
 
 @ApiTags('users')
-@ApiBearerAuth('access-token')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -42,6 +41,7 @@ export class UsersController {
   }
 
   @Patch('/nickname')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '닉네임 변경',
     description: '기존에 등록된 닉네임 변경 및 데이터 저장 시 중복 검사 수행',
@@ -79,6 +79,7 @@ export class UsersController {
   }
 
   @Get('/edit')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '회원정보 수정 페이지 데이터',
     description: '회원정보 수정 페이지 접속 시 기존 데이터',
@@ -88,6 +89,7 @@ export class UsersController {
   }
 
   @Post('/password/check')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '현재 비밀번호 확인',
   })
@@ -105,6 +107,7 @@ export class UsersController {
   }
 
   @Patch('edit')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '회원정보 수정',
     description: '회원정보 수정',
