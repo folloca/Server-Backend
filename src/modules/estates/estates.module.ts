@@ -18,7 +18,7 @@ import { ProposalRepository } from '../../repositories/proposal.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterUserIdMiddleware } from '../../middleware/multer-user-id.middleware';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -30,6 +30,14 @@ import { JwtService } from '@nestjs/jwt';
       ProposalRepository,
       HashTagRepository,
     ]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get(`${process.env.NODE_ENV}.auth.jwt_secret`),
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
     MulterModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -39,7 +47,7 @@ import { JwtService } from '@nestjs/jwt';
     }),
   ],
   controllers: [EstatesController],
-  providers: [EstatesService, JwtService],
+  providers: [EstatesService],
   exports: [EstatesService],
 })
 export class EstatesModule implements NestModule {
