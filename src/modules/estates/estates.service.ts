@@ -95,8 +95,8 @@ export class EstatesService {
     };
   }
 
-  async createEstate(ownerId: number, createEstateDto: CreateEstateDto) {
-    await this.estateRepository.createEstateData(ownerId, createEstateDto);
+  async createEstate(userId: number, createEstateDto: CreateEstateDto) {
+    await this.estateRepository.createEstateData(userId, createEstateDto);
   }
 
   async estateLikeUnlike(estateId: string, userId: string) {

@@ -65,7 +65,7 @@ export class EstateRepository extends Repository<EstateEntity> {
       .getRawMany();
   }
 
-  createEstateData(ownerId: number, createEstateDto: CreateEstateDto) {
+  createEstateData(userId: number, createEstateDto: CreateEstateDto) {
     const {
       estateName,
       estateKeyword,
@@ -89,7 +89,7 @@ export class EstateRepository extends Repository<EstateEntity> {
         estateUse,
         new Date(proposalDeadline),
         ownerMessage,
-        ownerId,
+        userId,
       ],
     );
   }
