@@ -25,9 +25,10 @@ import {
   PosteriorFilterEnumToKor,
   PosteriorFilterEnumToEng,
 } from './enum/posterior-filter.enum';
+import { ConfigService } from '@nestjs/config';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../../utilities/multer.options';
-import { ConfigService } from '@nestjs/config';
+import { GetUserId } from '../../custom/decorator/user-id.decorator';
 import * as os from 'os';
 
 @ApiTags('estates')
@@ -79,14 +80,8 @@ export class EstatesController {
   @Post()
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '공간 등록(미완료)',
+    summary: '공간 등록',
     description: '공간 등록',
-  })
-  @ApiQuery({
-    name: 'userId',
-    type: String,
-    required: true,
-    description: '공간 등록자 id',
   })
   @ApiBody({
     type: CreateEstateDto,
@@ -104,10 +99,10 @@ export class EstatesController {
   async createEstate(
     @UploadedFiles()
     files: { images?: Express.Multer.File[]; map?: Express.Multer.File[] },
-    @Query('ownerId') ownerId: string,
+    @GetUserId() userId,
     @Body() createEstateDto: CreateEstateDto,
   ) {
-    return this.estatesService.createEstate(+ownerId, createEstateDto);
+    return this.estatesService.createEstate(userId, createEstateDto);
   }
 
   @Post('/like')
@@ -122,14 +117,8 @@ export class EstatesController {
     required: true,
     description: '공간 id',
   })
-  @ApiQuery({
-    name: 'userId',
-    type: String,
-    required: true,
-    description: '사용자 id',
-  })
-  async estateLikeUnlike(@Query() query) {
-    const { estateId, userId } = query;
+  async estateLikeUnlike(@Query() query, @GetUserId() userId) {
+    const { estateId } = query;
     return this.estatesService.estateLikeUnlike(estateId, userId);
   }
 }
