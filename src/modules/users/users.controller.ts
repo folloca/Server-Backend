@@ -21,9 +21,9 @@ import {
 import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../../utilities/multer.options';
+import { GetUserId } from '../../custom/decorator/user-id.decorator';
 
 @ApiTags('users')
-@ApiBearerAuth('access-token')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -41,15 +41,10 @@ export class UsersController {
   }
 
   @Patch('/nickname')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '닉네임 변경',
     description: '기존에 등록된 닉네임 변경 및 데이터 저장 시 중복 검사 수행',
-  })
-  @ApiQuery({
-    name: 'userId',
-    type: String,
-    required: true,
-    description: '사용자 인덱스',
   })
   @ApiQuery({
     name: 'newName',
@@ -63,9 +58,9 @@ export class UsersController {
     required: true,
     description: '이전 닉네임',
   })
-  async updateNickname(@Query() query) {
-    const { userId, newName, oldName } = query;
-    return this.usersService.updateNickname(+userId, newName, oldName);
+  async updateNickname(@Query() query, @GetUserId() userId) {
+    const { newName, oldName } = query;
+    return this.usersService.updateNickname(userId, newName, oldName);
   }
 
   @Get('/nickname/check')
@@ -84,21 +79,17 @@ export class UsersController {
   }
 
   @Get('/edit')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '회원정보 수정 페이지 데이터',
     description: '회원정보 수정 페이지 접속 시 기존 데이터',
   })
-  @ApiQuery({
-    name: 'userId',
-    type: String,
-    required: true,
-    description: '사용자 인덱스',
-  })
-  async getEditPageUserInfo(@Query('userId') userId) {
-    return this.usersService.getEditPageUserInfo(+userId);
+  async getEditPageUserInfo(@GetUserId() userId) {
+    return this.usersService.getEditPageUserInfo(userId);
   }
 
   @Post('/password/check')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '현재 비밀번호 확인',
   })
@@ -115,16 +106,11 @@ export class UsersController {
     return await this.usersService.checkPassword(userId, password);
   }
 
-  @Post('edit')
+  @Patch('edit')
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '회원정보 수정',
     description: '회원정보 수정',
-  })
-  @ApiQuery({
-    name: 'userId',
-    type: String,
-    required: true,
-    description: '사용자 id',
   })
   @ApiBody({
     type: UpdateUserinfoReqDto,
@@ -134,7 +120,8 @@ export class UsersController {
   async updateUserInfo(
     @UploadedFile() file: Express.Multer.File,
     @Body() updateUserinfoReqDto: UpdateUserinfoReqDto,
+    @GetUserId() userId,
   ) {
-    return await this.usersService.updateUserInfo(updateUserinfoReqDto);
+    return await this.usersService.updateUserInfo(userId, updateUserinfoReqDto);
   }
 }

@@ -1,80 +1,79 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBooleanString, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+
+function transformToUndefinedIfEmpty() {
+  return Transform(({ value }) => (value === '' ? undefined : value));
+}
 
 export class UpdateUserinfoReqDto {
   @ApiProperty({
-    required: true,
-    type: Number,
-    description: '사용자 인덱스',
-  })
-  @IsNotEmpty()
-  userId: number;
-
-  @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     format: 'binary',
     description: '프로필 이미지',
   })
-  profileImage: Express.Multer.File;
+  @transformToUndefinedIfEmpty()
+  @IsOptional()
+  profileImage: Express.Multer.File | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     maxLength: 50,
     description: '한 줄 소개',
   })
-  @IsNotEmpty()
-  baseIntroduction: string;
+  @transformToUndefinedIfEmpty()
+  @IsString()
+  @IsOptional()
+  baseIntroduction: string | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     description: '개인 웹 사이트',
   })
-  @IsNotEmpty()
-  websiteUrl: string;
+  @transformToUndefinedIfEmpty()
+  @IsString()
+  @IsOptional()
+  websiteUrl: string | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     description: 'sns url',
   })
-  @IsNotEmpty()
-  snsUrl: string;
+  @transformToUndefinedIfEmpty()
+  @IsString()
+  @IsOptional()
+  snsUrl: string | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: Boolean,
     description: '연락처 공개 여부',
   })
-  @IsBooleanString()
-  @IsNotEmpty()
-  contactInfoPublic: boolean;
+  @transformToUndefinedIfEmpty()
+  @IsOptional()
+  contactInfoPublic: boolean | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     maxLength: 10,
     description: '닉네임',
   })
-  @IsNotEmpty()
-  nickname: string;
+  @transformToUndefinedIfEmpty()
+  @IsString()
+  @IsOptional()
+  nickname: string | null;
 
   @ApiProperty({
-    required: true,
-    type: String,
-    description: '비밀번호',
-  })
-  @IsNotEmpty()
-  password: string;
-
-  @ApiProperty({
-    required: true,
+    required: false,
     type: Boolean,
     description: '마케팅 수신 동의 여부',
   })
-  @IsBooleanString()
-  @IsNotEmpty()
-  marketingReception: boolean;
+  @transformToUndefinedIfEmpty()
+  @IsOptional()
+  marketingReception: boolean | null;
 }

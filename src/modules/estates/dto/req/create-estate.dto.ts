@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -17,16 +18,6 @@ export class MapCoordinates {
 }
 
 export class CreateEstateDto {
-  // @Type(() => Number)
-  // @ApiProperty({
-  //   required: true,
-  //   type: Number,
-  //   description: '공간 소유자 id',
-  // })
-  // @IsNumber()
-  // @IsNotEmpty()
-  // ownerId: number;
-
   @ApiProperty({
     required: true,
     type: String,
@@ -57,46 +48,50 @@ export class CreateEstateDto {
   @IsNotEmpty()
   estateTheme: string;
 
-  @Type(() => Number)
   @ApiProperty({
     required: false,
     type: Number,
     description: '면적',
   })
+  @Type(() => Number)
   @IsNumber()
+  @IsOptional()
   extent: number;
 
-  @Type(() => Number)
   @ApiProperty({
     required: false,
     type: Number,
     description: '수용 인원',
   })
+  @Type(() => Number)
   @IsNumber()
+  @IsOptional()
   capacity: number;
 
-  @Type(() => Number)
   @ApiProperty({
     required: false,
     type: Number,
     description: '가격',
   })
+  @Type(() => Number)
   @IsNumber()
+  @IsOptional()
   price: number;
 
-  @Type(() => Number)
   @ApiProperty({
     required: true,
     type: Number,
     description: '공간 유형(0: 팝업, 1: 전시)',
   })
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   estateUse: number;
 
   @ApiProperty({
     required: true,
-    type: Date,
+    type: String,
+    format: 'date-time',
     description: '기획 모집 마감 일자',
   })
   @IsDateString()
@@ -104,13 +99,12 @@ export class CreateEstateDto {
   proposalDeadline: Date;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     maxLength: 120,
     description: '자유로운 한마디',
   })
   @IsString()
-  @IsNotEmpty()
   ownerMessage: string;
 
   @ApiProperty({
@@ -137,13 +131,16 @@ export class CreateEstateDto {
     format: 'binary',
     description: '평면도',
   })
+  @IsOptional()
   map: Express.Multer.File;
 
   @ApiProperty({
     required: false,
     type: MapCoordinates,
+    isArray: true,
     description: '평면도 넘버링 태그 좌표',
   })
-  @IsNotEmpty()
+  @Type(() => MapCoordinates)
+  @IsOptional()
   numberingCoordinates: MapCoordinates[];
 }

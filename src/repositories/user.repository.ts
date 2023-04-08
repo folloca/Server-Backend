@@ -92,7 +92,6 @@ export class UserRepository extends Repository<UserEntity> {
     snsUrl,
     contactInfoPublic,
     nickname,
-    password,
     marketingReception,
   ) {
     return await this.update(
@@ -100,7 +99,6 @@ export class UserRepository extends Repository<UserEntity> {
       {
         nickname,
         profileImagePath,
-        password,
         contactInfoPublic,
         websiteUrl,
         snsUrl,

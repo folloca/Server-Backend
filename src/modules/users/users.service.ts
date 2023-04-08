@@ -125,16 +125,17 @@ export class UsersService {
     }
   }
 
-  async updateUserInfo(updateUserinfoReqDto: UpdateUserinfoReqDto) {
+  async updateUserInfo(
+    userId: number,
+    updateUserinfoReqDto: UpdateUserinfoReqDto,
+  ) {
     const {
-      userId,
       profileImage,
       baseIntroduction,
       websiteUrl,
       snsUrl,
       contactInfoPublic,
       nickname,
-      password,
       marketingReception,
     } = updateUserinfoReqDto;
     const updateResult = await this.userRepository.updateUserinfo(
@@ -145,7 +146,6 @@ export class UsersService {
       snsUrl,
       contactInfoPublic,
       nickname,
-      password,
       marketingReception,
     );
     await this.getUserData(+userId);
