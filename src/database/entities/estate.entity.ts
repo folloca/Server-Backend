@@ -34,6 +34,12 @@ export class EstateEntity extends DateColumnEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'owner_id', referencedColumnName: 'userId' }])
+  @Column({
+    name: 'owner_id',
+    type: 'number',
+    nullable: false,
+    comment: '공간 소유자 id',
+  })
   ownerId: UserEntity;
 
   @Column({
