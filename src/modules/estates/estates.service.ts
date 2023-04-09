@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   EstateLikeRepository,
@@ -120,7 +120,22 @@ export class EstatesService {
 
   async likeStatus(estateId: string, userId: string): Promise<boolean> {
     const likesOfEstate = await this.redis.smembers(`like_estate_${estateId}`);
-    console.log(likesOfEstate);
     return !!likesOfEstate.includes(userId);
+  }
+
+  async deleteEstate(estateId: number, userId: number) {
+    const isOwner = await this.estateRepository.validateEstateOwner(
+      estateId,
+      userId,
+    );
+
+    if (isOwner) {
+      await this.estateRepository.deleteEstateData(estateId);
+      return { message: `Deleted the estate id ${estateId}` };
+    } else {
+      throw new BadRequestException(
+        'The user is not the owner of the estate and cannot delete it',
+      );
+    }
   }
 }
