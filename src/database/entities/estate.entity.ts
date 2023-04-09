@@ -40,7 +40,7 @@ export class EstateEntity extends DateColumnEntity {
     nullable: false,
     comment: '공간 소유자 id',
   })
-  ownerId: UserEntity;
+  ownerId: number;
 
   @Column({
     name: 'thumbnail_path',
