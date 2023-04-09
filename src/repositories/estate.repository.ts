@@ -94,6 +94,15 @@ export class EstateRepository extends Repository<EstateEntity> {
     );
   }
 
+  async validateEstateOwner(estateId: number, userId: number) {
+    const { ownerId } = await this.findOneBy({ estateId });
+    return ownerId === userId;
+  }
+
+  async deleteEstateData(estateId: number) {
+    await this.softDelete(estateId);
+  }
+
   async updateTotalLikes(estateId: number, variation: number) {
     return this.query(
       `UPDATE estate SET total_likes = total_likes +(?) WHERE estate_id = ?`,
