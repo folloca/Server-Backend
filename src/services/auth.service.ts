@@ -163,12 +163,17 @@ export class AuthService {
     return refreshToken;
   }
 
-  async validateRefreshToken(userId, email, refreshToken) {
+  async validateRefreshToken(refreshToken) {
+    const { userId, email } = await this.jwtService.verifyAsync(refreshToken);
     const tokenData = await this.cacheManager.get<string>(`refresh_${email}`);
     const tokenVerification = await bcrypt.compare(refreshToken, tokenData);
 
+    if (!tokenData) {
+      throw new BadRequestException('Invalid Email');
+    }
+
     if (tokenVerification) {
-      return this.userRepository.getUserData(userId);
+      return await this.getAccessToken(userId, email);
     } else {
       throw new BadRequestException('Invalid Token');
     }
