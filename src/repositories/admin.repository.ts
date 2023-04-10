@@ -1,4 +1,4 @@
-import { TypeormRepository } from '../database/typeorm-repository.decorator';
+import { TypeormRepository } from '../custom/decorator/typeorm-repository.decorator';
 import { Repository } from 'typeorm';
 import { AdminEntity, BannerEntity } from '../database/entities';
 

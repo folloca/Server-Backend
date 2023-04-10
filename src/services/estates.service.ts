@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import {
   EstateLikeRepository,
   EstateRepository,
-} from '../../repositories/estate.repository';
-import { ProposalRepository } from '../../repositories/proposal.repository';
-import { CreateEstateDto } from './dto/req/create-estate.dto';
-import { PriorFilterEnumToKor } from './enum/prior-filter.enum';
-import { PosteriorFilterEnumToKor } from './enum/posterior-filter.enum';
+} from '../repositories/estate.repository';
+import { ProposalRepository } from '../repositories/proposal.repository';
+import { CreateEstateDto } from '../dto/req/create-estate.dto';
+import { PriorFilterEnumToKor } from '../custom/enum/prior-filter.enum';
+import { PosteriorFilterEnumToKor } from '../custom/enum/posterior-filter.enum';
 import Redis from 'ioredis';
 
 @Injectable()

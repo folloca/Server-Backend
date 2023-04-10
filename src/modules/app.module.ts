@@ -1,21 +1,21 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '../controllers/app.controller';
+import { AppService } from '../services/app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
-import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
-import { EstatesModule } from './modules/estates/estates.module';
-import { ProposalsModule } from './modules/proposals/proposals.module';
-import { LinkingsModule } from './modules/linkings/linkings.module';
-import { AdminModule } from './modules/admin/admin.module';
-import { SearchesModule } from './modules/searches/searches.module';
-import { TypeormConfigOptions } from './config/typeorm.config';
-import { LoggerMiddleware } from './middleware/logger.middleware';
-import configuration from './config/configuration';
+import { AuthModule } from './auth.module';
+import { UsersModule } from './users.module';
+import { EstatesModule } from './estates.module';
+import { ProposalsModule } from './proposals.module';
+import { LinkingsModule } from './linkings.module';
+import { AdminModule } from './admin.module';
+import { SearchesModule } from './searches.module';
+import { TypeormConfigOptions } from '../config/typeorm.config';
+import { LoggerMiddleware } from '../middleware/logger.middleware';
+import configuration from '../config/configuration';
 import * as Joi from 'joi';
 
 @Module({
