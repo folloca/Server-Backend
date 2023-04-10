@@ -9,7 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UsersService } from './users.service';
+import { UsersService } from '../services/users.service';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -18,10 +18,10 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
+import { UpdateUserinfoReqDto } from '../dto/req/update-userinfo-req.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../../utilities/multer.options';
-import { GetUserId } from '../../custom/decorator/user-id.decorator';
+import { multerOptions } from '../utilities/multer.options';
+import { GetUserId } from '../custom/decorator/user-id.decorator';
 
 @ApiTags('users')
 @Controller('users')

@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ProposalsController } from './proposals.controller';
-import { ProposalsService } from './proposals.service';
-import { TypeormRepositoryModule } from '../../database/typeorm-repository.module';
+import { ProposalsController } from '../controllers/proposals.controller';
+import { ProposalsService } from '../services/proposals.service';
+import { TypeormRepositoryModule } from './typeorm-repository.module';
 import {
   OpinionRepository,
   ProposalDetailRepository,
   ProposalImageRepository,
   ProposalLikeRepository,
   ProposalRepository,
-} from '../../repositories/proposal.repository';
-import { HashTagRepository } from '../../repositories/hash-tag.repository';
+} from '../repositories/proposal.repository';
+import { HashTagRepository } from '../repositories/hash-tag.repository';
 
 @Module({
   imports: [

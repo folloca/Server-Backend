@@ -6,9 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from '../../repositories/user.repository';
-import { adjectives, nouns } from './nickname-keywords';
-import { UpdateUserinfoReqDto } from './dto/req/update-userinfo-req.dto';
+import { UserRepository } from '../repositories/user.repository';
+import { adjectives, nouns } from '../custom/data/nickname-keywords';
+import { UpdateUserinfoReqDto } from '../dto/req/update-userinfo-req.dto';
 import * as bcrypt from 'bcrypt';
 import Redis from 'ioredis';
 

@@ -9,16 +9,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from '../../repositories/user.repository';
-import { SmtpConfig } from '../../config/smtp.config';
+import { UserRepository } from '../repositories/user.repository';
+import { SmtpConfig } from '../config/smtp.config';
 import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
-import { LoginResDto } from './dto/res/login-res.dto';
+import { LoginResDto } from '../dto/res/login-res.dto';
 import * as bcrypt from 'bcrypt';
-import { KakaoStrategy } from './jwt/kakao.strategy';
-import { KakaoUserInfosResDto } from './dto/res/kakao-userInfo-res.dto';
-import { GoogleStrategy } from './jwt/google.strategy';
+import { KakaoStrategy } from '../auth/kakao.strategy';
+import { KakaoUserInfosResDto } from '../dto/res/kakao-userInfo-res.dto';
+import { GoogleStrategy } from '../auth/google.strategy';
 
 @Injectable()
 export class AuthService {

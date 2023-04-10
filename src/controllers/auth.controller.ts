@@ -8,7 +8,7 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from '../services/auth.service';
 import {
   ApiBody,
   ApiOperation,
@@ -17,10 +17,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { SignupReqDto } from './dto/req/signup-req.dto';
-import { LoginReqDto } from './dto/req/login-req.dto';
-import { OauthSignupReqDto } from './dto/req/oauth-signup-req.dto';
-import { LoginResDto } from './dto/res/login-res.dto';
+import { SignupReqDto } from '../dto/req/signup-req.dto';
+import { LoginReqDto } from '../dto/req/login-req.dto';
+import { OauthSignupReqDto } from '../dto/req/oauth-signup-req.dto';
+import { LoginResDto } from '../dto/res/login-res.dto';
 
 @ApiTags('auth')
 @Controller('auth')

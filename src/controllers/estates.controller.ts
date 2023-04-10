@@ -16,20 +16,20 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { EstatesService } from './estates.service';
-import { CreateEstateDto } from './dto/req/create-estate.dto';
+import { EstatesService } from '../services/estates.service';
+import { CreateEstateDto } from '../dto/req/create-estate.dto';
 import {
   PriorFilterEnumToKor,
   PriorFilterEnumToEng,
-} from './enum/prior-filter.enum';
+} from '../custom/enum/prior-filter.enum';
 import {
   PosteriorFilterEnumToKor,
   PosteriorFilterEnumToEng,
-} from './enum/posterior-filter.enum';
+} from '../custom/enum/posterior-filter.enum';
 import { ConfigService } from '@nestjs/config';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../../utilities/multer.options';
-import { GetUserId } from '../../custom/decorator/user-id.decorator';
+import { multerOptions } from '../utilities/multer.options';
+import { GetUserId } from '../custom/decorator/user-id.decorator';
 import * as os from 'os';
 
 @ApiTags('estates')

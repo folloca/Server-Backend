@@ -4,20 +4,20 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { EstatesController } from './estates.controller';
-import { EstatesService } from './estates.service';
-import { TypeormRepositoryModule } from '../../database/typeorm-repository.module';
+import { EstatesController } from '../controllers/estates.controller';
+import { EstatesService } from '../services/estates.service';
+import { TypeormRepositoryModule } from './typeorm-repository.module';
 import {
   EstateImageRepository,
   EstateLikeRepository,
   EstateRepository,
   MapNumberingRepository,
-} from '../../repositories/estate.repository';
-import { HashTagRepository } from '../../repositories/hash-tag.repository';
-import { ProposalRepository } from '../../repositories/proposal.repository';
+} from '../repositories/estate.repository';
+import { HashTagRepository } from '../repositories/hash-tag.repository';
+import { ProposalRepository } from '../repositories/proposal.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MulterUserIdMiddleware } from '../../middleware/multer-user-id.middleware';
+import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({

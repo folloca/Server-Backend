@@ -1,18 +1,18 @@
 import { CacheModule, Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthController } from '../controllers/auth.controller';
+import { AuthService } from '../services/auth.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { TypeormRepositoryModule } from '../../database/typeorm-repository.module';
-import { UserRepository } from '../../repositories/user.repository';
-import { AdminRepository } from '../../repositories/admin.repository';
-import { SmtpConfig } from '../../config/smtp.config';
-import { JwtStrategy } from './jwt/jwt.strategy';
-import { RefreshStrategy } from './jwt/refresh.strategy';
-import { KakaoStrategy } from './jwt/kakao.strategy';
+import { TypeormRepositoryModule } from './typeorm-repository.module';
+import { UserRepository } from '../repositories/user.repository';
+import { AdminRepository } from '../repositories/admin.repository';
+import { SmtpConfig } from '../config/smtp.config';
+import { JwtStrategy } from '../auth/jwt.strategy';
+import { RefreshStrategy } from '../auth/refresh.strategy';
+import { KakaoStrategy } from '../auth/kakao.strategy';
 import * as redisStore from 'cache-manager-ioredis';
-import { GoogleStrategy } from './jwt/google.strategy';
+import { GoogleStrategy } from '../auth/google.strategy';
 
 @Module({
   imports: [
