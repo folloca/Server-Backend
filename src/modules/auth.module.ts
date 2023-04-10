@@ -9,7 +9,6 @@ import { UserRepository } from '../repositories/user.repository';
 import { AdminRepository } from '../repositories/admin.repository';
 import { SmtpConfig } from '../config/smtp.config';
 import { JwtStrategy } from '../auth/jwt.strategy';
-import { RefreshStrategy } from '../auth/refresh.strategy';
 import { KakaoStrategy } from '../auth/kakao.strategy';
 import * as redisStore from 'cache-manager-ioredis';
 import { GoogleStrategy } from '../auth/google.strategy';
@@ -45,7 +44,6 @@ import { GoogleStrategy } from '../auth/google.strategy';
     AuthService,
     SmtpConfig,
     JwtStrategy,
-    RefreshStrategy,
     KakaoStrategy,
     GoogleStrategy,
   ],
