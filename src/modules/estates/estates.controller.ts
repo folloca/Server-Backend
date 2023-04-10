@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Query,
@@ -120,5 +121,22 @@ export class EstatesController {
   async estateLikeUnlike(@Query() query, @GetUserId() userId) {
     const { estateId } = query;
     return this.estatesService.estateLikeUnlike(estateId, userId);
+  }
+
+  @Delete()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '공간 삭제',
+    description: '공간 게시물 id를 받아 토큰 검증 후 삭제',
+  })
+  @ApiQuery({
+    name: 'estateId',
+    type: String,
+    required: true,
+    description: '공간 id',
+  })
+  async deleteEstate(@Query() query, @GetUserId() userId) {
+    const { estateId } = query;
+    return this.estatesService.deleteEstate(+estateId, userId);
   }
 }
