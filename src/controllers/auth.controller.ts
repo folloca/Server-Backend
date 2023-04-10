@@ -7,10 +7,12 @@ import {
   Post,
   Query,
   Res,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import {
   ApiBody,
+  ApiCookieAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -326,5 +328,33 @@ export class AuthController {
       })
       .status(HttpStatus.OK)
       .send({ message: `Withdrawal success` });
+  }
+
+  @Post('/refresh-token')
+  @ApiOperation({
+    summary: '토큰 재발급 요청',
+  })
+  @ApiCookieAuth('refresh')
+  async refreshToken(@Req() req, @Res() res) {
+    if (req.headers.authorization) {
+      const refreshToken = req.headers.authorization
+        .replace('Bearer ', '')
+        .trim();
+
+      const accessToken = await this.authService.validateRefreshToken(
+        refreshToken,
+      );
+
+      res
+        .setHeader('Authorization', `Bearer ${accessToken}`)
+        .status(HttpStatus.OK)
+        .send({
+          message: `Reissuance AccessToken`,
+        });
+    } else {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ message: 'Not login status now' });
+    }
   }
 }

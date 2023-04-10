@@ -59,6 +59,14 @@ async function bootstrap() {
     .setTitle('FOLLOCA')
     .setDescription('Swagger document for FOLLOCA API server')
     .setVersion(pkg.version)
+    .addCookieAuth(
+      'auth-cookie',
+      {
+        type: 'http',
+        in: 'Header',
+      },
+      'refresh',
+    )
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'access-token',
