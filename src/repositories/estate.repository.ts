@@ -6,10 +6,13 @@ import {
   EstateLikeEntity,
   MapNumberingEntity,
 } from '../database/entities';
+import { executeQueryWithTransaction } from './functions';
 import { CreateEstateDto } from '../dto/req/create-estate.dto';
 
 @TypeormRepository(EstateEntity)
 export class EstateRepository extends Repository<EstateEntity> {
+  private managerConnection = this.manager.connection;
+
   getEstatesDataForTrending() {
     return this.query(
       `SELECT estate_id, proposal_count, total_likes, estate_name, estate_keyword, estate_use, proposal_deadline FROM estate ORDER BY proposal_count * 2 + total_likes DESC, estate_keyword ASC`,
@@ -65,7 +68,7 @@ export class EstateRepository extends Repository<EstateEntity> {
       .getRawMany();
   }
 
-  createEstateData(userId: number, createEstateDto: CreateEstateDto) {
+  async createEstateData(userId: number, createEstateDto: CreateEstateDto) {
     const {
       estateName,
       estateKeyword,
@@ -77,7 +80,8 @@ export class EstateRepository extends Repository<EstateEntity> {
       proposalDeadline,
       ownerMessage,
     } = createEstateDto;
-    return this.query(
+
+    const query = this.query(
       'INSERT INTO `estate`(`created_at`, `updated_at`, `deleted_at`, `estate_id`, `thumbnail_path`, `proposal_count`, `total_likes`, `estate_name`, `estate_keyword`, `extent`, `capacity`, `price`, `estate_theme`, `estate_use`, `proposal_deadline`, `map_image_path`, `owner_message`, `owner_id`) VALUES(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, DEFAULT, ?, ?)',
       [
         estateName,
@@ -92,6 +96,7 @@ export class EstateRepository extends Repository<EstateEntity> {
         userId,
       ],
     );
+    await executeQueryWithTransaction(this.managerConnection, query);
   }
 
   async validateEstateOwner(estateId: number, userId: number) {
@@ -104,10 +109,11 @@ export class EstateRepository extends Repository<EstateEntity> {
   }
 
   async updateTotalLikes(estateId: number, variation: number) {
-    return this.query(
+    const query = this.query(
       `UPDATE estate SET total_likes = total_likes +(?) WHERE estate_id = ?`,
       [variation, estateId],
     );
+    await executeQueryWithTransaction(this.managerConnection, query);
   }
 }
 
@@ -119,11 +125,14 @@ export class EstateImageRepository extends Repository<EstateImageEntity> {}
 
 @TypeormRepository(EstateLikeEntity)
 export class EstateLikeRepository extends Repository<EstateLikeEntity> {
+  private managerConnection = this.manager.connection;
+
   async addLike(userId, estateId) {
-    return this.query(
+    const query = this.query(
       'INSERT INTO `estate_like`(`created_at`, `updated_at`, `deleted_at`, `estate_like_id`, `user_id`, `estate_id`) VALUES(DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?, ?)',
       [userId, estateId],
     );
+    await executeQueryWithTransaction(this.managerConnection, query);
   }
 
   async cancelLike(userId, estateId) {
