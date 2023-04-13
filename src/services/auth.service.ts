@@ -1,17 +1,14 @@
 import {
   BadRequestException,
-  CACHE_MANAGER,
   ConflictException,
   HttpException,
   HttpStatus,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repositories/user.repository';
 import { SmtpConfig } from '../config/smtp.config';
-import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import { LoginResDto } from '../dto/res/login-res.dto';
@@ -19,17 +16,19 @@ import * as bcrypt from 'bcrypt';
 import { KakaoStrategy } from '../auth/kakao.strategy';
 import { KakaoUserInfosResDto } from '../dto/res/kakao-userInfo-res.dto';
 import { GoogleStrategy } from '../auth/google.strategy';
+import Redis from 'ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class AuthService {
   private readonly SALT_ROUND = 4;
-
   constructor(
     private readonly configService: ConfigService,
     private userRepository: UserRepository,
     private smtpConfig: SmtpConfig,
     private jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @InjectRedis()
+    private readonly redis: Redis,
   ) {}
 
   async emailCheck(email: string) {
@@ -58,9 +57,7 @@ export class AuthService {
     const authNumber = Math.floor(Math.random() * 888888) + 111111;
     await this.smtpConfig.sendEmailVerification(email, authNumber);
 
-    const data = authNumber + '_' + new Date();
-
-    await this.cacheManager.set(`authNum_${email}`, data);
+    await this.redis.set(`authNum_${email}`, authNumber, 'EX', 3 * 60);
 
     return {
       message: `Verification email is sent to ${email}`,
@@ -68,23 +65,11 @@ export class AuthService {
   }
 
   async authNumberCheck(email: string, authNumber: number): Promise<object> {
-    const data = await this.cacheManager.get(`authNum_${email}`);
-    const value = +String(data).split('_')[0];
-    const savedTime = new Date(String(data).split('_')[1]);
+    const data = +(await this.redis.get(`authNum_${email}`));
 
-    const validTime = new Date();
-    validTime.setMinutes(validTime.getMinutes() - 3);
+    const result: boolean = data && authNumber === data;
 
-    let result: boolean;
-    if (validTime > savedTime) {
-      result = false;
-      await this.cacheManager.del(`authNum_${email}`);
-    } else if (authNumber !== value) {
-      result = false;
-    } else {
-      result = true;
-      await this.cacheManager.del(`authNum_${email}`);
-    }
+    await this.redis.del(`authNum_${email}`);
 
     return {
       authNumberValidity: result,
@@ -158,14 +143,14 @@ export class AuthService {
     });
     const hashedRefreshToken = await bcrypt.hash(refreshToken, this.SALT_ROUND);
 
-    await this.cacheManager.set(`refresh_${email}`, hashedRefreshToken);
+    await this.redis.set(`refresh_${email}`, hashedRefreshToken);
 
     return refreshToken;
   }
 
   async validateRefreshToken(refreshToken) {
     const { userId, email } = await this.jwtService.verifyAsync(refreshToken);
-    const tokenData = await this.cacheManager.get<string>(`refresh_${email}`);
+    const tokenData = await this.redis.get(`refresh_${email}`);
     const tokenVerification = await bcrypt.compare(refreshToken, tokenData);
 
     if (!tokenData) {
@@ -214,7 +199,7 @@ export class AuthService {
   }
 
   async deleteRefreshToken(email: string) {
-    await this.cacheManager.del(`refresh_${email}`);
+    await this.redis.del(`refresh_${email}`);
   }
 
   async kakaoCheck(userInfo: KakaoUserInfosResDto) {
