@@ -62,7 +62,7 @@ async function bootstrap() {
     .addCookieAuth(
       'auth-cookie',
       {
-        type: 'http',
+        type: 'apiKey',
         in: 'cookie',
       },
       'refresh',
