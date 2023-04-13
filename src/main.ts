@@ -63,12 +63,12 @@ async function bootstrap() {
       'auth-cookie',
       {
         type: 'http',
-        in: 'Header',
+        in: 'cookie',
       },
       'refresh',
     )
     .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'Header' },
       'access-token',
     )
     .build();
