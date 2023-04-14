@@ -27,6 +27,14 @@ local:
   redis:
     host:
     port:
+    index:
+      auth:
+      admin:
+      estate:
+      linking:
+      proposal:
+      search:
+      user:
     database:
     username:
     password:
