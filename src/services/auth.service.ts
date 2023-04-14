@@ -122,7 +122,10 @@ export class AuthService {
 
   async getAccessToken(userId: number, email: string) {
     const payload = { userId, email };
-    return await this.jwtService.signAsync(payload);
+
+    return await this.jwtService.signAsync(payload, {
+      expiresIn: '5m',
+    });
   }
 
   async validateAccessToken(accessToken: string) {
@@ -200,6 +203,26 @@ export class AuthService {
 
   async deleteRefreshToken(email: string) {
     await this.redis.del(`refresh_${email}`);
+  }
+
+  async addAccessTokenAtBlackList(accessToken: string) {
+    const now = new Date();
+    const access_decoded = await this.jwtService.verifyAsync(accessToken);
+    const access_time = new Date(access_decoded['exp'] * 1000);
+    const access_end = Math.floor(
+      (access_time.getTime() - now.getTime()) / 1000,
+    );
+
+    await this.redis.set(
+      `black_${accessToken}`,
+      "It's Block Token",
+      'EX',
+      access_end,
+    );
+  }
+
+  async checkBlackListToken(accessToken: string) {
+    return await this.redis.get(`black_${accessToken}`);
   }
 
   async kakaoCheck(userInfo: KakaoUserInfosResDto) {
