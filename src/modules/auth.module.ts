@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AuthController } from '../controllers/auth.controller';
 import { AuthService } from '../services/auth.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -10,8 +10,8 @@ import { AdminRepository } from '../repositories/admin.repository';
 import { SmtpConfig } from '../config/smtp.config';
 import { JwtStrategy } from '../auth/jwt.strategy';
 import { KakaoStrategy } from '../auth/kakao.strategy';
-import * as redisStore from 'cache-manager-ioredis';
 import { GoogleStrategy } from '../auth/google.strategy';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
@@ -27,15 +27,28 @@ import { GoogleStrategy } from '../auth/google.strategy';
         signOptions: { expiresIn: '1d' },
       }),
     }),
-    CacheModule.registerAsync({
+    RedisModule.forRootAsync({
       imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const host = await configService.get(
+          `${process.env.NODE_ENV}.redis.host`,
+        );
+        const port = await configService.get(
+          `${process.env.NODE_ENV}.redis.port`,
+        );
+
+        const index = await configService.get(
+          `${process.env.NODE_ENV}.redis.index.auth`,
+        );
+
+        return {
+          config: {
+            url: `redis://${host}:${port}`,
+            db: index,
+          },
+        };
+      },
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get(`${process.env.NODE_ENV}.redis.host`),
-        port: configService.get(`${process.env.NODE_ENV}.redis.port`),
-        ttl: 1209600,
-      }),
     }),
     PassportModule,
   ],

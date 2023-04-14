@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiCookieAuth,
   ApiOperation,
@@ -149,6 +150,7 @@ export class AuthController {
     summary: '로그아웃',
     description: '로그아웃',
   })
+  @ApiBearerAuth('access-token')
   @ApiBody({
     schema: {
       properties: {
@@ -156,16 +158,16 @@ export class AuthController {
       },
     },
   })
-  async logout(@Res() res, @Body() body) {
+  async logout(@Req() req, @Res() res, @Body() body) {
+    const accessToken = req.headers.authorization
+      .replaceAll('Bearer ', '')
+      .trim();
     await this.authService.deleteRefreshToken(body.email);
+    await this.authService.addAccessTokenAtBlackList(accessToken);
+
     res
-      .setHeader('Authorization')
-      .cookie('refresh', {
-        path: '/',
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
+      .setHeader('Authorization', '')
+      .clearCookie('refresh')
       .status(HttpStatus.OK)
       .send({ message: `Logout success` });
   }
