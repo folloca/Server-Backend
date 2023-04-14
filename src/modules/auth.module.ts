@@ -37,10 +37,14 @@ import { RedisModule } from '@nestjs-modules/ioredis';
           `${process.env.NODE_ENV}.redis.port`,
         );
 
+        const index = await configService.get(
+          `${process.env.NODE_ENV}.redis.index.auth`,
+        );
+
         return {
           config: {
             url: `redis://${host}:${port}`,
-            db: 1,
+            db: index,
           },
         };
       },
