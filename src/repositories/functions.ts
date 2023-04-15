@@ -6,12 +6,12 @@ export const executeQueryWithTransaction = async (connection, query) => {
   await queryRunner.startTransaction();
 
   try {
-    await query;
+    await query.execute();
     await queryRunner.commitTransaction();
     Logger.log('Transaction commit success');
   } catch (err) {
     await queryRunner.rollbackTransaction();
-    Logger.error('Transaction rollback');
+    Logger.error('Transaction rollback', err);
   } finally {
     await queryRunner.release();
     Logger.log('Transaction released');
