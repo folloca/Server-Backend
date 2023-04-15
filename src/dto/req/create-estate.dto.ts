@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsArray,
   IsDateString,
   IsNotEmpty,
   IsNumber,
@@ -13,8 +12,11 @@ export class MapCoordinates {
   @IsNumber()
   tagNumber: number;
 
-  @IsArray()
-  coordinates: [number, number];
+  @IsNumber()
+  x: number;
+
+  @IsNumber()
+  y: number;
 }
 
 export class CreateEstateDto {
@@ -89,6 +91,26 @@ export class CreateEstateDto {
   estateUse: number;
 
   @ApiProperty({
+    required: false,
+    type: String,
+    maxLength: 7,
+    description: '해시태그1',
+  })
+  @IsString()
+  @IsOptional()
+  hashTag1: string;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+    maxLength: 7,
+    description: '해시태그2',
+  })
+  @IsString()
+  @IsOptional()
+  hashTag2: string;
+
+  @ApiProperty({
     required: true,
     type: String,
     format: 'date-time',
@@ -96,7 +118,7 @@ export class CreateEstateDto {
   })
   @IsDateString()
   @IsNotEmpty()
-  proposalDeadline: Date;
+  proposalDeadline: string;
 
   @ApiProperty({
     required: false,
