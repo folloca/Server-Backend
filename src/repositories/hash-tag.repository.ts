@@ -6,19 +6,30 @@ import { EstateTagEntity, HashTagEntity } from '../database/entities';
 export class HashTagRepository extends Repository<HashTagEntity> {
   private managerConnection = this.manager.connection;
 
-  async searchHashTag(word: string) {}
-  async createHashTag(word: string[]) {}
+  async createHashTag(words: string[]) {
+    return await Promise.all(
+      words.map(async (word) => {
+        const tagSearch = await this.findOne({ where: { word } });
+        if (tagSearch) {
+          return tagSearch.hashTagId;
+        } else {
+          const { hashTagId } = await this.save({ word });
+          return hashTagId;
+        }
+      }),
+    );
+  }
 }
 
 @TypeormRepository(EstateTagEntity)
 export class EstateTagRepository extends Repository<EstateTagEntity> {
   private managerConnection = this.manager.connection;
 
-  async createEstateTag(
-    estateId: number,
-    estateTagId: number,
-    hashTagId: number,
-  ) {
-    // Insert
+  async createEstateTag(estateId: number, hashTagIds: number[]) {
+    await Promise.all(
+      hashTagIds.map(async (hashTagId) => {
+        await this.save({ hashTagId, estateId });
+      }),
+    );
   }
 }
