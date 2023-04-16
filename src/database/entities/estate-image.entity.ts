@@ -24,7 +24,7 @@ export class EstateImageEntity extends DateColumnEntity {
     { onDelete: 'CASCADE' },
   )
   @JoinColumn([{ name: 'estate_id', referencedColumnName: 'estateId' }])
-  estateId: EstateEntity;
+  estateId: number;
 
   @Column({
     name: 'image_path',

@@ -18,6 +18,7 @@ export class HashTagEntity extends DateColumnEntity {
     name: 'word',
     type: 'varchar',
     length: 7,
+    unique: true,
     nullable: false,
     comment: '해시 태그 단어',
   })

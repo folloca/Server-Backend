@@ -19,11 +19,11 @@ export class EstateTagEntity {
     },
   )
   @JoinColumn([{ name: 'hash_tag_id', referencedColumnName: 'hashTagId' }])
-  hashTagId: HashTagEntity;
+  hashTagId: number;
 
   @ManyToOne(() => EstateEntity, (estate: EstateEntity) => estate.estateTags, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'estate_id', referencedColumnName: 'estateId' }])
-  estateId: EstateEntity;
+  estateId: number;
 }
