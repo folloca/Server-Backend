@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import {
-  IsDate,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -43,15 +43,14 @@ export class EstateEntity extends DateColumnEntity {
   ownerId: number;
 
   @Column({
-    name: 'thumbnail_path',
+    name: 'thumbnail',
     type: 'varchar',
     nullable: false,
-    default: 'tmp',
-    comment: '대표 이미지 경로',
+    comment: '대표 이미지 파일명',
   })
   @IsString()
   @IsNotEmpty()
-  thumbnailPath: string;
+  thumbnail: string;
 
   @Column({
     name: 'proposal_count',
@@ -100,31 +99,28 @@ export class EstateEntity extends DateColumnEntity {
   @Column({
     name: 'extent',
     type: 'float',
-    nullable: false,
+    nullable: true,
     comment: '면적',
   })
   @IsNumber()
-  @IsNotEmpty()
   extent: number;
 
   @Column({
     name: 'capacity',
     type: 'integer',
-    nullable: false,
+    nullable: true,
     comment: '수용 인원',
   })
   @IsNumber()
-  @IsNotEmpty()
   capacity: number;
 
   @Column({
     name: 'price',
     type: 'integer',
-    nullable: false,
+    nullable: true,
     comment: '가격',
   })
   @IsNumber()
-  @IsNotEmpty()
   price: number;
 
   @Column({
@@ -150,33 +146,32 @@ export class EstateEntity extends DateColumnEntity {
 
   @Column({
     name: 'proposal_deadline',
-    type: 'datetime',
+    type: 'timestamp',
     nullable: false,
     comment: '기획 모집 마감 일자',
   })
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
-  proposalDeadline: Date;
+  proposalDeadline: string;
 
   @Column({
-    name: 'map_image_path',
+    name: 'map_image',
     type: 'varchar',
     nullable: true,
-    comment: '평면도 저장 경로',
+    comment: '평면도 파일명',
   })
   @IsString()
   @IsOptional()
-  mapImagePath: string;
+  mapImage: string;
 
   @Column({
     name: 'owner_message',
     type: 'varchar',
     length: 120,
-    nullable: false,
+    nullable: true,
     comment: '남기고 싶은 한마디',
   })
   @IsString()
-  @IsNotEmpty()
   ownerMessage: string;
 
   @OneToMany(

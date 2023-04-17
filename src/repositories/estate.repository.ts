@@ -2,12 +2,11 @@ import { TypeormRepository } from '../custom/decorator/typeorm-repository.decora
 import { Repository } from 'typeorm';
 import {
   EstateEntity,
-  EstateImageEntity,
   EstateLikeEntity,
   MapNumberingEntity,
 } from '../database/entities';
 import { executeQueryWithTransaction } from './functions';
-import { CreateEstateDto } from '../dto/req/create-estate.dto';
+import { CreateEstateDto, MapCoordinates } from '../dto/req/create-estate.dto';
 
 @TypeormRepository(EstateEntity)
 export class EstateRepository extends Repository<EstateEntity> {
@@ -68,7 +67,12 @@ export class EstateRepository extends Repository<EstateEntity> {
       .getRawMany();
   }
 
-  async createEstateData(userId: number, createEstateDto: CreateEstateDto) {
+  async createEstateData(
+    userId: number,
+    createEstateDto: CreateEstateDto,
+    thumbnail: string,
+    map?: string,
+  ) {
     const {
       estateName,
       estateKeyword,
@@ -81,22 +85,34 @@ export class EstateRepository extends Repository<EstateEntity> {
       ownerMessage,
     } = createEstateDto;
 
-    const query = this.query(
-      'INSERT INTO `estate`(`created_at`, `updated_at`, `deleted_at`, `estate_id`, `thumbnail_path`, `proposal_count`, `total_likes`, `estate_name`, `estate_keyword`, `extent`, `capacity`, `price`, `estate_theme`, `estate_use`, `proposal_deadline`, `map_image_path`, `owner_message`, `owner_id`) VALUES(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, DEFAULT, ?, ?)',
-      [
-        estateName,
-        estateKeyword,
-        extent,
-        capacity,
-        price,
-        estateTheme,
-        estateUse,
-        new Date(proposalDeadline),
-        ownerMessage,
-        userId,
-      ],
-    );
+    const query = await this.createQueryBuilder()
+      .insert()
+      .into('estate')
+      .values([
+        {
+          estateName,
+          estateKeyword,
+          extent,
+          capacity,
+          price,
+          estateTheme,
+          estateUse,
+          proposalDeadline,
+          thumbnail,
+          mapImage: map,
+          ownerMessage,
+          ownerId: userId,
+        },
+      ]);
+
     await executeQueryWithTransaction(this.managerConnection, query);
+
+    const [{ estate_id }] = await this.createQueryBuilder()
+      .select('LAST_INSERT_ID() as estate_id')
+      .limit(1)
+      .execute();
+
+    return estate_id;
   }
 
   async validateEstateOwner(estateId: number, userId: number) {
@@ -118,10 +134,32 @@ export class EstateRepository extends Repository<EstateEntity> {
 }
 
 @TypeormRepository(MapNumberingEntity)
-export class MapNumberingRepository extends Repository<MapNumberingEntity> {}
+export class MapNumberingRepository extends Repository<MapNumberingEntity> {
+  private managerConnection = this.manager.connection;
 
-@TypeormRepository(EstateImageEntity)
-export class EstateImageRepository extends Repository<EstateImageEntity> {}
+  async addNumberingTags(
+    estateId: number,
+    numberingCoordinates: MapCoordinates[],
+  ) {
+    const values = [];
+    for (const tag of numberingCoordinates) {
+      const { tagNumber, x, y } = tag;
+      values.push({
+        estateId,
+        numbering: tagNumber,
+        xCoordinate: x,
+        yCoordinate: y,
+      });
+    }
+
+    const query = await this.createQueryBuilder()
+      .insert()
+      .into('map_numbering')
+      .values(values);
+
+    await executeQueryWithTransaction(this.managerConnection, query);
+  }
+}
 
 @TypeormRepository(EstateLikeEntity)
 export class EstateLikeRepository extends Repository<EstateLikeEntity> {

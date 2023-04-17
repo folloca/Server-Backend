@@ -1,10 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   EstateLikeRepository,
   EstateRepository,
+  MapNumberingRepository,
 } from '../repositories/estate.repository';
+import {
+  EstateTagRepository,
+  HashTagRepository,
+} from '../repositories/hash-tag.repository';
 import { ProposalRepository } from '../repositories/proposal.repository';
+import { EstateImageRepository } from '../repositories/image.repository';
 import { CreateEstateDto } from '../dto/req/create-estate.dto';
 import { PriorFilterEnumToKor } from '../custom/enum/prior-filter.enum';
 import { PosteriorFilterEnumToKor } from '../custom/enum/posterior-filter.enum';
@@ -17,6 +23,10 @@ export class EstatesService {
     private readonly configService: ConfigService,
     private estateRepository: EstateRepository,
     private estateLikeRepository: EstateLikeRepository,
+    private mapNumberingRepository: MapNumberingRepository,
+    private estateImageRepository: EstateImageRepository,
+    private hashTagRepository: HashTagRepository,
+    private estateTagRepository: EstateTagRepository,
     private proposalRepository: ProposalRepository,
   ) {
     this.redis = new Redis({
@@ -95,8 +105,44 @@ export class EstatesService {
     };
   }
 
-  async createEstate(userId: number, createEstateDto: CreateEstateDto) {
-    await this.estateRepository.createEstateData(userId, createEstateDto);
+  async createEstate(
+    userId: number,
+    filenames: { thumbnail: string; images: string[]; map: string },
+    createEstateDto: CreateEstateDto,
+  ) {
+    const { thumbnail, images = [], map } = filenames;
+    const { numberingCoordinates, hashTag1, hashTag2 } = createEstateDto;
+
+    try {
+      const newEstateId: number = await this.estateRepository.createEstateData(
+        userId,
+        createEstateDto,
+        thumbnail,
+        map,
+      );
+
+      const validFilenames = [thumbnail, ...images, map].filter(Boolean);
+      await this.estateImageRepository.createImageData(
+        newEstateId,
+        validFilenames,
+      );
+
+      if (numberingCoordinates) {
+        await this.mapNumberingRepository.addNumberingTags(
+          newEstateId,
+          numberingCoordinates,
+        );
+      }
+
+      if (hashTag1 || hashTag2) {
+        const tagResult = await this.hashTagRepository.createHashTag(
+          [hashTag1, hashTag2].filter(Boolean),
+        );
+        await this.estateTagRepository.createEstateTag(newEstateId, tagResult);
+      }
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   async estateLikeUnlike(estateId: string, userId: string) {

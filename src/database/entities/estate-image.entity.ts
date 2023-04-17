@@ -24,7 +24,7 @@ export class EstateImageEntity extends DateColumnEntity {
     { onDelete: 'CASCADE' },
   )
   @JoinColumn([{ name: 'estate_id', referencedColumnName: 'estateId' }])
-  estateId: EstateEntity;
+  estateId: number;
 
   @Column({
     name: 'image_path',
@@ -35,14 +35,4 @@ export class EstateImageEntity extends DateColumnEntity {
   @IsString()
   @IsNotEmpty()
   imagePath: string;
-
-  @Column({
-    name: 'original_name',
-    type: 'varchar',
-    nullable: false,
-    comment: '원본 이미지 이름',
-  })
-  @IsString()
-  @IsNotEmpty()
-  originalName: string;
 }

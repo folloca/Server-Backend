@@ -91,7 +91,8 @@ export class EstatesController {
   @UseInterceptors(
     FileFieldsInterceptor(
       [
-        { name: 'images', maxCount: 7 },
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'images', maxCount: 6 },
         { name: 'map', maxCount: 1 },
       ],
       multerOptions('estate'),
@@ -99,11 +100,22 @@ export class EstatesController {
   )
   async createEstate(
     @UploadedFiles()
-    files: { images?: Express.Multer.File[]; map?: Express.Multer.File[] },
+    files: {
+      thumbnail: Express.Multer.File;
+      images?: Express.Multer.File[];
+      map?: Express.Multer.File;
+    },
     @GetUserId() userId,
     @Body() createEstateDto: CreateEstateDto,
   ) {
-    return this.estatesService.createEstate(userId, createEstateDto);
+    const filenames = {
+      thumbnail: files.thumbnail[0].filename,
+      images: files.images
+        ? files.images.map((file) => file.filename)
+        : undefined,
+      map: files.map ? files.map[0]?.filename : undefined,
+    };
+    return this.estatesService.createEstate(userId, filenames, createEstateDto);
   }
 
   @Post('/like')

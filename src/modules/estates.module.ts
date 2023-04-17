@@ -8,13 +8,16 @@ import { EstatesController } from '../controllers/estates.controller';
 import { EstatesService } from '../services/estates.service';
 import { TypeormRepositoryModule } from './typeorm-repository.module';
 import {
-  EstateImageRepository,
   EstateLikeRepository,
   EstateRepository,
   MapNumberingRepository,
 } from '../repositories/estate.repository';
-import { HashTagRepository } from '../repositories/hash-tag.repository';
+import {
+  EstateTagRepository,
+  HashTagRepository,
+} from '../repositories/hash-tag.repository';
 import { ProposalRepository } from '../repositories/proposal.repository';
+import { EstateImageRepository } from '../repositories/image.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware';
@@ -29,6 +32,7 @@ import { JwtModule } from '@nestjs/jwt';
       EstateLikeRepository,
       ProposalRepository,
       HashTagRepository,
+      EstateTagRepository,
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
