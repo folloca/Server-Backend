@@ -336,12 +336,10 @@ export class AuthController {
   @ApiOperation({
     summary: '토큰 재발급 요청',
   })
-  @ApiCookieAuth('refresh')
+  @ApiCookieAuth()
   async refreshToken(@Req() req, @Res() res) {
-    if (req.headers.authorization) {
-      const refreshToken = req.headers.authorization
-        .replace('Bearer ', '')
-        .trim();
+    if (req.cookies['refresh']) {
+      const refreshToken = req.cookies['refresh'];
 
       const accessToken = await this.authService.validateRefreshToken(
         refreshToken,
