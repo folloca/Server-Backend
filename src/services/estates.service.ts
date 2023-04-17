@@ -135,10 +135,9 @@ export class EstatesService {
       }
 
       if (hashTag1 || hashTag2) {
-        const tagResult = await this.hashTagRepository.createHashTag([
-          hashTag1,
-          hashTag2,
-        ]);
+        const tagResult = await this.hashTagRepository.createHashTag(
+          [hashTag1, hashTag2].filter(Boolean),
+        );
         await this.estateTagRepository.createEstateTag(newEstateId, tagResult);
       }
     } catch (e) {
