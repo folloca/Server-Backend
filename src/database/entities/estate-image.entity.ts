@@ -35,14 +35,4 @@ export class EstateImageEntity extends DateColumnEntity {
   @IsString()
   @IsNotEmpty()
   imagePath: string;
-
-  @Column({
-    name: 'original_name',
-    type: 'varchar',
-    nullable: false,
-    comment: '원본 이미지 이름',
-  })
-  @IsString()
-  @IsNotEmpty()
-  originalName: string;
 }
