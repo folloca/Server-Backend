@@ -151,7 +151,7 @@ export class AuthService {
     return refreshToken;
   }
 
-  async validateRefreshToken(refreshToken) {
+  async validateRefreshToken(refreshToken: string) {
     const { userId, email } = await this.jwtService.verifyAsync(refreshToken);
     const tokenData = await this.redis.get(`refresh_${email}`);
     const tokenVerification = await bcrypt.compare(refreshToken, tokenData);
