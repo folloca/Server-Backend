@@ -6,15 +6,30 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { plainToInstance, Transform, Type } from 'class-transformer';
 
 export class MapCoordinates {
+  @ApiProperty({
+    name: 'tagNumber',
+    type: Number,
+    description: '평면도 태그 넘버',
+  })
   @IsNumber()
   tagNumber: number;
 
+  @ApiProperty({
+    name: 'x',
+    type: Number,
+    description: '평면도 태그 x 좌표',
+  })
   @IsNumber()
   x: number;
 
+  @ApiProperty({
+    name: 'y',
+    type: Number,
+    description: '평면도 태그 y 좌표',
+  })
   @IsNumber()
   y: number;
 }
@@ -24,7 +39,7 @@ export class CreateEstateDto {
     required: true,
     type: String,
     maxLength: 8,
-    description: '공간 이름',
+    description: '공간 이름(최대 8글자)',
   })
   @IsString()
   @IsNotEmpty()
@@ -34,7 +49,7 @@ export class CreateEstateDto {
     required: true,
     type: String,
     maxLength: 5,
-    description: '공간 키워드',
+    description: '공간 키워드(최대 5글자)',
   })
   @IsString()
   @IsNotEmpty()
@@ -56,6 +71,7 @@ export class CreateEstateDto {
     description: '면적',
   })
   @Type(() => Number)
+  @Transform(({ value }) => (value === '' || 0 ? undefined : value))
   @IsNumber()
   @IsOptional()
   extent: number;
@@ -66,6 +82,7 @@ export class CreateEstateDto {
     description: '수용 인원',
   })
   @Type(() => Number)
+  @Transform(({ value }) => (value === '' || 0 ? undefined : value))
   @IsNumber()
   @IsOptional()
   capacity: number;
@@ -76,6 +93,7 @@ export class CreateEstateDto {
     description: '가격',
   })
   @Type(() => Number)
+  @Transform(({ value }) => (value === '' || 0 ? undefined : value))
   @IsNumber()
   @IsOptional()
   price: number;
@@ -94,8 +112,9 @@ export class CreateEstateDto {
     required: false,
     type: String,
     maxLength: 7,
-    description: '해시태그1',
+    description: '해시태그1(최대 7글자)',
   })
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsString()
   @IsOptional()
   hashTag1: string;
@@ -104,8 +123,9 @@ export class CreateEstateDto {
     required: false,
     type: String,
     maxLength: 7,
-    description: '해시태그2',
+    description: '해시태그2(최대 7글자)',
   })
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsString()
   @IsOptional()
   hashTag2: string;
@@ -114,7 +134,7 @@ export class CreateEstateDto {
     required: true,
     type: String,
     format: 'date-time',
-    description: '기획 모집 마감 일자',
+    description: '기획 모집 마감 일자(`YYYY-MM-DD HH:MM`)',
   })
   @IsDateString()
   @IsNotEmpty()
@@ -126,8 +146,19 @@ export class CreateEstateDto {
     maxLength: 120,
     description: '자유로운 한마디',
   })
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsString()
+  @IsOptional()
   ownerMessage: string;
+
+  @ApiProperty({
+    required: true,
+    type: String,
+    format: 'binary',
+    description: '대표 이미지',
+  })
+  @IsOptional()
+  thumbnail: Express.Multer.File;
 
   @ApiProperty({
     required: false,
@@ -135,17 +166,8 @@ export class CreateEstateDto {
     format: 'binary',
     description: '공간 이미지',
   })
+  @IsOptional()
   images: Express.Multer.File;
-
-  @Type(() => Number)
-  @ApiProperty({
-    required: true,
-    type: Number,
-    description: '섬네일 이미지 인덱스',
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  thumbnailIdx: number;
 
   @ApiProperty({
     required: false,
@@ -158,11 +180,14 @@ export class CreateEstateDto {
 
   @ApiProperty({
     required: false,
-    type: MapCoordinates,
-    isArray: true,
+    type: [MapCoordinates],
     description: '평면도 넘버링 태그 좌표',
   })
-  @Type(() => MapCoordinates)
+  @Transform(({ value }) =>
+    value === ''
+      ? undefined
+      : plainToInstance(MapCoordinates, JSON.parse(`[${value}]`)),
+  )
   @IsOptional()
   numberingCoordinates: MapCoordinates[];
 }
