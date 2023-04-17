@@ -184,8 +184,8 @@ export class CreateEstateDto {
     description: '평면도 넘버링 태그 좌표',
   })
   @Transform(({ value }) =>
-    value === ''
-      ? undefined
+    Array.isArray(value)
+      ? Array.from(value).map((el) => JSON.parse(String(el)))
       : plainToInstance(MapCoordinates, JSON.parse(`[${value}]`)),
   )
   @IsOptional()
