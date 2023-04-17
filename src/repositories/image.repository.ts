@@ -6,12 +6,11 @@ import { EstateImageEntity } from '../database/entities';
 export class EstateImageRepository extends Repository<EstateImageEntity> {
   private managerConnection = this.manager.connection;
 
-  async createImageData(
-    estateId: number,
-    fileName: string,
-    originalName: string,
-  ) {
-    // const query = this.create();
+  async createImageData(estateId: number, filenames: string[]) {
+    const data = filenames.map((filename) => {
+      return { estateId, imagePath: filename };
+    });
+    await this.save(data);
   }
 
   async deleteImageData(estateId) {}
