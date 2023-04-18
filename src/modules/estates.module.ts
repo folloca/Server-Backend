@@ -22,6 +22,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware';
 import { JwtModule } from '@nestjs/jwt';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
@@ -47,6 +48,29 @@ import { JwtModule } from '@nestjs/jwt';
       useFactory: async (configService: ConfigService) => ({
         dest: configService.get(`${process.env.NODE_ENV}.image.estate`),
       }),
+      inject: [ConfigService],
+    }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const host = await configService.get(
+          `${process.env.NODE_ENV}.redis.host`,
+        );
+        const port = await configService.get(
+          `${process.env.NODE_ENV}.redis.port`,
+        );
+
+        const index = await configService.get(
+          `${process.env.NODE_ENV}.redis.index.estate`,
+        );
+
+        return {
+          config: {
+            url: `redis://${host}:${port}`,
+            db: index,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],
