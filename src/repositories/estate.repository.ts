@@ -125,10 +125,10 @@ export class EstateRepository extends Repository<EstateEntity> {
   }
 
   async updateTotalLikes(estateId: number, variation: number) {
-    const query = this.query(
-      `UPDATE estate SET total_likes = total_likes +(?) WHERE estate_id = ?`,
-      [variation, estateId],
-    );
+    const query = this.createQueryBuilder()
+      .update('estate')
+      .set({ totalLikes: () => `total_likes + ${variation}` })
+      .where('estateId = :id', { id: estateId });
     await executeQueryWithTransaction(this.managerConnection, query);
   }
 }
@@ -165,18 +165,20 @@ export class MapNumberingRepository extends Repository<MapNumberingEntity> {
 export class EstateLikeRepository extends Repository<EstateLikeEntity> {
   private managerConnection = this.manager.connection;
 
-  async addLike(userId, estateId) {
-    const query = this.query(
-      'INSERT INTO `estate_like`(`created_at`, `updated_at`, `deleted_at`, `estate_like_id`, `user_id`, `estate_id`) VALUES(DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?, ?)',
-      [userId, estateId],
-    );
+  async addLike(userId: number, estateId: number) {
+    const query = this.createQueryBuilder()
+      .insert()
+      .into('estate_like')
+      .values({ userId, estateId });
     await executeQueryWithTransaction(this.managerConnection, query);
   }
 
-  async cancelLike(userId, estateId) {
-    return this.query(
-      'DELETE FROM `estate_like` WHERE `user_id` = ? AND `estate_id` = ?',
-      [userId, estateId],
-    );
+  async cancelLike(userId: number, estateId: number) {
+    const query = this.createQueryBuilder()
+      .delete()
+      .from('estate_like')
+      .where('user_id = :userId', { userId })
+      .andWhere('estate_id = :estateId', { estateId });
+    await executeQueryWithTransaction(this.managerConnection, query);
   }
 }
