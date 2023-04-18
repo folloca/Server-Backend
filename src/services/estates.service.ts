@@ -14,12 +14,14 @@ import { EstateImageRepository } from '../repositories/image.repository';
 import { CreateEstateDto } from '../dto/req/create-estate.dto';
 import { PriorFilterEnumToKor } from '../custom/enum/prior-filter.enum';
 import { PosteriorFilterEnumToKor } from '../custom/enum/posterior-filter.enum';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 
 @Injectable()
 export class EstatesService {
-  private redis;
   constructor(
+    @InjectRedis()
+    private readonly redis: Redis,
     private readonly configService: ConfigService,
     private estateRepository: EstateRepository,
     private estateLikeRepository: EstateLikeRepository,
@@ -28,12 +30,7 @@ export class EstatesService {
     private hashTagRepository: HashTagRepository,
     private estateTagRepository: EstateTagRepository,
     private proposalRepository: ProposalRepository,
-  ) {
-    this.redis = new Redis({
-      host: configService.get(`${process.env.NODE_ENV}.redis.host`),
-      port: configService.get(`${process.env.NODE_ENV}.redis.port`),
-    });
-  }
+  ) {}
 
   async getEstateListByPopularity() {
     const data = await this.estateRepository.getEstatesDataForTrending();
@@ -166,7 +163,7 @@ export class EstatesService {
 
   async likeStatus(estateId: string, userId: string): Promise<boolean> {
     const likesOfEstate = await this.redis.smembers(`like_estate_${estateId}`);
-    return !!likesOfEstate.includes(userId);
+    return !!likesOfEstate.includes(String(userId));
   }
 
   async deleteEstate(estateId: number, userId: number) {
