@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Query,
   UploadedFiles,
@@ -13,6 +14,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -76,6 +78,21 @@ export class EstatesController {
       PriorFilterEnumToEng[priorFilter],
       PosteriorFilterEnumToEng[posteriorFilter],
     );
+  }
+
+  @Get('/:estateId')
+  @ApiOperation({
+    summary: '공간 상세 조회',
+    description: '공간 상세 조회',
+  })
+  @ApiParam({
+    name: 'estateId',
+    type: String,
+    required: true,
+    description: '공간 id',
+  })
+  async getEstate(@Param('estateId') estateId) {
+    return await this.estatesService.getEstateById(+estateId);
   }
 
   @Post()
