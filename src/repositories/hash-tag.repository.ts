@@ -6,6 +6,15 @@ import { EstateTagEntity, HashTagEntity } from '../database/entities';
 export class HashTagRepository extends Repository<HashTagEntity> {
   private managerConnection = this.manager.connection;
 
+  async getHashTagData(hashTagIds: number[]) {
+    return await Promise.all(
+      hashTagIds.map(async (id) => {
+        const { word } = await this.findOneBy({ hashTagId: id });
+        return word;
+      }),
+    );
+  }
+
   async createHashTag(words: string[]) {
     return await Promise.all(
       words.map(async (word) => {
@@ -24,6 +33,11 @@ export class HashTagRepository extends Repository<HashTagEntity> {
 @TypeormRepository(EstateTagEntity)
 export class EstateTagRepository extends Repository<EstateTagEntity> {
   private managerConnection = this.manager.connection;
+
+  async getTagIds(estateId: number) {
+    const result = await this.findBy({ estateId });
+    return result.map((el) => el.hashTagId);
+  }
 
   async createEstateTag(estateId: number, hashTagIds: number[]) {
     await Promise.all(
