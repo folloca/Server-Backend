@@ -19,21 +19,21 @@ export class MulterUserIdMiddleware implements NestMiddleware {
   }
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const token = req.headers.authorization.replace('Bearer ', '').trim();
-
-    if (await this.redis.get(`black_${token}`)) {
-      res.status(403).send({
-        message: 'Blacklist Token',
-      });
-    }
-
     try {
+      const token = req.headers.authorization.replace('Bearer ', '').trim();
+
+      if (await this.redis.get(`black_${token}`)) {
+        res.status(403).send({
+          message: 'Blacklist Token',
+        });
+      }
+
       const { userId } = await this.jwtService.verifyAsync(token);
       req.query.userId = userId;
       next();
     } catch (err) {
       res.status(401).send({
-        message: 'Expired Token',
+        message: 'Expired or invalid Token',
       });
     }
   }
