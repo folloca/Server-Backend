@@ -12,9 +12,11 @@ import {
 import { ProposalRepository } from '../repositories/proposal.repository';
 import { EstateImageRepository } from '../repositories/image.repository';
 import { CreateEstateDto } from '../dto/req/create-estate.dto';
+import { GetEstateResDto } from '../dto/res/get-estate-res.dto';
 import { PriorFilterEnumToKor } from '../custom/enum/prior-filter.enum';
 import { PosteriorFilterEnumToKor } from '../custom/enum/posterior-filter.enum';
 import { InjectRedis } from '@nestjs-modules/ioredis';
+import { plainToInstance } from 'class-transformer';
 import Redis from 'ioredis';
 
 @Injectable()
@@ -102,6 +104,44 @@ export class EstatesService {
     };
   }
 
+  async getEstateById(userId: number, estateId: number) {
+    const searchResult = await this.estateRepository.getEstateData(estateId);
+    const estateObject = plainToInstance(GetEstateResDto, searchResult, {
+      excludeExtraneousValues: true,
+    });
+
+    const totalLikes = await this.likeCount(estateId);
+
+    const likeOrNot = await this.estateLikeRepository.checkLike(
+      userId,
+      estateId,
+    );
+
+    const estateImages = await this.estateImageRepository.getImageData(
+      estateId,
+    );
+
+    const estateTagIds = await this.estateTagRepository.getTagIds(estateId);
+    const estateHashTags = await this.hashTagRepository.getHashTagData(
+      estateTagIds,
+    );
+
+    // TODO proposal 테이블 조회
+    // TODO user 테이블에서 기획자 닉네임 조회
+    // TODO proposal tag 테이블 조회
+
+    return {
+      data: {
+        ...estateObject,
+        totalLikes,
+        likeOrNot,
+        estateImages,
+        estateHashTags,
+      },
+      message: `Detail information of estate ${estateId}`,
+    };
+  }
+
   async createEstate(
     userId: number,
     filenames: { thumbnail: string; images: string[]; map: string },
@@ -164,6 +204,10 @@ export class EstatesService {
   async likeStatus(estateId: string, userId: string): Promise<boolean> {
     const likesOfEstate = await this.redis.smembers(`like_estate_${estateId}`);
     return !!likesOfEstate.includes(String(userId));
+  }
+
+  async likeCount(estateId: number) {
+    return this.redis.scard(`like_estate_${estateId}`);
   }
 
   async deleteEstate(estateId: number, userId: number) {
