@@ -27,12 +27,12 @@ export class EstateImageEntity extends DateColumnEntity {
   estateId: number;
 
   @Column({
-    name: 'image_path',
+    name: 'image',
     type: 'varchar',
     nullable: false,
-    comment: '공간 이미지 저장 경로',
+    comment: '공간 이미지 파일명',
   })
   @IsString()
   @IsNotEmpty()
-  imagePath: string;
+  imageName: string;
 }
