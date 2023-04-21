@@ -29,23 +29,35 @@ export class ProposalEntity extends DateColumnEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'planner_id', referencedColumnName: 'userId' }])
-  plannerId: UserEntity;
+  @Column({
+    name: 'planner_id',
+    type: 'number',
+    nullable: false,
+    comment: '기획 작성자 id',
+  })
+  plannerId: number;
 
   @ManyToOne(() => EstateEntity, (estate: EstateEntity) => estate.proposals, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'estate_id', referencedColumnName: 'estateId' }])
-  estateId: EstateEntity;
+  @Column({
+    name: 'estate_id',
+    type: 'number',
+    nullable: false,
+    comment: '공간 id',
+  })
+  estateId: number;
 
   @Column({
-    name: 'thumbnail_path',
+    name: 'thumbnail',
     type: 'varchar',
     nullable: false,
-    comment: '대표 이미지 경로',
+    comment: '대표 이미지 파일명',
   })
   @IsString()
   @IsNotEmpty()
-  thumbnailPath: string;
+  thumbnail: string;
 
   @Column({
     name: 'total_likes',
