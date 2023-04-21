@@ -67,6 +67,10 @@ export class EstateRepository extends Repository<EstateEntity> {
       .getRawMany();
   }
 
+  async getEstateData(estateId: number) {
+    return await this.findOneBy({ estateId });
+  }
+
   async createEstateData(
     userId: number,
     createEstateDto: CreateEstateDto,
@@ -164,6 +168,11 @@ export class MapNumberingRepository extends Repository<MapNumberingEntity> {
 @TypeormRepository(EstateLikeEntity)
 export class EstateLikeRepository extends Repository<EstateLikeEntity> {
   private managerConnection = this.manager.connection;
+
+  async checkLike(userId: number, estateId: number): Promise<boolean> {
+    const result = await this.findOneBy({ userId, estateId });
+    return !!result;
+  }
 
   async addLike(userId: number, estateId: number) {
     const query = this.createQueryBuilder()

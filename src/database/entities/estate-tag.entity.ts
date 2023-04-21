@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { EstateEntity } from './estate.entity';
 import { HashTagEntity } from './hash-tag.entity';
 
@@ -19,6 +25,12 @@ export class EstateTagEntity {
     },
   )
   @JoinColumn([{ name: 'hash_tag_id', referencedColumnName: 'hashTagId' }])
+  @Column({
+    name: 'hash_tag_id',
+    type: 'number',
+    nullable: false,
+    comment: '해시태그 id',
+  })
   hashTagId: number;
 
   @ManyToOne(() => EstateEntity, (estate: EstateEntity) => estate.estateTags, {
