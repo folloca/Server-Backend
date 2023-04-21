@@ -32,21 +32,14 @@ import { ConfigService } from '@nestjs/config';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../utilities/multer.options';
 import { GetUserId } from '../custom/decorator/user-id.decorator';
-import * as os from 'os';
 
 @ApiTags('estates')
 @Controller('estates')
 export class EstatesController {
-  private readonly estateImagePath;
   constructor(
     private readonly configService: ConfigService,
     private estatesService: EstatesService,
-  ) {
-    const storagePath = this.configService.get<string>(
-      `${process.env.NODE_ENV}.storage.estate`,
-    );
-    this.estateImagePath = storagePath.replace('user.home', os.homedir());
-  }
+  ) {}
 
   @Get('/popularity')
   @ApiOperation({
