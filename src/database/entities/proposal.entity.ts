@@ -94,7 +94,7 @@ export class ProposalEntity extends DateColumnEntity {
 
   @Column({
     name: 'opinion_open',
-    type: 'boolean',
+    type: Boolean,
     nullable: false,
     comment: '의견 받기 여부',
   })
