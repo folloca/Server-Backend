@@ -93,16 +93,6 @@ export class ProposalEntity extends DateColumnEntity {
   proposalDescription: string;
 
   @Column({
-    name: 'estimated_period',
-    type: 'varchar',
-    nullable: false,
-    comment: '예상 기간',
-  })
-  @IsString()
-  @IsNotEmpty()
-  estimatedPeriod: string;
-
-  @Column({
     name: 'opinion_open',
     type: 'boolean',
     nullable: false,
