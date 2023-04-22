@@ -19,6 +19,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -30,6 +31,14 @@ import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware'
       OpinionRepository,
       HashTagRepository,
     ]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get(`${process.env.NODE_ENV}.auth.jwt_secret`),
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
     MulterModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
