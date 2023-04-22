@@ -15,6 +15,7 @@ import {
   ProposalRepository,
 } from '../repositories/proposal.repository';
 import { HashTagRepository } from '../repositories/hash-tag.repository';
+import { EstateRepository } from '../repositories/estate.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
@@ -30,6 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
       ProposalLikeRepository,
       OpinionRepository,
       HashTagRepository,
+      EstateRepository,
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
