@@ -1,13 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsBoolean,
+  IsBooleanString,
   IsNotEmpty,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export interface ProposalDetailsDto {
   [key: number]: string;
@@ -19,6 +18,7 @@ export class CreateProposalDto {
     type: Number,
     description: '공간 id',
   })
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   estateId: number;
@@ -73,7 +73,6 @@ export class CreateProposalDto {
     },
     description: '구체화 방안',
   })
-  @IsObject()
   @IsOptional()
   proposalDetails: ProposalDetailsDto;
 
@@ -82,7 +81,7 @@ export class CreateProposalDto {
     type: Boolean,
     description: '의견 받기 여부',
   })
-  @IsBoolean()
+  @IsBooleanString()
   @IsNotEmpty()
   opinionOpen: boolean;
 
