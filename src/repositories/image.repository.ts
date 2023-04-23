@@ -1,12 +1,10 @@
 import { TypeormRepository } from '../custom/decorator/typeorm-repository.decorator';
 import { Repository } from 'typeorm';
-import { EstateImageEntity } from '../database/entities';
+import { EstateImageEntity, ProposalImageEntity } from '../database/entities';
 import * as path from 'path';
 
 @TypeormRepository(EstateImageEntity)
 export class EstateImageRepository extends Repository<EstateImageEntity> {
-  private managerConnection = this.manager.connection;
-
   async getImageData(estateId: number) {
     const imageData = await this.findBy({ estateId });
     return await Promise.all(
@@ -25,6 +23,14 @@ export class EstateImageRepository extends Repository<EstateImageEntity> {
     });
     await this.save(data);
   }
+}
 
-  async deleteImageData(estateId) {}
+@TypeormRepository(ProposalImageEntity)
+export class ProposalImageRepository extends Repository<ProposalImageEntity> {
+  async createImageData(proposalId: number, filenames: string[]) {
+    const data = filenames.map((filename) => {
+      return { proposalId, imageName: filename };
+    });
+    await this.save(data);
+  }
 }
