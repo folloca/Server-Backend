@@ -10,10 +10,11 @@ import { TypeormRepositoryModule } from './typeorm-repository.module';
 import {
   OpinionRepository,
   ProposalDetailRepository,
-  ProposalImageRepository,
   ProposalLikeRepository,
   ProposalRepository,
 } from '../repositories/proposal.repository';
+import { ProposalImageRepository } from '../repositories/image.repository';
+
 import { HashTagRepository } from '../repositories/hash-tag.repository';
 import { EstateRepository } from '../repositories/estate.repository';
 import { MulterModule } from '@nestjs/platform-express';
@@ -21,7 +22,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware';
 import { JwtModule } from '@nestjs/jwt';
-
 @Module({
   imports: [
     TypeormRepositoryModule.forTypeormRepository([
