@@ -19,7 +19,7 @@ export class ProposalTagEntity {
     },
   )
   @JoinColumn([{ name: 'hash_tag_id', referencedColumnName: 'hashTagId' }])
-  hashTagId: HashTagEntity;
+  hashTagId: number;
 
   @ManyToOne(
     () => ProposalEntity,
@@ -29,5 +29,5 @@ export class ProposalTagEntity {
     },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])
-  proposalId: ProposalEntity;
+  proposalId: number;
 }
