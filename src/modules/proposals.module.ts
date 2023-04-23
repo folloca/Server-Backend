@@ -14,14 +14,17 @@ import {
   ProposalRepository,
 } from '../repositories/proposal.repository';
 import { ProposalImageRepository } from '../repositories/image.repository';
-
-import { HashTagRepository } from '../repositories/hash-tag.repository';
+import {
+  HashTagRepository,
+  ProposalTagRepository,
+} from '../repositories/hash-tag.repository';
 import { EstateRepository } from '../repositories/estate.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware';
 import { JwtModule } from '@nestjs/jwt';
+
 @Module({
   imports: [
     TypeormRepositoryModule.forTypeormRepository([
@@ -29,6 +32,7 @@ import { JwtModule } from '@nestjs/jwt';
       ProposalDetailRepository,
       ProposalImageRepository,
       ProposalLikeRepository,
+      ProposalTagRepository,
       OpinionRepository,
       HashTagRepository,
       EstateRepository,
