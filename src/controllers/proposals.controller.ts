@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -10,6 +12,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
@@ -26,6 +29,22 @@ export class ProposalsController {
     private readonly configService: ConfigService,
     private proposalsService: ProposalsService,
   ) {}
+
+  @Get()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '기획 등록하기 전 필요한 데이터 응답',
+    description: '기획 등록 페이지 접속 시 요청',
+  })
+  @ApiQuery({
+    name: 'estateId',
+    type: String,
+    required: true,
+    description: '공간 id',
+  })
+  async preProposal(@GetUserId() userId, @Query('estateId') estateId) {
+    return this.proposalsService.getEstateBeforeProposal(userId, +estateId);
+  }
 
   @Post()
   @ApiBearerAuth('access-token')
