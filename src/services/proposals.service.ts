@@ -11,8 +11,14 @@ import {
   HashTagRepository,
   ProposalTagRepository,
 } from '../repositories/hash-tag.repository';
-import { EstateRepository } from '../repositories/estate.repository';
+import {
+  EstateRepository,
+  MapNumberingRepository,
+} from '../repositories/estate.repository';
+import { UserRepository } from '../repositories/user.repository';
 import { CreateProposalDto } from '../dto/req/create-proposal.dto';
+import { PreProposalEstateResDto } from '../dto/res/pre-proposal-estate-res.dto';
+import { plainToInstance } from 'class-transformer';
 import Redis from 'ioredis';
 
 @Injectable()
@@ -28,7 +34,36 @@ export class ProposalsService {
     private proposalTagRepository: ProposalTagRepository,
     private hashTagRepository: HashTagRepository,
     private estateRepository: EstateRepository,
+    private mapNumberingRepository: MapNumberingRepository,
+    private userRepository: UserRepository,
   ) {}
+
+  async getEstateBeforeProposal(userId: number, estateId: number) {
+    const { estateKeyword, estateName, estateUse, proposalDeadline, mapImage } =
+      await this.estateRepository.getEstateData(estateId);
+
+    const numberingData = await this.mapNumberingRepository.getNumberingData(
+      estateId,
+    );
+
+    const { contactInfoPublic } = await this.userRepository.getUserData(userId);
+
+    const data = plainToInstance(PreProposalEstateResDto, {
+      estateId,
+      estateKeyword,
+      estateName,
+      estateUse,
+      proposalDeadline,
+      mapImage,
+      numberingData,
+      contactInfoPublic,
+    });
+
+    return {
+      data,
+      message: `Information of estate ${estateId} to show before writing proposal`,
+    };
+  }
 
   async createProposal(
     userId: number,
