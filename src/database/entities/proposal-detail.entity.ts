@@ -24,7 +24,7 @@ export class ProposalDetailEntity extends DateColumnEntity {
     { onDelete: 'CASCADE' },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])
-  proposalId: ProposalEntity;
+  proposalId: number;
 
   @Column({
     name: 'map_numbering',

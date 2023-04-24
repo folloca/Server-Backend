@@ -1,6 +1,10 @@
 import { TypeormRepository } from '../custom/decorator/typeorm-repository.decorator';
 import { Repository } from 'typeorm';
-import { EstateTagEntity, HashTagEntity } from '../database/entities';
+import {
+  EstateTagEntity,
+  HashTagEntity,
+  ProposalTagEntity,
+} from '../database/entities';
 
 @TypeormRepository(HashTagEntity)
 export class HashTagRepository extends Repository<HashTagEntity> {
@@ -43,6 +47,17 @@ export class EstateTagRepository extends Repository<EstateTagEntity> {
     await Promise.all(
       hashTagIds.map(async (hashTagId) => {
         await this.save({ hashTagId, estateId });
+      }),
+    );
+  }
+}
+
+@TypeormRepository(ProposalTagEntity)
+export class ProposalTagRepository extends Repository<ProposalTagEntity> {
+  async createEstateTag(proposalId: number, hashTagIds: number[]) {
+    await Promise.all(
+      hashTagIds.map(async (hashTagId) => {
+        await this.save({ hashTagId, proposalId });
       }),
     );
   }

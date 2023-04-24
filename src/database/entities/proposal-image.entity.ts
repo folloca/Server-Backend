@@ -24,15 +24,15 @@ export class ProposalImageEntity extends DateColumnEntity {
     { onDelete: 'CASCADE' },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])
-  proposalId: ProposalEntity;
+  proposalId: number;
 
   @Column({
-    name: 'image_path',
+    name: 'image',
     type: 'varchar',
     nullable: false,
-    comment: '기획 이미지 저장 경로',
+    comment: '기획 이미지 파일명',
   })
   @IsString()
   @IsNotEmpty()
-  imagePath: string;
+  imageName: string;
 }

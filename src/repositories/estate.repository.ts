@@ -135,6 +135,14 @@ export class EstateRepository extends Repository<EstateEntity> {
       .where('estateId = :id', { id: estateId });
     await executeQueryWithTransaction(this.managerConnection, query);
   }
+
+  async updateProposalCount(estateId: number, variation: number) {
+    const query = this.createQueryBuilder()
+      .update('estate')
+      .set({ proposalCount: () => `proposal_count + ${variation}` })
+      .where('estateId = :id', { id: estateId });
+    await executeQueryWithTransaction(this.managerConnection, query);
+  }
 }
 
 @TypeormRepository(MapNumberingEntity)
@@ -162,6 +170,16 @@ export class MapNumberingRepository extends Repository<MapNumberingEntity> {
       .values(values);
 
     await executeQueryWithTransaction(this.managerConnection, query);
+  }
+
+  async getNumberingData(estateId: number) {
+    const searchResult = await this.findBy({ estateId });
+    return searchResult.map((el) => {
+      return {
+        tagNumber: el.numbering,
+        coordinate: [el.xCoordinate, el.yCoordinate],
+      };
+    });
   }
 }
 
