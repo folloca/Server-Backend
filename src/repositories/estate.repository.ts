@@ -171,6 +171,16 @@ export class MapNumberingRepository extends Repository<MapNumberingEntity> {
 
     await executeQueryWithTransaction(this.managerConnection, query);
   }
+
+  async getNumberingData(estateId: number) {
+    const searchResult = await this.findBy({ estateId });
+    return searchResult.map((el) => {
+      return {
+        tagNumber: el.numbering,
+        coordinate: [el.xCoordinate, el.yCoordinate],
+      };
+    });
+  }
 }
 
 @TypeormRepository(EstateLikeEntity)
