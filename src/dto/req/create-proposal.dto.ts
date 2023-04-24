@@ -73,6 +73,7 @@ export class CreateProposalDto {
     },
     description: '구체화 방안',
   })
+  @Transform(({ value }) => JSON.parse(value))
   @IsOptional()
   proposalDetails: ProposalDetailsDto;
 
