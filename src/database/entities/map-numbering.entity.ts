@@ -24,7 +24,7 @@ export class MapNumberingEntity extends DateColumnEntity {
     { onDelete: 'CASCADE' },
   )
   @JoinColumn([{ name: 'estate_id', referencedColumnName: 'estateId' }])
-  estateId: EstateEntity;
+  estateId: number;
 
   @Column({
     name: 'numbering',
