@@ -18,12 +18,16 @@ import {
   HashTagRepository,
   ProposalTagRepository,
 } from '../repositories/hash-tag.repository';
-import { EstateRepository } from '../repositories/estate.repository';
+import {
+  EstateRepository,
+  MapNumberingRepository,
+} from '../repositories/estate.repository';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { MulterUserIdMiddleware } from '../middleware/multer-user-id.middleware';
 import { JwtModule } from '@nestjs/jwt';
+import { UserRepository } from '../repositories/user.repository';
 
 @Module({
   imports: [
@@ -36,6 +40,8 @@ import { JwtModule } from '@nestjs/jwt';
       OpinionRepository,
       HashTagRepository,
       EstateRepository,
+      MapNumberingRepository,
+      UserRepository,
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
