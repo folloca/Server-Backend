@@ -6,6 +6,7 @@ import {
   ProposalEntity,
   ProposalLikeEntity,
 } from '../database/entities';
+import { ProposalDetailsDto } from '../dto/req/create-proposal.dto';
 
 @TypeormRepository(ProposalEntity)
 export class ProposalRepository extends Repository<ProposalEntity> {
@@ -30,7 +31,22 @@ export class ProposalRepository extends Repository<ProposalEntity> {
 }
 
 @TypeormRepository(ProposalDetailEntity)
-export class ProposalDetailRepository extends Repository<ProposalDetailEntity> {}
+export class ProposalDetailRepository extends Repository<ProposalDetailEntity> {
+  async createDetailData(
+    proposalId: number,
+    proposalDetails: ProposalDetailsDto,
+  ) {
+    const data = [];
+    for (const detail of Object.entries(proposalDetails)) {
+      data.push({
+        proposalId,
+        mapNumbering: +detail[0],
+        detailDescription: detail[1],
+      });
+    }
+    await this.save(data);
+  }
+}
 
 @TypeormRepository(ProposalLikeEntity)
 export class ProposalLikeRepository extends Repository<ProposalLikeEntity> {}
