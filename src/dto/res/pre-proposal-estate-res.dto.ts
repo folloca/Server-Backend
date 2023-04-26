@@ -66,9 +66,17 @@ export class PreProposalEstateResDto {
     type: String,
     description: '평면도 이미지 경로',
   })
-  @Transform(
-    ({ value }) =>
-      `${path.join(__dirname, '..', '..', '..', 'storage', 'estate')}/${value}`,
+  @Transform(({ value }) =>
+    value
+      ? `${path.join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          'storage',
+          'estate',
+        )}/${value}`
+      : null,
   )
   @Expose({ name: 'mapImage' })
   @IsString()
