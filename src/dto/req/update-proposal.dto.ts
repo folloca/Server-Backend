@@ -21,7 +21,7 @@ export class UpdateProposalDto {
   proposalId: number;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     maxLength: 20,
     description: '한 줄 소개(20자 이내)',
@@ -31,7 +31,7 @@ export class UpdateProposalDto {
   proposalIntroduction: string;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     maxLength: 200,
     description: '설명(200자 이내)',
@@ -76,7 +76,7 @@ export class UpdateProposalDto {
   proposalDetails: ProposalDetailsDto;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: Boolean,
     description: '의견 받기 여부',
   })
@@ -85,7 +85,7 @@ export class UpdateProposalDto {
   opinionOpen: boolean;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: String,
     format: 'binary',
     description: '대표 이미지',
