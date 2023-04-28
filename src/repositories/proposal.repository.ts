@@ -28,6 +28,19 @@ export class ProposalRepository extends Repository<ProposalEntity> {
     };
     return await this.save(data);
   }
+
+  async getPlannerId(proposalId: number) {
+    const { plannerId } = await this.findOneBy({ proposalId });
+    return plannerId;
+  }
+
+  async updateProposalData(
+    proposalId: number,
+    thumbnail: string,
+    proposalIntroduction: string,
+    proposalDescription: string,
+    opinionOpen: boolean,
+  ) {}
 }
 
 @TypeormRepository(ProposalDetailEntity)
