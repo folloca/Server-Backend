@@ -13,12 +13,12 @@ export class UpdateProposalDto {
   @ApiProperty({
     required: true,
     type: Number,
-    description: '공간 id',
+    description: '기획 id',
   })
   @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
-  estateId: number;
+  proposalId: number;
 
   @ApiProperty({
     required: true,
@@ -71,7 +71,7 @@ export class UpdateProposalDto {
     description:
       '구체화 방안(평면도가 존재하지 않을 경우, "0"을 key로 string value 1200자까지 하나만 작성 가능)',
   })
-  @Transform(({ value }) => JSON.parse(value))
+  @Transform(({ value }) => (value ? JSON.parse(value) : null))
   @IsOptional()
   proposalDetails: ProposalDetailsDto;
 
