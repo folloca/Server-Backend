@@ -35,7 +35,7 @@ export class ProposalRepository extends Repository<ProposalEntity> {
   }
 
   async deleteProposal(proposalId: number) {
-    await this.delete({ proposalId });
+    await this.softDelete({ proposalId });
   }
 
   async updateProposalData(
