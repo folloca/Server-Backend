@@ -34,6 +34,10 @@ export class ProposalRepository extends Repository<ProposalEntity> {
     return plannerId;
   }
 
+  async deleteProposal(proposalId: number) {
+    await this.delete({ proposalId });
+  }
+
   async updateProposalData(
     proposalId: number,
     thumbnail: string,
