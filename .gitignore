@@ -38,3 +38,5 @@ lerna-debug.log*
 /src/config/config.yaml
 
 package-lock.json
+
+dump.rdb
