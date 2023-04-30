@@ -26,6 +26,7 @@ export class UpdateProposalDto {
     maxLength: 20,
     description: '한 줄 소개(20자 이내)',
   })
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsString()
   @IsOptional()
   proposalIntroduction: string;
@@ -36,6 +37,7 @@ export class UpdateProposalDto {
     maxLength: 200,
     description: '설명(200자 이내)',
   })
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsString()
   @IsOptional()
   proposalDescription: string;
@@ -80,6 +82,7 @@ export class UpdateProposalDto {
     type: Boolean,
     description: '의견 받기 여부',
   })
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsBooleanString()
   @IsOptional()
   opinionOpen: boolean;
