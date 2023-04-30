@@ -161,4 +161,27 @@ export class UsersService {
       };
     }
   }
+
+  async getProfilePageUserInfo(email: string) {
+    const user = await this.userRepository.findAccountByEmail(email);
+
+    if (!user) {
+      throw new BadRequestException(`Wrong user Email: ${email}`);
+    } else {
+      const { userId } = user;
+
+      const userData = await this.userRepository.getUserData(userId);
+
+      return {
+        userId: userId,
+        nickname: userData.nickname,
+        website_url: userData.websiteUrl,
+        sns_url: userData.snsUrl,
+        base_introduction: userData.baseIntroduction,
+        trending_planner: userData.trendingPlanner,
+        trending_fielder: userData.trendingFielder,
+        trending_finder: userData.trendingFinder,
+      };
+    }
+  }
 }

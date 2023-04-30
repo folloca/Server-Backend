@@ -5,6 +5,7 @@ import {
   Patch,
   Post,
   Query,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -123,5 +125,34 @@ export class UsersController {
     @GetUserId() userId,
   ) {
     return await this.usersService.updateUserInfo(userId, updateUserinfoReqDto);
+  }
+
+  @Get('/profile')
+  @ApiOperation({
+    summary: 'profile 조회',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description:
+      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+  })
+  async getProfile(@Query() query, @Res() res) {
+    const email = query.email;
+
+    if (email) {
+      const userData = await this.usersService.getProfilePageUserInfo(email);
+
+      if (userData) {
+        res.status(200).send({
+          profile: userData,
+        });
+      } else {
+        res.status(404).send({
+          message: '',
+        });
+      }
+    }
   }
 }
