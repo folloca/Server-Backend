@@ -143,10 +143,23 @@ export class UsersController {
 
     if (email) {
       const userData = await this.usersService.getProfilePageUserInfo(email);
-
+      const proposals = await this.usersService.getProposalListByUserId(
+        userData.userId,
+      );
+      const linkings = await this.usersService.getLinkingListByUserId(
+        userData.userId,
+      );
+      const estates = await this.usersService.getEstateListByUserId(
+        userData.userId,
+      );
       if (userData) {
         res.status(200).send({
           profile: userData,
+          posts: {
+            proposals: proposals,
+            linkings: linkings,
+            estates: estates,
+          },
         });
       } else {
         res.status(404).send({

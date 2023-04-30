@@ -7,6 +7,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repositories/user.repository';
+import { ProposalRepository } from '../repositories/proposal.repository';
+import { EstateRepository } from '../repositories/estate.repository';
+import { LinkingRepository } from '../repositories/linking.repository';
 import { adjectives, nouns } from '../custom/data/nickname-keywords';
 import { UpdateUserinfoReqDto } from '../dto/req/update-userinfo-req.dto';
 import * as bcrypt from 'bcrypt';
@@ -20,6 +23,9 @@ export class UsersService {
   constructor(
     private readonly configService: ConfigService,
     private userRepository: UserRepository,
+    private proposalRepository: ProposalRepository,
+    private estateRepository: EstateRepository,
+    private linkingRepository: LinkingRepository,
   ) {
     this.redis = new Redis({
       host: configService.get(`${process.env.NODE_ENV}.redis.host`),
@@ -183,5 +189,17 @@ export class UsersService {
         trending_finder: userData.trendingFinder,
       };
     }
+  }
+
+  async getProposalListByUserId(userId: number) {
+    return await this.proposalRepository.getProposalListByUserId(userId);
+  }
+
+  async getEstateListByUserId(userId: number) {
+    return await this.estateRepository.getEstateListByUserId(userId);
+  }
+
+  async getLinkingListByUserId(userId: number) {
+    return await this.linkingRepository.getLinkingListByUserId(userId);
   }
 }

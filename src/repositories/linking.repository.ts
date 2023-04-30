@@ -8,7 +8,11 @@ import {
 } from '../database/entities';
 
 @TypeormRepository(LinkingEntity)
-export class LinkingRepository extends Repository<LinkingEntity> {}
+export class LinkingRepository extends Repository<LinkingEntity> {
+  async getLinkingListByUserId(userId: number) {
+    return this.findBy({ organizerId: userId });
+  }
+}
 
 @TypeormRepository(LinkingRequestEntity)
 export class LinkingRequestRepository extends Repository<LinkingRequestEntity> {}

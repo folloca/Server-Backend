@@ -28,6 +28,10 @@ export class ProposalRepository extends Repository<ProposalEntity> {
     };
     return await this.save(data);
   }
+
+  async getProposalListByUserId(userId: number) {
+    return await this.findBy({ plannerId: userId });
+  }
 }
 
 @TypeormRepository(ProposalDetailEntity)

@@ -143,6 +143,10 @@ export class EstateRepository extends Repository<EstateEntity> {
       .where('estateId = :id', { id: estateId });
     await executeQueryWithTransaction(this.managerConnection, query);
   }
+
+  async getEstateListByUserId(userId: number) {
+    return await this.findBy({ ownerId: userId });
+  }
 }
 
 @TypeormRepository(MapNumberingEntity)
