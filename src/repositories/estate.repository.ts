@@ -212,4 +212,8 @@ export class EstateLikeRepository extends Repository<EstateLikeEntity> {
       .andWhere('estate_id = :estateId', { estateId });
     await executeQueryWithTransaction(this.managerConnection, query);
   }
+
+  async getLikedEstatesByUserId(userId: number) {
+    return await this.findBy({ userId: userId });
+  }
 }

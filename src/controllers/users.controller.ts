@@ -143,18 +143,21 @@ export class UsersController {
 
     if (email) {
       const userData = await this.usersService.getProfilePageUserInfo(email);
-      const proposals = await this.usersService.getProposalListByUserId(
-        userData.userId,
-      );
-      const linkings = await this.usersService.getLinkingListByUserId(
-        userData.userId,
-      );
-      const estates = await this.usersService.getEstateListByUserId(
-        userData.userId,
-      );
+      const { userId } = userData;
+
+      const proposals = await this.usersService.getProposalListByUserId(userId);
+      const linkings = await this.usersService.getLinkingListByUserId(userId);
+      const estates = await this.usersService.getEstateListByUserId(userId);
       if (userData) {
         res.status(200).send({
           profile: userData,
+          dashboard: {
+            post_cnt: proposals.length + linkings.length + estates.length,
+            likes_cnt: (await this.usersService.getLikedPostByUserId(userId))
+              .total_cnt,
+            sentOpinion_cnt: 0,
+            recentPosts_cnt: 0,
+          },
           posts: {
             proposals: proposals,
             linkings: linkings,

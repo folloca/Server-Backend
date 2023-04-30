@@ -21,4 +21,8 @@ export class LinkingRequestRepository extends Repository<LinkingRequestEntity> {
 export class LinkingImageRepository extends Repository<LinkingImageEntity> {}
 
 @TypeormRepository(LinkingLikeEntity)
-export class LinkingLikeRepository extends Repository<LinkingLikeEntity> {}
+export class LinkingLikeRepository extends Repository<LinkingLikeEntity> {
+  async getLikedLinkingssByUserId(userId: number) {
+    return await this.findBy({ userId: userId });
+  }
+}

@@ -7,9 +7,18 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repositories/user.repository';
-import { ProposalRepository } from '../repositories/proposal.repository';
-import { EstateRepository } from '../repositories/estate.repository';
-import { LinkingRepository } from '../repositories/linking.repository';
+import {
+  ProposalRepository,
+  ProposalLikeRepository,
+} from '../repositories/proposal.repository';
+import {
+  EstateRepository,
+  EstateLikeRepository,
+} from '../repositories/estate.repository';
+import {
+  LinkingRepository,
+  LinkingLikeRepository,
+} from '../repositories/linking.repository';
 import { adjectives, nouns } from '../custom/data/nickname-keywords';
 import { UpdateUserinfoReqDto } from '../dto/req/update-userinfo-req.dto';
 import * as bcrypt from 'bcrypt';
@@ -26,6 +35,9 @@ export class UsersService {
     private proposalRepository: ProposalRepository,
     private estateRepository: EstateRepository,
     private linkingRepository: LinkingRepository,
+    private proposalLikeRepository: ProposalLikeRepository,
+    private estateLikeRepository: EstateLikeRepository,
+    private linkingLikeRepository: LinkingLikeRepository,
   ) {
     this.redis = new Redis({
       host: configService.get(`${process.env.NODE_ENV}.redis.host`),
@@ -201,5 +213,25 @@ export class UsersService {
 
   async getLinkingListByUserId(userId: number) {
     return await this.linkingRepository.getLinkingListByUserId(userId);
+  }
+
+  async getLikedPostByUserId(userId: number) {
+    const proposal =
+      await this.proposalLikeRepository.getLikedProposalsByUserId(userId);
+    const estate = await this.estateLikeRepository.getLikedEstatesByUserId(
+      userId,
+    );
+    const linking = await this.linkingLikeRepository.getLikedLinkingssByUserId(
+      userId,
+    );
+
+    return {
+      total_cnt: proposal.length + estate.length + linking.length,
+      posts: {
+        proposals: proposal,
+        estates: estate,
+        linkings: linking,
+      },
+    };
   }
 }
