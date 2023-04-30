@@ -16,7 +16,7 @@ export class ProposalLikeEntity extends DateColumnEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'userId' }])
-  userId: UserEntity;
+  userId: number;
 
   @ManyToOne(
     () => ProposalEntity,
