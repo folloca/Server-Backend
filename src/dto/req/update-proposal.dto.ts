@@ -85,7 +85,7 @@ export class UpdateProposalDto {
   opinionOpen: boolean;
 
   @ApiProperty({
-    required: false,
+    required: true,
     type: String,
     format: 'binary',
     description: '대표 이미지',
