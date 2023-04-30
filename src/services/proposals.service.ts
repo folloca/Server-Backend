@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -18,6 +18,7 @@ import {
 import { UserRepository } from '../repositories/user.repository';
 import { CreateProposalDto } from '../dto/req/create-proposal.dto';
 import { PreProposalEstateResDto } from '../dto/res/pre-proposal-estate-res.dto';
+import { UpdateProposalDto } from '../dto/req/update-proposal.dto';
 import { plainToInstance } from 'class-transformer';
 import Redis from 'ioredis';
 
@@ -99,21 +100,101 @@ export class ProposalsService {
         validFilenames,
       );
 
-      await this.proposalDetailRepository.createDetailData(
-        proposalId,
-        proposalDetails,
-      );
+      if (proposalDetails) {
+        await this.proposalDetailRepository.createDetailData(
+          proposalId,
+          proposalDetails,
+        );
+      }
 
       if (hashTag1 || hashTag2) {
         const tagResult = await this.hashTagRepository.createHashTag(
           [hashTag1, hashTag2].filter(Boolean),
         );
-        await this.proposalTagRepository.createEstateTag(proposalId, tagResult);
+        await this.proposalTagRepository.createProposalTag(
+          proposalId,
+          tagResult,
+        );
       }
 
       return { message: `Registered new proposal of estate ${estateId}` };
     } catch (e) {
       Logger.error(e);
+    }
+  }
+
+  async updateProposal(
+    userId: number,
+    filenames: { thumbnail: string; images: string[] },
+    updateProposalDto: UpdateProposalDto,
+  ) {
+    const { thumbnail, images = [] } = filenames;
+    const {
+      proposalId,
+      proposalIntroduction,
+      proposalDescription,
+      proposalDetails,
+      opinionOpen,
+      hashTag1,
+      hashTag2,
+    } = updateProposalDto;
+
+    const plannerId = await this.proposalRepository.getPlannerId(proposalId);
+    if (userId !== plannerId) {
+      throw new BadRequestException(
+        `User ${userId} is not the planner of ${proposalId}`,
+      );
+    } else {
+      try {
+        await this.proposalRepository.updateProposalData(
+          proposalId,
+          thumbnail,
+          proposalIntroduction,
+          proposalDescription,
+          opinionOpen,
+        );
+
+        await this.proposalImageRepository.deleteImageData(proposalId);
+        const validFilenames = [thumbnail, ...images].filter(Boolean);
+        await this.proposalImageRepository.createImageData(
+          proposalId,
+          validFilenames,
+        );
+
+        if (proposalDetails) {
+          await this.proposalDetailRepository.updateDetailData(
+            proposalId,
+            proposalDetails,
+          );
+        }
+
+        if (hashTag1 || hashTag2) {
+          await this.proposalTagRepository.deleteProposalTag(proposalId);
+          const tagResult = await this.hashTagRepository.createHashTag(
+            [hashTag1, hashTag2].filter(Boolean),
+          );
+          await this.proposalTagRepository.createProposalTag(
+            proposalId,
+            tagResult,
+          );
+        }
+
+        return { message: `Updated proposal ${proposalId}` };
+      } catch (e) {
+        Logger.error(e);
+      }
+    }
+  }
+
+  async deleteProposal(userId: number, proposalId: number) {
+    const plannerId = await this.proposalRepository.getPlannerId(proposalId);
+    if (userId !== plannerId) {
+      throw new BadRequestException(
+        `User ${userId} is not the planner of ${proposalId}`,
+      );
+    } else {
+      await this.proposalRepository.deleteProposal(proposalId);
+      return { message: `Deleted proposal ${proposalId}` };
     }
   }
 }
