@@ -35,6 +35,6 @@ export class ProposalImageRepository extends Repository<ProposalImageEntity> {
   }
 
   async deleteImageData(proposalId: number) {
-    await this.softDelete({ proposalId });
+    await this.delete({ proposalId });
   }
 }
