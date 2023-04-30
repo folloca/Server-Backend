@@ -41,10 +41,15 @@ export class ProposalRepository extends Repository<ProposalEntity> {
   async updateProposalData(
     proposalId: number,
     thumbnail: string,
-    proposalIntroduction: string,
-    proposalDescription: string,
-    opinionOpen: boolean,
-  ) {}
+    proposalIntroduction?: string,
+    proposalDescription?: string,
+    opinionOpen?: boolean,
+  ) {
+    await this.update(
+      { proposalId },
+      { thumbnail, proposalIntroduction, proposalDescription, opinionOpen },
+    );
+  }
 }
 
 @TypeormRepository(ProposalDetailEntity)
@@ -62,6 +67,21 @@ export class ProposalDetailRepository extends Repository<ProposalDetailEntity> {
       });
     }
     await this.save(data);
+  }
+
+  async updateDetailData(
+    proposalId: number,
+    proposalDetails: ProposalDetailsDto,
+  ) {
+    const data = [];
+    for (const detail of Object.entries(proposalDetails)) {
+      data.push({
+        proposalId,
+        mapNumbering: +detail[0],
+        detailDescription: detail[1],
+      });
+    }
+    await this.upsert(data, ['proposalId', 'mapNumbering']);
   }
 }
 
