@@ -15,22 +15,22 @@ export class GetProposalResDto {
   proposalId: number;
 
   @ApiProperty({
-    name: 'plannerId',
-    type: Number,
-    description: '작성자 id',
+    name: 'estateName',
+    type: String,
+    description: '공간명',
   })
   @Expose()
-  @IsNumber()
-  plannerId: number;
+  @IsString()
+  estateName: string;
 
   @ApiProperty({
-    name: 'estateId',
-    type: Number,
-    description: '공간 id',
+    name: 'nickname',
+    type: String,
+    description: '작성자 닉네임',
   })
   @Expose()
-  @IsNumber()
-  estateId: number;
+  @IsString()
+  nickname: string;
 
   @ApiProperty({
     name: 'thumbnail',
@@ -46,12 +46,13 @@ export class GetProposalResDto {
   thumbnail: string;
 
   @ApiProperty({
-    name: 'opinionOpen',
-    type: Boolean,
-    description: '의견수렴여부',
+    name: 'proposalIntroduction',
+    type: String,
+    description: '한줄소개',
   })
   @Expose()
-  opinionOpen: boolean;
+  @IsString()
+  proposalIntroduction: string;
 
   @ApiProperty({
     name: 'createdAt',
@@ -62,14 +63,4 @@ export class GetProposalResDto {
   @Expose()
   @IsString()
   createdAt: string;
-
-  @ApiProperty({
-    name: 'updatedAt',
-    type: String,
-    description: '수정 일자',
-  })
-  @Transform(({ value }) => dayjs(value).format('YYYY-MM-DD HH:mm'))
-  @Expose()
-  @IsString()
-  updatedAt: string;
 }
