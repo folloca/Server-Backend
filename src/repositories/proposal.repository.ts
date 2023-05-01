@@ -28,6 +28,28 @@ export class ProposalRepository extends Repository<ProposalEntity> {
     };
     return await this.save(data);
   }
+
+  async getPlannerId(proposalId: number) {
+    const { plannerId } = await this.findOneBy({ proposalId });
+    return plannerId;
+  }
+
+  async deleteProposal(proposalId: number) {
+    await this.softDelete({ proposalId });
+  }
+
+  async updateProposalData(
+    proposalId: number,
+    thumbnail: string,
+    proposalIntroduction?: string,
+    proposalDescription?: string,
+    opinionOpen?: boolean,
+  ) {
+    await this.update(
+      { proposalId },
+      { thumbnail, proposalIntroduction, proposalDescription, opinionOpen },
+    );
+  }
 }
 
 @TypeormRepository(ProposalDetailEntity)
@@ -45,6 +67,21 @@ export class ProposalDetailRepository extends Repository<ProposalDetailEntity> {
       });
     }
     await this.save(data);
+  }
+
+  async updateDetailData(
+    proposalId: number,
+    proposalDetails: ProposalDetailsDto,
+  ) {
+    const data = [];
+    for (const detail of Object.entries(proposalDetails)) {
+      data.push({
+        proposalId,
+        mapNumbering: +detail[0],
+        detailDescription: detail[1],
+      });
+    }
+    await this.upsert(data, ['proposalId', 'mapNumbering']);
   }
 }
 
