@@ -24,6 +24,15 @@ export class GetLinkingResDto {
   organizerId: number;
 
   @ApiProperty({
+    name: 'nickname',
+    type: String,
+    description: '작성자 nickname',
+  })
+  @Expose()
+  @IsString()
+  nickname: string;
+
+  @ApiProperty({
     name: 'linkingTitle',
     type: String,
     description: '링킹 제목',
@@ -122,26 +131,6 @@ export class GetLinkingResDto {
   linkingDeadline: string;
 
   @ApiProperty({
-    name: 'linkingStartAt',
-    type: String,
-    description: '링킹 시작 일자',
-  })
-  @Transform(({ value }) => dayjs(value).format('YYYY-MM-DD HH:mm'))
-  @Expose()
-  @IsString()
-  linkingStartAt: string;
-
-  @ApiProperty({
-    name: 'linkingEndAt',
-    type: String,
-    description: '링킹 종료 일자',
-  })
-  @Transform(({ value }) => dayjs(value).format('YYYY-MM-DD HH:mm'))
-  @Expose()
-  @IsString()
-  linkingEndAt: string;
-
-  @ApiProperty({
     name: 'createdAt',
     type: String,
     description: '등록 일자',
@@ -150,14 +139,4 @@ export class GetLinkingResDto {
   @Expose()
   @IsString()
   createdAt: string;
-
-  @ApiProperty({
-    name: 'updatedAt',
-    type: String,
-    description: '수정 일자',
-  })
-  @Transform(({ value }) => dayjs(value).format('YYYY-MM-DD HH:mm'))
-  @Expose()
-  @IsString()
-  updatedAt: string;
 }
