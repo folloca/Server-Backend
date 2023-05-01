@@ -60,4 +60,8 @@ export class ProposalLikeRepository extends Repository<ProposalLikeEntity> {
 }
 
 @TypeormRepository(OpinionEntity)
-export class OpinionRepository extends Repository<OpinionEntity> {}
+export class OpinionRepository extends Repository<OpinionEntity> {
+  async getProposalOpinionByUserId(userId: number) {
+    return await this.findBy({ writerId: userId });
+  }
+}

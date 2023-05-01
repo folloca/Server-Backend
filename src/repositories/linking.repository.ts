@@ -15,7 +15,11 @@ export class LinkingRepository extends Repository<LinkingEntity> {
 }
 
 @TypeormRepository(LinkingRequestEntity)
-export class LinkingRequestRepository extends Repository<LinkingRequestEntity> {}
+export class LinkingRequestRepository extends Repository<LinkingRequestEntity> {
+  async getLinkingsRequestByUserId(userId: number) {
+    return await this.findBy({ userId: userId });
+  }
+}
 
 @TypeormRepository(LinkingImageEntity)
 export class LinkingImageRepository extends Repository<LinkingImageEntity> {}

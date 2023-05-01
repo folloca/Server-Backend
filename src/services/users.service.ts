@@ -10,6 +10,7 @@ import { UserRepository } from '../repositories/user.repository';
 import {
   ProposalRepository,
   ProposalLikeRepository,
+  OpinionRepository,
 } from '../repositories/proposal.repository';
 import {
   EstateRepository,
@@ -18,6 +19,7 @@ import {
 import {
   LinkingRepository,
   LinkingLikeRepository,
+  LinkingRequestRepository,
 } from '../repositories/linking.repository';
 import { adjectives, nouns } from '../custom/data/nickname-keywords';
 import { UpdateUserinfoReqDto } from '../dto/req/update-userinfo-req.dto';
@@ -38,6 +40,8 @@ export class UsersService {
     private proposalLikeRepository: ProposalLikeRepository,
     private estateLikeRepository: EstateLikeRepository,
     private linkingLikeRepository: LinkingLikeRepository,
+    private opinionRepository: OpinionRepository,
+    private linkingRequestRepository: LinkingRequestRepository,
   ) {
     this.redis = new Redis({
       host: configService.get(`${process.env.NODE_ENV}.redis.host`),
@@ -231,6 +235,23 @@ export class UsersService {
         proposals: proposal,
         estates: estate,
         linkings: linking,
+      },
+    };
+  }
+
+  async getSentOpinionByUserId(userId: number) {
+    const proposals = await this.opinionRepository.getProposalOpinionByUserId(
+      userId,
+    );
+
+    const linkings =
+      await this.linkingRequestRepository.getLinkingsRequestByUserId(userId);
+
+    return {
+      total_cnt: proposals.length + linkings.length,
+      posts: {
+        proposals: proposals,
+        linkings: linkings,
       },
     };
   }
