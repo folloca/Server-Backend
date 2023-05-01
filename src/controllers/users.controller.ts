@@ -138,7 +138,7 @@ export class UsersController {
     description:
       '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
   })
-  async getProfile(@Query() query, @Res() res) {
+  async getProfileDashboard(@Query() query, @Res() res) {
     const email = query.email;
 
     if (email) {
