@@ -73,6 +73,19 @@ export class ProposalLikeRepository extends Repository<ProposalLikeEntity> {
 @TypeormRepository(OpinionEntity)
 export class OpinionRepository extends Repository<OpinionEntity> {
   async getProposalOpinionByUserId(userId: number) {
-    return await this.findBy({ writerId: userId });
+    return await this.query(`
+      SELECT 
+        b.proposal_id as proposalId, 
+        a.opinion_text as opinionText, 
+        b.created_at as createdAt, 
+        b.proposal_introduction as proposalIntroduction, 
+        c.estate_name as estateName, 
+        d.nickname as nickname
+      FROM opinion a
+      LEFT JOIN proposal b on a.proposal_id = b.proposal_id
+      LEFT JOIN estate c on b.estate_id = c.estate_id
+      LEFT JOIN user d on b.planner_id = d.user_id
+      WHERE a.writer_id = ${userId}
+    `);
   }
 }

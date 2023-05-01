@@ -28,7 +28,21 @@ export class LinkingRepository extends Repository<LinkingEntity> {
 @TypeormRepository(LinkingRequestEntity)
 export class LinkingRequestRepository extends Repository<LinkingRequestEntity> {
   async getLinkingsRequestByUserId(userId: number) {
-    return await this.findBy({ userId: userId });
+    // return await this.findBy({ userId: userId });
+
+    return await this.query(`
+      SELECT 
+        b.linking_id as linkingId, 
+        a.participate_message as participateMessage, 
+        b.created_at as createdAt, 
+        b.linking_title as linkingTitle, 
+        b.member_count as memberCount, 
+        b.linking_deadline as linkingDeadline, 
+        b.recruit_in_progress as recruitInProgress
+      FROM linking_request a
+      LEFT JOIN linking b on a.linking_id = b.linking_id
+      WHERE a.user_id = ${userId}
+    `);
   }
 }
 

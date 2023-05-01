@@ -30,6 +30,7 @@ export class OpinionEntity extends DateColumnEntity {
     (proposal: ProposalEntity) => proposal.opinions,
     {
       onDelete: 'CASCADE',
+      eager: true,
     },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])

@@ -222,4 +222,39 @@ export class UsersController {
       }
     }
   }
+
+  @Get('/profile/opinions')
+  @ApiOperation({
+    summary: 'profile 보낸 의견 조회',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description:
+      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+  })
+  async getProfileOpinions(@Query() query, @Res() res) {
+    const email = query.email;
+
+    if (email) {
+      const userData = await this.usersService.getProfilePageUserInfo(email);
+      const { userId } = userData;
+
+      if (userData) {
+        const opinionList = await this.usersService.getSentOpinionByUserId(
+          userId,
+        );
+
+        res.status(200).send({
+          total_cnt: opinionList.total_cnt,
+          posts: opinionList.posts,
+        });
+      } else {
+        res.status(404).send({
+          message: `Not Found User`,
+        });
+      }
+    }
+  }
 }

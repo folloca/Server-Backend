@@ -31,7 +31,7 @@ export class LinkingRequestEntity extends DateColumnEntity {
     { onDelete: 'CASCADE' },
   )
   @JoinColumn([{ name: 'linking_id', referencedColumnName: 'linkingId' }])
-  linkingId: LinkingEntity;
+  linkingId: number;
 
   @Column({
     name: 'participate_message',
