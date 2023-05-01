@@ -25,6 +25,10 @@ import { adjectives, nouns } from '../custom/data/nickname-keywords';
 import { UpdateUserinfoReqDto } from '../dto/req/update-userinfo-req.dto';
 import * as bcrypt from 'bcrypt';
 import Redis from 'ioredis';
+import { plainToInstance } from 'class-transformer';
+import { GetEstateResDto } from 'src/dto/res/get-estate-res.dto';
+import { GetProposalResDto } from 'src/dto/res/get-proposal-res.dto';
+import { GetLinkingResDto } from 'src/dto/res/get-linkings-req.dto';
 
 @Injectable()
 export class UsersService {
@@ -208,15 +212,33 @@ export class UsersService {
   }
 
   async getProposalListByUserId(userId: number) {
-    return await this.proposalRepository.getProposalListByUserId(userId);
+    return plainToInstance(
+      GetProposalResDto,
+      await this.proposalRepository.getProposalListByUserId(userId),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   async getEstateListByUserId(userId: number) {
-    return await this.estateRepository.getEstateListByUserId(userId);
+    return plainToInstance(
+      GetEstateResDto,
+      await this.estateRepository.getEstateListByUserId(userId),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   async getLinkingListByUserId(userId: number) {
-    return await this.linkingRepository.getLinkingListByUserId(userId);
+    return plainToInstance(
+      GetLinkingResDto,
+      await this.linkingRepository.getLinkingListByUserId(userId),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   async getLikedPostByUserId(userId: number) {
@@ -253,6 +275,30 @@ export class UsersService {
         proposals: proposals,
         linkings: linkings,
       },
+    };
+  }
+  // latest-seen-proposals_${email}
+
+  async getLatestSeen(userId: number) {
+    const proposalIdList = await this.redis.zrevrange(
+      `latest_seen_proposals_${userId}`,
+      0,
+      -1,
+    );
+    const estateIdList = await this.redis.zrevrange(
+      `latest_seen_estates_${userId}`,
+      0,
+      -1,
+    );
+    const linkingIdList = await this.redis.zrevrange(
+      `latest_seen_linkings_${userId}`,
+      0,
+      -1,
+    );
+
+    return {
+      total_cnt:
+        proposalIdList.length + estateIdList.length + linkingIdList.length,
     };
   }
 }

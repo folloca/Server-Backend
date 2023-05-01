@@ -148,16 +148,19 @@ export class UsersController {
       const proposals = await this.usersService.getProposalListByUserId(userId);
       const linkings = await this.usersService.getLinkingListByUserId(userId);
       const estates = await this.usersService.getEstateListByUserId(userId);
+
       if (userData) {
         res.status(200).send({
           profile: userData,
           dashboard: {
             post_cnt: proposals.length + linkings.length + estates.length,
-            likes_cnt: await this.usersService.getLikedPostByUserId(userId),
-            sentOpinion_cnt: await this.usersService.getSentOpinionByUserId(
-              userId,
-            ),
-            recentPosts_cnt: 0,
+            likes_cnt: (await this.usersService.getLikedPostByUserId(userId))
+              .total_cnt,
+            sentOpinion_cnt: (
+              await this.usersService.getSentOpinionByUserId(userId)
+            ).total_cnt,
+            recentPosts_cnt: (await this.usersService.getLatestSeen(userId))
+              .total_cnt,
           },
           posts: {
             proposals: proposals,
@@ -167,7 +170,7 @@ export class UsersController {
         });
       } else {
         res.status(404).send({
-          message: '',
+          message: `Not Found User`,
         });
       }
     }
