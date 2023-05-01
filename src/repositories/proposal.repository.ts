@@ -32,6 +32,17 @@ export class ProposalRepository extends Repository<ProposalEntity> {
   async getProposalListByUserId(userId: number) {
     return await this.findBy({ plannerId: userId });
   }
+
+  async getProposalListByLikes(proposalIds: number[]) {
+    if (proposalIds.length > 0) {
+      return await this.createQueryBuilder()
+        .where('proposal_id IN (:...ids)', {
+          ids: proposalIds,
+        })
+        .orderBy('created_at', 'DESC')
+        .getMany();
+    }
+  }
 }
 
 @TypeormRepository(ProposalDetailEntity)

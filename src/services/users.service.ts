@@ -277,7 +277,6 @@ export class UsersService {
       },
     };
   }
-  // latest-seen-proposals_${email}
 
   async getLatestSeen(userId: number) {
     const proposalIdList = await this.redis.zrevrange(
@@ -299,6 +298,36 @@ export class UsersService {
     return {
       total_cnt:
         proposalIdList.length + estateIdList.length + linkingIdList.length,
+    };
+  }
+
+  async getLikesPostByIds(
+    proposalIds: number[],
+    linkingIds: number[],
+    estateIds: number[],
+  ) {
+    return {
+      proposals: plainToInstance(
+        GetProposalResDto,
+        await this.proposalRepository.getProposalListByLikes(proposalIds),
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
+      linkings: plainToInstance(
+        GetLinkingResDto,
+        await this.linkingRepository.getLinkingListByLikes(linkingIds),
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
+      estates: plainToInstance(
+        GetEstateResDto,
+        await this.estateRepository.getEstateListByLikes(estateIds),
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
     };
   }
 }

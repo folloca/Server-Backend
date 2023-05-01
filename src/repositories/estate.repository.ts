@@ -147,6 +147,17 @@ export class EstateRepository extends Repository<EstateEntity> {
   async getEstateListByUserId(userId: number) {
     return await this.findBy({ ownerId: userId });
   }
+
+  async getEstateListByLikes(estateIds: number[]) {
+    if (estateIds.length > 0) {
+      return await this.createQueryBuilder()
+        .where('estate_id IN (:...ids)', {
+          ids: estateIds,
+        })
+        .orderBy('created_at', 'DESC')
+        .getRawMany();
+    }
+  }
 }
 
 @TypeormRepository(MapNumberingEntity)

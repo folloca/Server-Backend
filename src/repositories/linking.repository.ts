@@ -12,6 +12,17 @@ export class LinkingRepository extends Repository<LinkingEntity> {
   async getLinkingListByUserId(userId: number) {
     return this.findBy({ organizerId: userId });
   }
+
+  async getLinkingListByLikes(linkingIds: number[]) {
+    if (linkingIds.length > 0) {
+      return await this.createQueryBuilder()
+        .where('linking_id IN (:...ids)', {
+          ids: linkingIds,
+        })
+        .orderBy('created_at', 'DESC')
+        .getRawMany();
+    }
+  }
 }
 
 @TypeormRepository(LinkingRequestEntity)
