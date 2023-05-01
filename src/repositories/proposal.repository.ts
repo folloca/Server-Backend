@@ -30,17 +30,37 @@ export class ProposalRepository extends Repository<ProposalEntity> {
   }
 
   async getProposalListByUserId(userId: number) {
-    return await this.findBy({ plannerId: userId });
+    if (userId) {
+      return await this.query(`
+        SELECT
+          a.proposal_id as proposalId,
+          b.nickname as nickname,
+          c.estate_name as estateName,
+          a.thumbnail as thunmbail,
+          a.proposal_introduction as proposalIntroduction
+        FROM proposal a
+        LEFT JOIN user b ON a.planner_id = b.user_id
+        LEFT JOIN estate c on a.estate_id = c.estate_id
+        WHERE planner_id = ${userId}
+      `);
+    }
   }
 
-  async getProposalListByLikes(proposalIds: number[]) {
+  async getProposalListByIds(proposalIds: number[]) {
     if (proposalIds.length > 0) {
-      return await this.createQueryBuilder()
-        .where('proposal_id IN (:...ids)', {
-          ids: proposalIds,
-        })
-        .orderBy('created_at', 'DESC')
-        .getMany();
+      return await this.query(`
+        SELECT 
+          a.proposal_id as proposalId,
+          b.estate_name as estateName,
+          c.nickname as nickname,
+          a.thumbnail as thunmbail,
+          a.proposal_introduction as proposalIntroduction,
+          a.created_at as createdAt
+        FROM proposal a
+        LEFT JOIN estate b on a.estate_id = b.estate_id
+        LEFT JOIN user c on b.owner_id = c.user_id
+        WHERE proposal_id IN (${proposalIds})
+      `);
     }
   }
 }

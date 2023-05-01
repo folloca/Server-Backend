@@ -13,14 +13,20 @@ export class LinkingRepository extends Repository<LinkingEntity> {
     return this.findBy({ organizerId: userId });
   }
 
-  async getLinkingListByLikes(linkingIds: number[]) {
+  async getLinkingListByIds(linkingIds: number[]) {
     if (linkingIds.length > 0) {
-      return await this.createQueryBuilder()
-        .where('linking_id IN (:...ids)', {
-          ids: linkingIds,
-        })
-        .orderBy('created_at', 'DESC')
-        .getRawMany();
+      return await this.query(`
+        SELECT 
+          a.created_at as createdAt,
+          a.linking_title as linkingTitle,
+          a.recruit_in_progress as recruitInProgress,
+          a.linking_deadline as linkingDeadline,
+          a.member_count as memberCount,
+          b.nickname as nickname
+        FROM linking a
+        LEFT JOIN user b on a.organizer_id = b.user_id
+        WHERE linking_id IN (${linkingIds})
+      `);
     }
   }
 }
