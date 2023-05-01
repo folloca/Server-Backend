@@ -28,7 +28,7 @@ import Redis from 'ioredis';
 import { plainToInstance } from 'class-transformer';
 import { GetEstateResDto } from 'src/dto/res/get-estate-res.dto';
 import { GetProposalResDto } from 'src/dto/res/get-proposal-res.dto';
-import { GetLinkingResDto } from 'src/dto/res/get-linkings-req.dto';
+import { GetLinkingResDto } from 'src/dto/res/get-linkings-res.dto';
 import { OpinionResDto } from 'src/dto/res/opinion-res.dto';
 import { LinkingRequestResDto } from 'src/dto/res/linkging-request-res.dto';
 
@@ -214,13 +214,13 @@ export class UsersService {
   }
 
   async getProposalListByUserId(userId: number) {
-    return plainToInstance(
-      GetProposalResDto,
-      await this.proposalRepository.getProposalListByUserId(userId),
-      {
-        excludeExtraneousValues: true,
-      },
+    const resData = await this.proposalRepository.getProposalListByUserId(
+      userId,
     );
+
+    return plainToInstance(GetProposalResDto, resData, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getEstateListByUserId(userId: number) {
@@ -304,6 +304,11 @@ export class UsersService {
     return {
       total_cnt:
         proposalIdList.length + estateIdList.length + linkingIdList.length,
+      posts: {
+        proposals: proposalIdList,
+        estates: estateIdList,
+        linkings: linkingIdList,
+      },
     };
   }
 
@@ -315,21 +320,51 @@ export class UsersService {
     return {
       proposals: plainToInstance(
         GetProposalResDto,
-        await this.proposalRepository.getProposalListByLikes(proposalIds),
+        await this.proposalRepository.getProposalListByIds(proposalIds),
         {
           excludeExtraneousValues: true,
         },
       ),
       linkings: plainToInstance(
-        GetLinkingResDto,
-        await this.linkingRepository.getLinkingListByLikes(linkingIds),
+        LinkingRequestResDto,
+        await this.linkingRepository.getLinkingListByIds(linkingIds),
         {
           excludeExtraneousValues: true,
         },
       ),
       estates: plainToInstance(
         GetEstateResDto,
-        await this.estateRepository.getEstateListByLikes(estateIds),
+        await this.estateRepository.getEstateListByIds(estateIds),
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
+    };
+  }
+
+  async getLatestSeenPosts(posts: {
+    proposals: any;
+    linkings: any;
+    estates: any;
+  }) {
+    return {
+      proposals: plainToInstance(
+        GetProposalResDto,
+        await this.proposalRepository.getProposalListByIds(posts.proposals),
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
+      linkings: plainToInstance(
+        GetLinkingResDto,
+        await this.linkingRepository.getLinkingListByIds(posts.linkings),
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
+      estates: plainToInstance(
+        GetEstateResDto,
+        await this.estateRepository.getEstateListByIds(posts.estates),
         {
           excludeExtraneousValues: true,
         },

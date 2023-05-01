@@ -153,7 +153,8 @@ export class UsersController {
         res.status(200).send({
           profile: userData,
           dashboard: {
-            post_cnt: proposals.length + linkings.length + estates.length,
+            post_cnt:
+              Object.keys(proposals).length + linkings.length + estates.length,
             likes_cnt: (await this.usersService.getLikedPostByUserId(userId))
               .total_cnt,
             sentOpinion_cnt: (
@@ -249,6 +250,45 @@ export class UsersController {
         res.status(200).send({
           total_cnt: opinionList.total_cnt,
           posts: opinionList.posts,
+        });
+      } else {
+        res.status(404).send({
+          message: `Not Found User`,
+        });
+      }
+    }
+  }
+
+  @Get('/profile/recent')
+  @ApiOperation({
+    summary: 'profile 보낸 의견 조회',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description:
+      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+  })
+  async getProfileRecent(@Query() query, @Res() res) {
+    const email = query.email;
+
+    if (email) {
+      const userData = await this.usersService.getProfilePageUserInfo(email);
+      const { userId } = userData;
+
+      if (userData) {
+        const recentIdList = await this.usersService.getLatestSeen(userId);
+
+        const recentPostList = await this.usersService.getLatestSeenPosts(
+          recentIdList.posts,
+        );
+
+        console.log(recentPostList.linkings);
+
+        res.status(200).send({
+          total_cnt: recentIdList.total_cnt,
+          posts: recentPostList,
         });
       } else {
         res.status(404).send({
