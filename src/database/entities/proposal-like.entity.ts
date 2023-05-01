@@ -23,6 +23,7 @@ export class ProposalLikeEntity extends DateColumnEntity {
     (proposal: ProposalEntity) => proposal.proposalLikes,
     {
       onDelete: 'CASCADE',
+      eager: true,
     },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])

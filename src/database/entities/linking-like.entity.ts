@@ -23,6 +23,7 @@ export class LinkingLikeEntity extends DateColumnEntity {
     (linking: LinkingEntity) => linking.linkingLikes,
     {
       onDelete: 'CASCADE',
+      eager: true,
     },
   )
   @JoinColumn([{ name: 'linking_id', referencedColumnName: 'linkingId' }])
