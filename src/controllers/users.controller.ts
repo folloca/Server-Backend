@@ -153,9 +153,10 @@ export class UsersController {
           profile: userData,
           dashboard: {
             post_cnt: proposals.length + linkings.length + estates.length,
-            likes_cnt: (await this.usersService.getLikedPostByUserId(userId))
-              .total_cnt,
-            sentOpinion_cnt: 0,
+            likes_cnt: await this.usersService.getLikedPostByUserId(userId),
+            sentOpinion_cnt: await this.usersService.getSentOpinionByUserId(
+              userId,
+            ),
             recentPosts_cnt: 0,
           },
           posts: {
