@@ -27,5 +27,5 @@ export class ProposalLikeEntity extends DateColumnEntity {
     },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])
-  proposalId: ProposalEntity;
+  proposalId: number;
 }

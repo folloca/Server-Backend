@@ -7,9 +7,12 @@ import {
   ProposalLikeEntity,
 } from '../database/entities';
 import { ProposalDetailsDto } from '../dto/req/create-proposal.dto';
+import { executeQueryWithTransaction } from './functions';
 
 @TypeormRepository(ProposalEntity)
 export class ProposalRepository extends Repository<ProposalEntity> {
+  private managerConnection = this.manager.connection;
+
   async createProposalData(
     userId: number,
     thumbnail: string,
@@ -85,6 +88,14 @@ export class ProposalRepository extends Repository<ProposalEntity> {
       { thumbnail, proposalIntroduction, proposalDescription, opinionOpen },
     );
   }
+
+  async updateTotalLikes(proposalId: number, variation: number) {
+    const query = this.createQueryBuilder()
+      .update('proposal')
+      .set({ totalLikes: () => `total_likes + ${variation}` })
+      .where('proposalId = :id', { id: proposalId });
+    await executeQueryWithTransaction(this.managerConnection, query);
+  }
 }
 
 @TypeormRepository(ProposalDetailEntity)
@@ -122,8 +133,31 @@ export class ProposalDetailRepository extends Repository<ProposalDetailEntity> {
 
 @TypeormRepository(ProposalLikeEntity)
 export class ProposalLikeRepository extends Repository<ProposalLikeEntity> {
+  private managerConnection = this.manager.connection;
   async getLikedProposalsByUserId(userId: number) {
     return await this.findBy({ userId: userId });
+  }
+
+  async checkLike(userId: number, proposalId: number): Promise<boolean> {
+    const result = await this.findOneBy({ userId, proposalId });
+    return !!result;
+  }
+
+  async addLike(userId: number, proposalId: number) {
+    const query = this.createQueryBuilder()
+      .insert()
+      .into('proposal_like')
+      .values({ userId, proposalId });
+    await executeQueryWithTransaction(this.managerConnection, query);
+  }
+
+  async cancelLike(userId: number, proposalId: number) {
+    const query = this.createQueryBuilder()
+      .delete()
+      .from('proposal_like')
+      .where('user_id = :userId', { userId })
+      .andWhere('proposal_id = :proposalId', { proposalId });
+    await executeQueryWithTransaction(this.managerConnection, query);
   }
 }
 

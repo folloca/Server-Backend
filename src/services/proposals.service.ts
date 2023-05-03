@@ -197,4 +197,36 @@ export class ProposalsService {
       return { message: `Deleted proposal ${proposalId}` };
     }
   }
+
+  async likeStatus(proposalId: string, userId: string): Promise<boolean> {
+    const likesOfProposal = await this.redis.smembers(
+      `like_proposal_${proposalId}`,
+    );
+    return !!likesOfProposal.includes(String(userId));
+  }
+
+  async likeCount(proposalId: number) {
+    return this.redis.scard(`like_proposal_${proposalId}`);
+  }
+
+  async proposalLikeUnlike(proposalId: string, userId: number) {
+    const likeCheck = await this.likeStatus(proposalId, `${userId}`);
+
+    let action;
+    if (likeCheck) {
+      await this.redis.srem(`like_proposal_${proposalId}`, userId);
+      await this.proposalRepository.updateTotalLikes(+proposalId, -1);
+      await this.proposalLikeRepository.cancelLike(+userId, +proposalId);
+      action = 'Cancel';
+    } else {
+      await this.redis.sadd(`like_proposal_${proposalId}`, userId);
+      await this.proposalRepository.updateTotalLikes(+proposalId, 1);
+      await this.proposalLikeRepository.addLike(+userId, +proposalId);
+      action = 'Add';
+    }
+
+    return {
+      message: `${action} LIKE of proposal ${proposalId} from ${userId}`,
+    };
+  }
 }
