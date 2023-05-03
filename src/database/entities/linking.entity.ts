@@ -34,7 +34,7 @@ export class LinkingEntity extends DateColumnEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'organizer_id', referencedColumnName: 'userId' }])
-  organizerId: UserEntity;
+  organizerId: number;
 
   @Column({
     name: 'linking_deadline',

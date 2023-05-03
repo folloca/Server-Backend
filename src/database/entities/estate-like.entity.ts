@@ -20,6 +20,7 @@ export class EstateLikeEntity extends DateColumnEntity {
 
   @ManyToOne(() => EstateEntity, (estate: EstateEntity) => estate.estateLikes, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   @JoinColumn([{ name: 'estate_id', referencedColumnName: 'estateId' }])
   estateId: number;

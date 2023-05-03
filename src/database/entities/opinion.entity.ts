@@ -23,13 +23,14 @@ export class OpinionEntity extends DateColumnEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'writer_id', referencedColumnName: 'userId' }])
-  writerId: UserEntity;
+  writerId: number;
 
   @ManyToOne(
     () => ProposalEntity,
     (proposal: ProposalEntity) => proposal.opinions,
     {
       onDelete: 'CASCADE',
+      eager: true,
     },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])

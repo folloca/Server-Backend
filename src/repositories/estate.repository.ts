@@ -143,6 +143,29 @@ export class EstateRepository extends Repository<EstateEntity> {
       .where('estateId = :id', { id: estateId });
     await executeQueryWithTransaction(this.managerConnection, query);
   }
+
+  async getEstateListByUserId(userId: number) {
+    return await this.findBy({ ownerId: userId });
+  }
+
+  async getEstateListByIds(estateIds: number[]) {
+    if (estateIds.length > 0) {
+      return await this.query(`
+        SELECT 
+          a.created_at as createdAt,
+          a.estate_name as estateName,
+          a.estate_theme as estateTheme,
+          a.proposal_deadline as proposalDeadline,
+          a.thumbnail as thumbnail,
+          a.estate_keyword as estateKeyword,
+          a.estate_use as estateUse,
+          b.nickname as nickname
+        FROM estate a
+        LEFT JOIN user b ON a.owner_id = b.user_id
+        WHERE estate_id IN (${estateIds})
+      `);
+    }
+  }
 }
 
 @TypeormRepository(MapNumberingEntity)
@@ -207,5 +230,9 @@ export class EstateLikeRepository extends Repository<EstateLikeEntity> {
       .where('user_id = :userId', { userId })
       .andWhere('estate_id = :estateId', { estateId });
     await executeQueryWithTransaction(this.managerConnection, query);
+  }
+
+  async getLikedEstatesByUserId(userId: number) {
+    return await this.findBy({ userId: userId });
   }
 }

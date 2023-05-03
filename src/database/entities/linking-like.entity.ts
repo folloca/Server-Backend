@@ -16,13 +16,14 @@ export class LinkingLikeEntity extends DateColumnEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'userId' }])
-  userId: UserEntity;
+  userId: number;
 
   @ManyToOne(
     () => LinkingEntity,
     (linking: LinkingEntity) => linking.linkingLikes,
     {
       onDelete: 'CASCADE',
+      eager: true,
     },
   )
   @JoinColumn([{ name: 'linking_id', referencedColumnName: 'linkingId' }])

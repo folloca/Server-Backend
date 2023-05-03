@@ -5,6 +5,7 @@ import {
   Patch,
   Post,
   Query,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -123,5 +125,176 @@ export class UsersController {
     @GetUserId() userId,
   ) {
     return await this.usersService.updateUserInfo(userId, updateUserinfoReqDto);
+  }
+
+  @Get('/profile')
+  @ApiOperation({
+    summary: 'profile dashboard & 작성한 글 조회',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description:
+      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+  })
+  async getProfileDashboard(@Query() query, @Res() res) {
+    const email = query.email;
+
+    if (email) {
+      const userData = await this.usersService.getProfilePageUserInfo(email);
+      const { userId } = userData;
+
+      const proposals = await this.usersService.getProposalListByUserId(userId);
+      const linkings = await this.usersService.getLinkingListByUserId(userId);
+      const estates = await this.usersService.getEstateListByUserId(userId);
+
+      if (userData) {
+        res.status(200).send({
+          profile: userData,
+          dashboard: {
+            post_cnt:
+              Object.keys(proposals).length + linkings.length + estates.length,
+            likes_cnt: (await this.usersService.getLikedPostByUserId(userId))
+              .total_cnt,
+            sentOpinion_cnt: (
+              await this.usersService.getSentOpinionByUserId(userId)
+            ).total_cnt,
+            recentPosts_cnt: (await this.usersService.getLatestSeen(userId))
+              .total_cnt,
+          },
+          posts: {
+            proposals: proposals,
+            linkings: linkings,
+            estates: estates,
+          },
+        });
+      } else {
+        res.status(404).send({
+          message: `Not Found User`,
+        });
+      }
+    }
+  }
+
+  @Get('/profile/likes')
+  @ApiOperation({
+    summary: 'profile like 조회',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description:
+      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+  })
+  async getProfileLikes(@Query() query, @Res() res) {
+    const email = query.email;
+
+    if (email) {
+      const userData = await this.usersService.getProfilePageUserInfo(email);
+      const { userId } = userData;
+
+      if (userData) {
+        const likeList = await this.usersService.getLikedPostByUserId(userId);
+
+        const proposalIds = likeList.posts.proposals.map(
+          (proposal) => proposal.proposalId.proposalId,
+        );
+        const linkingIds = likeList.posts.linkings.map(
+          (linking) => linking.linkingId.linkingId,
+        );
+        const estateIds = likeList.posts.estates.map(
+          (estate) => estate.estateId,
+        );
+
+        res.status(200).send({
+          total_cnt: likeList.total_cnt,
+          posts: await this.usersService.getLikesPostByIds(
+            proposalIds,
+            linkingIds,
+            estateIds,
+          ),
+        });
+      } else {
+        res.status(404).send({
+          message: `Not Found User`,
+        });
+      }
+    }
+  }
+
+  @Get('/profile/opinions')
+  @ApiOperation({
+    summary: 'profile 보낸 의견 조회',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description:
+      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+  })
+  async getProfileOpinions(@Query() query, @Res() res) {
+    const email = query.email;
+
+    if (email) {
+      const userData = await this.usersService.getProfilePageUserInfo(email);
+      const { userId } = userData;
+
+      if (userData) {
+        const opinionList = await this.usersService.getSentOpinionByUserId(
+          userId,
+        );
+
+        res.status(200).send({
+          total_cnt: opinionList.total_cnt,
+          posts: opinionList.posts,
+        });
+      } else {
+        res.status(404).send({
+          message: `Not Found User`,
+        });
+      }
+    }
+  }
+
+  @Get('/profile/recent')
+  @ApiOperation({
+    summary: 'profile 보낸 의견 조회',
+  })
+  @ApiParam({
+    name: 'email',
+    type: String,
+    required: true,
+    description:
+      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+  })
+  async getProfileRecent(@Query() query, @Res() res) {
+    const email = query.email;
+
+    if (email) {
+      const userData = await this.usersService.getProfilePageUserInfo(email);
+      const { userId } = userData;
+
+      if (userData) {
+        const recentIdList = await this.usersService.getLatestSeen(userId);
+
+        const recentPostList = await this.usersService.getLatestSeenPosts(
+          recentIdList.posts,
+        );
+
+        console.log(recentPostList.linkings);
+
+        res.status(200).send({
+          total_cnt: recentIdList.total_cnt,
+          posts: recentPostList,
+        });
+      } else {
+        res.status(404).send({
+          message: `Not Found User`,
+        });
+      }
+    }
   }
 }
