@@ -33,12 +33,13 @@ export class LinkingRequestResDto {
 
   @ApiProperty({
     name: 'memberCount',
-    type: String,
-    description: '참여 메시지',
+    type: Number,
+    description: '참여 인원수',
   })
   @Expose()
   @IsNumber()
   memberCount: number;
+
   @ApiProperty({
     name: 'linkingDeadline',
     type: String,
@@ -51,12 +52,12 @@ export class LinkingRequestResDto {
 
   @ApiProperty({
     name: 'recruitInProgress',
-    type: String,
-    description: '참여 메시지',
+    type: Boolean,
+    description: '링킹 모집 여부',
   })
   @Expose()
   @IsNumber()
-  recruitInProgress: number;
+  recruitInProgress: boolean;
 
   @ApiProperty({
     name: 'createdAt',
