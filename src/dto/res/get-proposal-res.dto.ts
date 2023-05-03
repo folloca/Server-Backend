@@ -39,7 +39,14 @@ export class GetProposalResDto {
   })
   @Transform(
     ({ value }) =>
-      `${path.join(__dirname, '..', '..', '..', 'storage', 'estate')}/${value}`,
+      `${path.join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'storage',
+        'proposal',
+      )}/${value}`,
   )
   @Expose()
   @IsString()
