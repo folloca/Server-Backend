@@ -30,7 +30,7 @@ import { GetEstateResDto } from 'src/dto/res/get-estate-res.dto';
 import { GetProposalResDto } from 'src/dto/res/get-proposal-res.dto';
 import { GetLinkingResDto } from 'src/dto/res/get-linkings-res.dto';
 import { OpinionResDto } from 'src/dto/res/opinion-res.dto';
-import { LinkingRequestResDto } from 'src/dto/res/linkging-request-res.dto';
+import { LinkingRequestResDto } from 'src/dto/res/linking-request-res.dto';
 
 @Injectable()
 export class UsersService {
