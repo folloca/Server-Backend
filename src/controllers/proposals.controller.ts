@@ -146,4 +146,23 @@ export class ProposalsController {
   async deleteProposal(@GetUserId() userId, @Query('proposalId') proposalId) {
     return this.proposalsService.deleteProposal(userId, +proposalId);
   }
+
+  @Post('/like')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '기획 좋아요/취소',
+    description: '기획 게시물 id를 받아 좋아요 추가 및 취소',
+  })
+  @ApiQuery({
+    name: 'proposalId',
+    type: String,
+    required: true,
+    description: '기획 id',
+  })
+  async proposalLikeUnlike(
+    @Query('proposalId') proposalId,
+    @GetUserId() userId,
+  ) {
+    return this.proposalsService.proposalLikeUnlike(proposalId, userId);
+  }
 }
