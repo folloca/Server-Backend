@@ -199,7 +199,7 @@ export class UsersController {
         const likeList = await this.usersService.getLikedPostByUserId(userId);
 
         const proposalIds = likeList.posts.proposals.map(
-          (proposal) => proposal.proposalId.proposalId,
+          (proposal) => proposal.proposalId,
         );
         const linkingIds = likeList.posts.linkings.map(
           (linking) => linking.linkingId.linkingId,
