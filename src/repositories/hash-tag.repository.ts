@@ -54,11 +54,15 @@ export class EstateTagRepository extends Repository<EstateTagEntity> {
 
 @TypeormRepository(ProposalTagEntity)
 export class ProposalTagRepository extends Repository<ProposalTagEntity> {
-  async createEstateTag(proposalId: number, hashTagIds: number[]) {
+  async createProposalTag(proposalId: number, hashTagIds: number[]) {
     await Promise.all(
       hashTagIds.map(async (hashTagId) => {
         await this.save({ hashTagId, proposalId });
       }),
     );
+  }
+
+  async deleteProposalTag(proposalId: number) {
+    await this.delete({ proposalId });
   }
 }

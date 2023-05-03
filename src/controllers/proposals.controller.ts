@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Patch,
   Post,
   Query,
   UploadedFiles,
@@ -21,6 +23,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../utilities/multer.options';
 import { GetUserId } from '../custom/decorator/user-id.decorator';
 import { CreateProposalDto } from '../dto/req/create-proposal.dto';
+import { UpdateProposalDto } from '../dto/req/update-proposal.dto';
 
 @ApiTags('proposals')
 @Controller('proposals')
@@ -85,5 +88,62 @@ export class ProposalsController {
       filenames,
       createProposalDto,
     );
+  }
+
+  @Patch()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '기획 수정',
+    description: '기획 수정',
+  })
+  @ApiBody({
+    type: UpdateProposalDto,
+  })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'images', maxCount: 6 },
+      ],
+      multerOptions('proposal'),
+    ),
+  )
+  async updateEstate(
+    @UploadedFiles()
+    files: {
+      thumbnail: Express.Multer.File;
+      images?: Express.Multer.File[];
+    },
+    @GetUserId() userId,
+    @Body() updateProposalDto: UpdateProposalDto,
+  ) {
+    const filenames = {
+      thumbnail: files.thumbnail[0].filename,
+      images: files.images
+        ? files.images.map((file) => file.filename)
+        : undefined,
+    };
+    return this.proposalsService.updateProposal(
+      userId,
+      filenames,
+      updateProposalDto,
+    );
+  }
+
+  @Delete()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '기획 삭제',
+    description: '기획 id를 받아 토큰 검증 후 삭제',
+  })
+  @ApiQuery({
+    name: 'proposalId',
+    type: String,
+    required: true,
+    description: '기획 id',
+  })
+  async deleteProposal(@GetUserId() userId, @Query('proposalId') proposalId) {
+    return this.proposalsService.deleteProposal(userId, +proposalId);
   }
 }
