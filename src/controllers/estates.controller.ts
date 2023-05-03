@@ -141,8 +141,7 @@ export class EstatesController {
     required: true,
     description: '공간 id',
   })
-  async estateLikeUnlike(@Query() query, @GetUserId() userId) {
-    const { estateId } = query;
+  async estateLikeUnlike(@Query('estateId') estateId, @GetUserId() userId) {
     return this.estatesService.estateLikeUnlike(estateId, userId);
   }
 
