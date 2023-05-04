@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import { ConfigService } from '@nestjs/config';
 import {
+  OpinionRepository,
   ProposalDetailRepository,
   ProposalLikeRepository,
   ProposalRepository,
@@ -37,6 +38,7 @@ export class ProposalsService {
     private estateRepository: EstateRepository,
     private mapNumberingRepository: MapNumberingRepository,
     private userRepository: UserRepository,
+    private opinionRepository: OpinionRepository,
   ) {}
 
   async getEstateBeforeProposal(userId: number, estateId: number) {
@@ -228,5 +230,21 @@ export class ProposalsService {
     return {
       message: `${action} LIKE of proposal ${proposalId} from ${userId}`,
     };
+  }
+
+  async writeOpinion(userId: number, proposalId: number, opinionText: string) {
+    const openness = await this.proposalRepository.checkOpinionOpen(proposalId);
+
+    if (!openness) {
+      throw new BadRequestException(
+        `Proposal ${proposalId} is not open for opinions`,
+      );
+    } else {
+      await this.opinionRepository.createOpinionData(
+        userId,
+        proposalId,
+        opinionText,
+      );
+    }
   }
 }
