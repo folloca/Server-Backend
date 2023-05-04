@@ -34,7 +34,7 @@ export class OpinionEntity extends DateColumnEntity {
     },
   )
   @JoinColumn([{ name: 'proposal_id', referencedColumnName: 'proposalId' }])
-  proposalId: ProposalEntity;
+  proposalId: number;
 
   @Column({
     name: 'opinion_text',
