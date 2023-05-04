@@ -96,6 +96,11 @@ export class ProposalRepository extends Repository<ProposalEntity> {
       .where('proposalId = :id', { id: proposalId });
     await executeQueryWithTransaction(this.managerConnection, query);
   }
+
+  async checkOpinionOpen(proposalId: number) {
+    const { opinionOpen } = await this.findOneBy({ proposalId });
+    return opinionOpen;
+  }
 }
 
 @TypeormRepository(ProposalDetailEntity)
@@ -178,5 +183,14 @@ export class OpinionRepository extends Repository<OpinionEntity> {
       LEFT JOIN user d on b.planner_id = d.user_id
       WHERE a.writer_id = ${userId}
     `);
+  }
+
+  async createOpinionData(
+    writerId: number,
+    proposalId: number,
+    opinionText: string,
+  ) {
+    const data = { writerId, proposalId, opinionText };
+    await this.save(data);
   }
 }
