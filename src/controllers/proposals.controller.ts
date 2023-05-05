@@ -33,7 +33,7 @@ export class ProposalsController {
     private proposalsService: ProposalsService,
   ) {}
 
-  @Get()
+  @Get('/prefill')
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '기획 등록하기 전 필요한 데이터 응답',
@@ -164,5 +164,27 @@ export class ProposalsController {
     @GetUserId() userId,
   ) {
     return this.proposalsService.proposalLikeUnlike(proposalId, userId);
+  }
+
+  @Post('/opinion')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '의견 작성',
+    description: '기획 게시물 id를 받아 의견 작성',
+  })
+  @ApiBody({
+    description: '기획 등록 body',
+    required: true,
+    schema: {
+      type: 'object',
+      properties: {
+        proposalId: { type: 'number' },
+        opinionText: { type: 'string' },
+      },
+    },
+  })
+  async writeOpinion(@GetUserId() userId, @Body() body) {
+    const { proposalId, opinionText } = body;
+    return this.proposalsService.writeOpinion(userId, proposalId, opinionText);
   }
 }
