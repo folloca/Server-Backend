@@ -18,6 +18,7 @@ import { PosteriorFilterEnumToKor } from '../custom/enum/posterior-filter.enum';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import { plainToInstance } from 'class-transformer';
 import Redis from 'ioredis';
+import { SingleEstateProposalListDto } from '../dto/res/single-estate-proposal-list.dto';
 
 @Injectable()
 export class EstatesService {
@@ -126,9 +127,12 @@ export class EstatesService {
       estateTagIds,
     );
 
-    // TODO proposal 테이블 조회
-    // TODO user 테이블에서 기획자 닉네임 조회
-    // TODO proposal tag 테이블 조회
+    const proposalsOfEstate =
+      await this.proposalRepository.getProposalListByEstate(estateId);
+
+    const proposalList = proposalsOfEstate.map((el) =>
+      plainToInstance(SingleEstateProposalListDto, el),
+    );
 
     return {
       data: {
@@ -137,6 +141,7 @@ export class EstatesService {
         likeOrNot,
         estateImages,
         estateHashTags,
+        proposalList,
       },
       message: `Detail information of estate ${estateId}`,
     };

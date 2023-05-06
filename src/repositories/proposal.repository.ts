@@ -56,7 +56,7 @@ export class ProposalRepository extends Repository<ProposalEntity> {
           a.proposal_id as proposalId,
           b.estate_name as estateName,
           c.nickname as nickname,
-          a.thumbnail as thunmbail,
+          a.thumbnail as thumbnail,
           a.proposal_introduction as proposalIntroduction,
           a.created_at as createdAt
         FROM proposal a
@@ -65,6 +65,28 @@ export class ProposalRepository extends Repository<ProposalEntity> {
         WHERE proposal_id IN (${proposalIds})
       `);
     }
+  }
+
+  async getProposalListByEstate(estateId: number) {
+    return await this.query(
+      `SELECT
+          proposal.proposal_id AS proposalId,
+          user.nickname AS plannerName,
+          proposal.proposal_introduction AS proposalIntroduction,
+          proposal.thumbnail,
+          GROUP_CONCAT(DISTINCT hash_tag.word) AS hashTags,
+          proposal.total_likes AS totalLikes,
+          proposal.created_at AS createdAt
+          proposal.updated_at AS updatedAt
+        FROM proposal
+        INNER JOIN user ON proposal.planner_id = user.user_id
+        LEFT JOIN proposal_tag ON proposal.proposal_id = proposal_tag.proposal_id
+        LEFT JOIN hash_tag ON hash_tag.hash_tag_id = proposal_tag.hash_tag_id
+        WHERE estate_id = ?
+        GROUP BY proposal.proposal_id, user.nickname, proposal.proposal_introduction, proposal.thumbnail, proposal.total_likes, proposal.created_at
+        `,
+      [estateId],
+    );
   }
 
   async getPlannerId(proposalId: number) {
