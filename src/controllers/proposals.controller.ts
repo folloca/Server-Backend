@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   Query,
@@ -14,6 +15,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -47,6 +49,22 @@ export class ProposalsController {
   })
   async preProposal(@GetUserId() userId, @Query('estateId') estateId) {
     return this.proposalsService.getEstateBeforeProposal(userId, +estateId);
+  }
+
+  @Get('/:proposalId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '기획 상세 조회',
+    description: '기획 상세 조회',
+  })
+  @ApiParam({
+    name: 'proposalId',
+    type: String,
+    required: true,
+    description: '기획 id',
+  })
+  async getProposal(@GetUserId() userId, @Param('proposalId') proposalId) {
+    return this.proposalsService.getProposalById(userId, +proposalId);
   }
 
   @Post()
