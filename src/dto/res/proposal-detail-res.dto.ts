@@ -33,6 +33,10 @@ export class ProposalDetailResDto {
   proposalDescription: string;
 
   @Expose()
+  @Transform(({ value }) => (!value ? null : value.split(',')))
+  hashTags: string[];
+
+  @Expose()
   opinionOpen: boolean;
 
   @Expose()
