@@ -53,7 +53,11 @@ export class ProposalsService {
     const hashTags = await this.proposalTagRepository.getProposalTag(
       proposalId,
     );
-    const proposalData = Object.assign(proposalSearch, hashTags);
+    const likeOrNot = await this.proposalLikeRepository.checkLike(
+      userId,
+      proposalId,
+    );
+    const proposalData = Object.assign(proposalSearch, hashTags, { likeOrNot });
     const proposalInfo = plainToInstance(ProposalDetailResDto, proposalData, {
       excludeExtraneousValues: true,
     });
