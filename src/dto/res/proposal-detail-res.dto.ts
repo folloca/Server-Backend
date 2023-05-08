@@ -43,3 +43,22 @@ export class ProposalDetailResDto {
   @Transform(({ value }) => dayjs(value).format('YYYY-MM-DD HH:mm'))
   updatedAt: string;
 }
+
+export class ProposalImagesResDto {
+  @Expose()
+  proposalImageId: number;
+
+  @Expose({ name: 'imageName' })
+  @Transform(
+    ({ value }) =>
+      `${path.join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'storage',
+        'proposal',
+      )}/${value}`,
+  )
+  imagePath: string;
+}
