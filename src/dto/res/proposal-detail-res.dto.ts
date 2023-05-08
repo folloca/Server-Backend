@@ -40,6 +40,9 @@ export class ProposalDetailResDto {
   opinionOpen: boolean;
 
   @Expose()
+  likeOrNot: boolean;
+
+  @Expose()
   @Transform(({ value }) => dayjs(value).format('YYYY-MM-DD HH:mm'))
   createdAt: string;
 
