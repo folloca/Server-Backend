@@ -54,6 +54,20 @@ export class EstateTagRepository extends Repository<EstateTagEntity> {
 
 @TypeormRepository(ProposalTagEntity)
 export class ProposalTagRepository extends Repository<ProposalTagEntity> {
+  async getProposalTag(proposalId: number) {
+    const result = await this.query(
+      `
+        SELECT
+          GROUP_CONCAT(DISTINCT hash_tag.word) AS hashTags
+        FROM proposal_tag
+        INNER JOIN hash_tag ON proposal_tag.hash_tag_id = hash_tag.hash_tag_id
+        WHERE proposal_id = ?
+      `,
+      [proposalId],
+    );
+    return result[0];
+  }
+
   async createProposalTag(proposalId: number, hashTagIds: number[]) {
     await Promise.all(
       hashTagIds.map(async (hashTagId) => {

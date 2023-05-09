@@ -20,6 +20,11 @@ import { UserRepository } from '../repositories/user.repository';
 import { CreateProposalDto } from '../dto/req/create-proposal.dto';
 import { PreProposalEstateResDto } from '../dto/res/pre-proposal-estate-res.dto';
 import { UpdateProposalDto } from '../dto/req/update-proposal.dto';
+import {
+  ProposalDetailResDto,
+  ProposalImagesResDto,
+} from '../dto/res/proposal-detail-res.dto';
+import { ProposalNumberingDataDto } from '../dto/res/proposal-numbering-data.dto';
 import { plainToInstance } from 'class-transformer';
 import Redis from 'ioredis';
 
@@ -40,6 +45,65 @@ export class ProposalsService {
     private userRepository: UserRepository,
     private opinionRepository: OpinionRepository,
   ) {}
+
+  async getProposalById(userId: number, proposalId: number) {
+    const proposalSearch = await this.proposalRepository.getProposalById(
+      proposalId,
+    );
+    const hashTags = await this.proposalTagRepository.getProposalTag(
+      proposalId,
+    );
+    const likeOrNot = await this.proposalLikeRepository.checkLike(
+      userId,
+      proposalId,
+    );
+    const proposalData = Object.assign(proposalSearch, hashTags, { likeOrNot });
+    const proposalInfo = plainToInstance(ProposalDetailResDto, proposalData, {
+      excludeExtraneousValues: true,
+    });
+
+    const imageData = await this.proposalImageRepository.getImageData(
+      proposalId,
+    );
+    const images = imageData.map((el) =>
+      plainToInstance(ProposalImagesResDto, el, {
+        excludeExtraneousValues: true,
+      }),
+    );
+
+    const estateId = proposalSearch.estateId;
+    const { mapImage } = await this.estateRepository.getEstateData(estateId);
+
+    const coordinatesData = await this.mapNumberingRepository.getNumberingData(
+      estateId,
+    );
+    const detailData = await this.proposalDetailRepository.getDetailData(
+      proposalId,
+    );
+    const numberingData = detailData.map((el) =>
+      plainToInstance(ProposalNumberingDataDto, el, {
+        excludeExtraneousValues: true,
+      }),
+    );
+    const numberingTagInfo = numberingData.reduce((acc, curr) => {
+      const matchingObject = coordinatesData.find(
+        (obj) => obj.tagNumber === curr.mapTagNumber,
+      );
+      if (matchingObject) {
+        acc.push({
+          mapTagNumber: curr.mapTagNumber,
+          tagCoordinate: matchingObject.coordinate,
+          detailDescription: curr.detailDescription,
+        });
+      }
+      return acc;
+    }, []);
+
+    return {
+      data: { proposalInfo, images, mapInfo: { mapImage, numberingTagInfo } },
+      message: `Detail information of proposal ${proposalId}`,
+    };
+  }
 
   async getEstateBeforeProposal(userId: number, estateId: number) {
     const { estateKeyword, estateName, estateUse, proposalDeadline, mapImage } =
@@ -96,7 +160,7 @@ export class ProposalsService {
 
       await this.estateRepository.updateProposalCount(+estateId, 1);
 
-      const validFilenames = [thumbnail, ...images].filter(Boolean);
+      const validFilenames = [...images].filter(Boolean);
       await this.proposalImageRepository.createImageData(
         proposalId,
         validFilenames,
@@ -157,7 +221,7 @@ export class ProposalsService {
         );
 
         await this.proposalImageRepository.deleteImageData(proposalId);
-        const validFilenames = [thumbnail, ...images].filter(Boolean);
+        const validFilenames = [...images].filter(Boolean);
         await this.proposalImageRepository.createImageData(
           proposalId,
           validFilenames,

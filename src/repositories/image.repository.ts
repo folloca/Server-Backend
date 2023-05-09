@@ -27,6 +27,10 @@ export class EstateImageRepository extends Repository<EstateImageEntity> {
 
 @TypeormRepository(ProposalImageEntity)
 export class ProposalImageRepository extends Repository<ProposalImageEntity> {
+  async getImageData(proposalId: number) {
+    return await this.findBy({ proposalId });
+  }
+
   async createImageData(proposalId: number, filenames: string[]) {
     const data = filenames.map((filename) => {
       return { proposalId, imageName: filename };

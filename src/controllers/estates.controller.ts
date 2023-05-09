@@ -76,7 +76,7 @@ export class EstatesController {
   @Get('/:estateId')
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '공간 상세 조회(기획 모듈 개발 후 완료 예정)',
+    summary: '공간 상세 조회',
     description: '공간 상세 조회',
   })
   @ApiParam({

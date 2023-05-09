@@ -76,17 +76,21 @@ export class ProposalRepository extends Repository<ProposalEntity> {
           proposal.thumbnail,
           GROUP_CONCAT(DISTINCT hash_tag.word) AS hashTags,
           proposal.total_likes AS totalLikes,
-          proposal.created_at AS createdAt
+          proposal.created_at AS createdAt,
           proposal.updated_at AS updatedAt
         FROM proposal
         INNER JOIN user ON proposal.planner_id = user.user_id
         LEFT JOIN proposal_tag ON proposal.proposal_id = proposal_tag.proposal_id
         LEFT JOIN hash_tag ON hash_tag.hash_tag_id = proposal_tag.hash_tag_id
         WHERE estate_id = ?
-        GROUP BY proposal.proposal_id, user.nickname, proposal.proposal_introduction, proposal.thumbnail, proposal.total_likes, proposal.created_at
+        GROUP BY proposal.proposal_id, user.nickname, proposal.proposal_introduction, proposal.thumbnail, proposal.total_likes, proposal.created_at, proposal.updated_at
         `,
       [estateId],
     );
+  }
+
+  async getProposalById(proposalId: number) {
+    return await this.findOneBy({ proposalId });
   }
 
   async getPlannerId(proposalId: number) {
@@ -127,6 +131,9 @@ export class ProposalRepository extends Repository<ProposalEntity> {
 
 @TypeormRepository(ProposalDetailEntity)
 export class ProposalDetailRepository extends Repository<ProposalDetailEntity> {
+  async getDetailData(proposalId: number) {
+    return await this.findBy({ proposalId });
+  }
   async createDetailData(
     proposalId: number,
     proposalDetails: ProposalDetailsDto,
