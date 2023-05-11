@@ -89,6 +89,29 @@ export class ProposalRepository extends Repository<ProposalEntity> {
     );
   }
 
+  async getTrendingOrder() {
+    return this.query(
+      `SELECT
+          proposal.proposal_id AS proposalId,
+          user.nickname AS plannerName,
+          estate.estate_name AS estateName,
+          proposal.proposal_introduction AS proposalIntroduction,
+          proposal.thumbnail,
+          GROUP_CONCAT(DISTINCT hash_tag.word) AS hashTags,
+          proposal.total_likes AS totalLikes,
+          proposal.created_at AS createdAt
+        FROM proposal
+        INNER JOIN user ON proposal.planner_id = user.user_id
+        INNER JOIN estate ON proposal.estate_id = estate.estate_id
+        LEFT JOIN proposal_tag ON proposal.proposal_id = proposal_tag.proposal_id
+        LEFT JOIN hash_tag ON hash_tag.hash_tag_id = proposal_tag.hash_tag_id
+        WHERE proposal.total_likes > 0
+        GROUP BY proposal.proposal_id, user.nickname, proposal.proposal_introduction, proposal.thumbnail, proposal.total_likes, proposal.created_at
+        ORDER BY proposal.total_likes DESC, proposal.updated_at DESC
+      `,
+    );
+  }
+
   async getProposalById(proposalId: number) {
     return await this.findOneBy({ proposalId });
   }
