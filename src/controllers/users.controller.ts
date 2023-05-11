@@ -138,7 +138,11 @@ export class UsersController {
     description:
       '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
   })
-  async getProfileDashboard(@Query() query, @Res() res) {
+  async getProfileDashboard(
+    @GetUserId() currentUserId,
+    @Query() query,
+    @Res() res,
+  ) {
     const email = query.email;
 
     if (email) {
@@ -150,7 +154,7 @@ export class UsersController {
       const estates = await this.usersService.getEstateListByUserId(userId);
 
       if (userData) {
-        res.status(200).send({
+        const returnData = {
           profile: userData,
           dashboard: {
             post_cnt:
@@ -168,7 +172,13 @@ export class UsersController {
             linkings: linkings,
             estates: estates,
           },
-        });
+        };
+
+        if (currentUserId !== userId) {
+          delete returnData.dashboard;
+        }
+
+        res.status(200).send(returnData);
       } else {
         res.status(404).send({
           message: `Not Found User`,
@@ -283,8 +293,6 @@ export class UsersController {
         const recentPostList = await this.usersService.getLatestSeenPosts(
           recentIdList.posts,
         );
-
-        console.log(recentPostList.linkings);
 
         res.status(200).send({
           total_cnt: recentIdList.total_cnt,
