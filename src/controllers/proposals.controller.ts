@@ -35,6 +35,16 @@ export class ProposalsController {
     private proposalsService: ProposalsService,
   ) {}
 
+  @Get('/trending')
+  @ApiOperation({
+    summary: '트렌드순 기획 리스트 조회',
+    description:
+      '트렌드순으로 정렬한 기획 리스트 조회(기획과 다르게 배포 초반에는 좋아요 수 기준 정렬 ㅓ리)',
+  })
+  async getTrendingProposals() {
+    return this.proposalsService.getTrendingList();
+  }
+
   @Get('/prefill')
   @ApiBearerAuth('access-token')
   @ApiOperation({
