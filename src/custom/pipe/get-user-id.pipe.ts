@@ -6,7 +6,7 @@ export class GetUserIdPipe implements PipeTransform {
   constructor(private jwtService: JwtService) {}
 
   async transform(value: any) {
-    if (!value.startsWith('Bearer')) {
+    if (!value || !value.startsWith('Bearer')) {
       return 0;
     } else {
       const token = value.replace('Bearer', '').trim();
