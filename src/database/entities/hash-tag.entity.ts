@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { DateColumnEntity } from './date-column.entity';
 import { EstateTagEntity } from './estate-tag.entity';
@@ -18,12 +24,12 @@ export class HashTagEntity extends DateColumnEntity {
     name: 'word',
     type: 'varchar',
     length: 7,
-    unique: true,
     nullable: false,
     comment: '해시 태그 단어',
   })
   @IsString()
   @IsNotEmpty()
+  @Index({ fulltext: true })
   word: string;
 
   @OneToMany(
