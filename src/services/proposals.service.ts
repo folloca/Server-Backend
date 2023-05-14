@@ -25,6 +25,7 @@ import {
   ProposalImagesResDto,
 } from '../dto/res/proposal-detail-res.dto';
 import { ProposalNumberingDataDto } from '../dto/res/proposal-numbering-data.dto';
+import { TrendingProposalListDto } from '../dto/res/trending-proposal-list.dto';
 import { plainToInstance } from 'class-transformer';
 import Redis from 'ioredis';
 
@@ -45,6 +46,17 @@ export class ProposalsService {
     private userRepository: UserRepository,
     private opinionRepository: OpinionRepository,
   ) {}
+
+  async getTrendingList() {
+    const result = await this.proposalRepository.getTrendingOrder();
+    const list = result.map((el) =>
+      plainToInstance(TrendingProposalListDto, el),
+    );
+    return {
+      data: list,
+      message: 'Trending proposal list',
+    };
+  }
 
   async getProposalById(userId: number, proposalId: number) {
     const proposalSearch = await this.proposalRepository.getProposalById(
