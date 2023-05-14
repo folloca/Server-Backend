@@ -19,6 +19,23 @@ export class HashTagRepository extends Repository<HashTagEntity> {
     );
   }
 
+  async getHashTagId(words: string[]) {
+    let fulltext = "'";
+
+    words.map((word, index) => {
+      fulltext += `${word}`;
+      if (words.length - 1 !== index) {
+        fulltext += `|`;
+      }
+    });
+    fulltext += "'";
+
+    return await this.createQueryBuilder()
+      .select(['hash_tag_id, word'])
+      .where(`word REGEXP (${fulltext})`)
+      .getRawMany();
+  }
+
   async createHashTag(words: string[]) {
     return await Promise.all(
       words.map(async (word) => {
@@ -41,6 +58,13 @@ export class EstateTagRepository extends Repository<EstateTagEntity> {
   async getTagIds(estateId: number) {
     const result = await this.findBy({ estateId });
     return result.map((el) => el.hashTagId);
+  }
+
+  async getEstateIds(tagIds: number[]) {
+    return this.createQueryBuilder()
+      .select(['estate_id'])
+      .where(`hash_tag_id IN (:id)`, { id: tagIds })
+      .getRawMany();
   }
 
   async createEstateTag(estateId: number, hashTagIds: number[]) {
@@ -66,6 +90,13 @@ export class ProposalTagRepository extends Repository<ProposalTagEntity> {
       [proposalId],
     );
     return result[0];
+  }
+
+  async getProposalIds(tagIds: number[]) {
+    return this.createQueryBuilder()
+      .select(['proposal_id'])
+      .where(`hash_tag_id IN (:id)`, { id: tagIds })
+      .getRawMany();
   }
 
   async createProposalTag(proposalId: number, hashTagIds: number[]) {
