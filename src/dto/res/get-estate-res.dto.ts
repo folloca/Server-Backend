@@ -32,7 +32,7 @@ export class GetEstateResDto {
     ({ value }) =>
       `${path.join(__dirname, '..', '..', '..', 'storage', 'estate')}/${value}`,
   )
-  @Expose()
+  @Expose({ name: 'thumbnail' })
   @IsString()
   thumbnailPath: string;
 
