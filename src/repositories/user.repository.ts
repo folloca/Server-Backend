@@ -39,7 +39,7 @@ export class UserRepository extends Repository<UserEntity> {
     marketingReception: boolean,
     registerMethod: string,
   ) {
-    await this.insert({
+    return await this.save({
       nickname,
       email,
       password,
