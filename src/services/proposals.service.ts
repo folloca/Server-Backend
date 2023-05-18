@@ -28,6 +28,7 @@ import { ProposalNumberingDataDto } from '../dto/res/proposal-numbering-data.dto
 import { TrendingProposalListDto } from '../dto/res/trending-proposal-list.dto';
 import { plainToInstance } from 'class-transformer';
 import Redis from 'ioredis';
+import path from 'path';
 
 @Injectable()
 export class ProposalsService {
@@ -85,6 +86,13 @@ export class ProposalsService {
 
     const estateId = proposalSearch.estateId;
     const { mapImage } = await this.estateRepository.getEstateData(estateId);
+    const mapImagePath = `${path.join(
+      __dirname,
+      '..',
+      '..',
+      'storage',
+      'estate',
+    )}/${mapImage}`;
 
     const coordinatesData = await this.mapNumberingRepository.getNumberingData(
       estateId,
@@ -112,7 +120,11 @@ export class ProposalsService {
     }, []);
 
     return {
-      data: { proposalInfo, images, mapInfo: { mapImage, numberingTagInfo } },
+      data: {
+        proposalInfo,
+        images,
+        mapInfo: { mapImage: mapImagePath, numberingTagInfo },
+      },
       message: `Detail information of proposal ${proposalId}`,
     };
   }
@@ -195,7 +207,7 @@ export class ProposalsService {
         );
       }
 
-      return { message: `Registered new proposal of estate ${estateId}` };
+      return await this.getProposalById(userId, proposalId);
     } catch (e) {
       Logger.error(e);
     }
