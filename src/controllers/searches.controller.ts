@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SearchesService } from 'src/services/searches.service';
 
 @ApiTags('searches')
@@ -12,11 +12,17 @@ export class SearchesController {
   ) {}
 
   @Get('/')
+  @ApiQuery({
+    name: 'tags',
+    type: Array,
+    required: true,
+    description: '검색어 태그 리스트',
+  })
   @ApiOperation({
     summary: '검색어 태그 목록',
     description: '검색어 태그 목록',
   })
-  async searches(@Body() tags: string[]) {
-    return this.searchesService.getHashTagIdByWord(tags);
+  async searches(@Query() tags: string[]) {
+    return this.searchesService.getHashTagIdByWord(tags['tags']);
   }
 }

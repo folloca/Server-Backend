@@ -1,22 +1,18 @@
-import { InjectRedis } from '@nestjs-modules/ioredis';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { EstateRepository } from 'src/repositories/estate.repository';
+import { ProposalRepository } from '../repositories/proposal.repository';
 import {
   EstateTagRepository,
   HashTagRepository,
   ProposalTagRepository,
 } from 'src/repositories/hash-tag.repository';
-import { ProposalRepository } from 'src/repositories/proposal.repository';
-import { UserRepository } from 'src/repositories/user.repository';
 
 @Injectable()
 export class SearchesService {
   constructor(
-    @InjectRedis()
+    private hashTagRepository: HashTagRepository,
     private proposalRepository: ProposalRepository,
     private proposalTagRepository: ProposalTagRepository,
-    private hashTagRepository: HashTagRepository,
     private estateRepository: EstateRepository,
     private estateTagRepository: EstateTagRepository,
   ) {}
