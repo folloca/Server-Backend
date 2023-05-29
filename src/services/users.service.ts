@@ -190,14 +190,10 @@ export class UsersService {
     }
   }
 
-  async getProfilePageUserInfo(email: string) {
-    const user = await this.userRepository.findAccountByEmail(email);
-
-    if (!user) {
-      throw new BadRequestException(`Wrong user Email: ${email}`);
+  async getProfilePageUserInfo(userId: number) {
+    if (!userId) {
+      throw new BadRequestException(`Wrong user Id: ${userId}`);
     } else {
-      const { userId } = user;
-
       const userData = await this.userRepository.getUserData(userId);
 
       return {
