@@ -43,7 +43,7 @@ export class UserEntity extends DateColumnEntity {
     name: 'profile_image_path',
     type: 'varchar',
     nullable: false,
-    default: '../../../../storage/profile/basicProfile.png',
+    default: 'basicProfile.png',
     comment: '프로필 이미지 저장 경로',
   })
   @IsString()

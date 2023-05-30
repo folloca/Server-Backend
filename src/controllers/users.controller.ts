@@ -98,13 +98,12 @@ export class UsersController {
   @ApiBody({
     schema: {
       properties: {
-        userId: { type: 'number' },
         password: { type: 'string' },
       },
     },
   })
-  async checkPassword(@Body() body) {
-    const { userId, password } = body;
+  async checkPassword(@GetUserId() userId, @Body() body) {
+    const { password } = body;
     return await this.usersService.checkPassword(userId, password);
   }
 

@@ -15,6 +15,7 @@ import { LoginResDto } from '../dto/res/login-res.dto';
 import * as bcrypt from 'bcrypt';
 import { KakaoStrategy } from '../auth/kakao.strategy';
 import { KakaoUserInfosResDto } from '../dto/res/kakao-userInfo-res.dto';
+import { NewUserResDto } from '../dto/res/new-user-res.dto';
 import { GoogleStrategy } from '../auth/google.strategy';
 import Redis from 'ioredis';
 import { InjectRedis } from '@nestjs-modules/ioredis';
@@ -83,25 +84,40 @@ export class AuthService {
     marketingReception: boolean,
     nickname: string,
   ) {
+    const accountInfo = await this.userRepository.findAccountByEmail(email);
+    if (accountInfo) {
+      throw new BadRequestException(
+        `Email ${email} is already registered with ${accountInfo.registerMethod}`,
+      );
+    }
+
+    if (nickname.length > 10) {
+      throw new BadRequestException('Nickname must be under 10 letters');
+    }
+
+    const nicknameValidity = await this.userRepository.findNickname(nickname);
+    if (nicknameValidity) {
+      return { message: `Nickname ${nickname} already exists` };
+    }
+
     const salt = await bcrypt.genSalt(this.SALT_ROUND);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await this.userRepository
-      .createUserData(
-        email,
-        hashedPassword,
-        nickname,
-        marketingReception,
-        'EMAIL',
-      )
-      .then(() => {
-        return {
-          message: `Successfully created new user data: ${email}`,
-        };
-      })
-      .catch((err) => {
-        throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+    const newUserData = await this.userRepository.createUserData(
+      email,
+      hashedPassword,
+      nickname,
+      marketingReception,
+      'EMAIL',
+    );
+
+    const userData = plainToInstance(NewUserResDto, newUserData, {
+      excludeExtraneousValues: true,
+    });
+    return {
+      data: userData,
+      message: `Successfully created new user data of ${email}`,
+    };
   }
 
   async oAuthSignup(

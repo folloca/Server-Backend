@@ -163,7 +163,7 @@ export class EstatesService {
         map,
       );
 
-      const validFilenames = [thumbnail, ...images, map].filter(Boolean);
+      const validFilenames = [...images, map].filter(Boolean);
       await this.estateImageRepository.createImageData(
         newEstateId,
         validFilenames,
@@ -182,6 +182,8 @@ export class EstatesService {
         );
         await this.estateTagRepository.createEstateTag(newEstateId, tagResult);
       }
+
+      return this.getEstateById(userId, newEstateId);
     } catch (e) {
       Logger.error(e);
     }
