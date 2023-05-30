@@ -131,28 +131,27 @@ export class UsersController {
     summary: 'profile dashboard & 작성한 글 조회',
   })
   @ApiParam({
-    name: 'email',
+    name: 'user_id',
     type: String,
     required: true,
-    description:
-      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+    description: '조회하고자 하는 유저의 인덱스 값',
   })
   async getProfileDashboard(
     @GetUserId() currentUserId,
     @Query() query,
     @Res() res,
   ) {
-    const email = query.email;
+    const userId = +query.userId;
 
-    if (email) {
-      const userData = await this.usersService.getProfilePageUserInfo(email);
-      const { userId } = userData;
-
-      const proposals = await this.usersService.getProposalListByUserId(userId);
-      const linkings = await this.usersService.getLinkingListByUserId(userId);
-      const estates = await this.usersService.getEstateListByUserId(userId);
+    if (userId) {
+      const userData = await this.usersService.getUserData(userId);
 
       if (userData) {
+        const proposals = await this.usersService.getProposalListByUserId(
+          userId,
+        );
+        const linkings = await this.usersService.getLinkingListByUserId(userId);
+        const estates = await this.usersService.getEstateListByUserId(userId);
         const returnData = {
           profile: userData,
           dashboard: {
@@ -191,45 +190,39 @@ export class UsersController {
     summary: 'profile like 조회',
   })
   @ApiParam({
-    name: 'email',
+    name: 'user_id',
     type: String,
     required: true,
-    description:
-      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+    description: '조회하고자 하는 유저의 인덱스 값',
   })
   async getProfileLikes(@Query() query, @Res() res) {
-    const email = query.email;
+    const userId = +query.userId;
 
-    if (email) {
-      const userData = await this.usersService.getProfilePageUserInfo(email);
-      const { userId } = userData;
+    const userData = await this.usersService.getProfilePageUserInfo(userId);
 
-      if (userData) {
-        const likeList = await this.usersService.getLikedPostByUserId(userId);
+    if (userData) {
+      const likeList = await this.usersService.getLikedPostByUserId(userId);
 
-        const proposalIds = likeList.posts.proposals.map(
-          (proposal) => proposal.proposalId,
-        );
-        const linkingIds = likeList.posts.linkings.map(
-          (linking) => linking.linkingId.linkingId,
-        );
-        const estateIds = likeList.posts.estates.map(
-          (estate) => estate.estateId,
-        );
+      const proposalIds = likeList.posts.proposals.map(
+        (proposal) => proposal.proposalId,
+      );
+      const linkingIds = likeList.posts.linkings.map(
+        (linking) => linking.linkingId.linkingId,
+      );
+      const estateIds = likeList.posts.estates.map((estate) => estate.estateId);
 
-        res.status(200).send({
-          total_cnt: likeList.total_cnt,
-          posts: await this.usersService.getLikesPostByIds(
-            proposalIds,
-            linkingIds,
-            estateIds,
-          ),
-        });
-      } else {
-        res.status(404).send({
-          message: `Not Found User`,
-        });
-      }
+      res.status(200).send({
+        total_cnt: likeList.total_cnt,
+        posts: await this.usersService.getLikesPostByIds(
+          proposalIds,
+          linkingIds,
+          estateIds,
+        ),
+      });
+    } else {
+      res.status(404).send({
+        message: `Not Found User`,
+      });
     }
   }
 
@@ -238,18 +231,16 @@ export class UsersController {
     summary: 'profile 보낸 의견 조회',
   })
   @ApiParam({
-    name: 'email',
+    name: 'user_id',
     type: String,
     required: true,
-    description:
-      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+    description: '조회하고자 하는 유저의 인덱스 값',
   })
   async getProfileOpinions(@Query() query, @Res() res) {
-    const email = query.email;
+    const userId = +query.userId;
 
-    if (email) {
-      const userData = await this.usersService.getProfilePageUserInfo(email);
-      const { userId } = userData;
+    if (userId) {
+      const userData = await this.usersService.getProfilePageUserInfo(userId);
 
       if (userData) {
         const opinionList = await this.usersService.getSentOpinionByUserId(
@@ -273,18 +264,16 @@ export class UsersController {
     summary: 'profile 보낸 의견 조회',
   })
   @ApiParam({
-    name: 'email',
+    name: 'user_id',
     type: String,
     required: true,
-    description:
-      '조회하고자 하는 유저의 Email(테스트에따라 닉네임으로 변경될 수도..)',
+    description: '조회하고자 하는 유저의 인덱스 값',
   })
   async getProfileRecent(@Query() query, @Res() res) {
-    const email = query.email;
+    const userId = +query.userId;
 
-    if (email) {
-      const userData = await this.usersService.getProfilePageUserInfo(email);
-      const { userId } = userData;
+    if (userId) {
+      const userData = await this.usersService.getProfilePageUserInfo(userId);
 
       if (userData) {
         const recentIdList = await this.usersService.getLatestSeen(userId);
