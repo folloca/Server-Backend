@@ -133,7 +133,7 @@ export class UsersController {
   })
   @ApiParam({
     name: 'user_id',
-    type: Number,
+    type: String,
     required: true,
     description: '조회하고자 하는 유저의 인덱스 값',
   })
@@ -142,7 +142,7 @@ export class UsersController {
     @Query() query,
     @Res() res,
   ) {
-    const userId = query.userId;
+    const userId = +query.userId;
 
     if (userId) {
       const userData = await this.usersService.getUserData(userId);
@@ -192,12 +192,12 @@ export class UsersController {
   })
   @ApiParam({
     name: 'user_id',
-    type: Number,
+    type: String,
     required: true,
     description: '조회하고자 하는 유저의 인덱스 값',
   })
   async getProfileLikes(@Query() query, @Res() res) {
-    const userId = query.userId;
+    const userId = +query.userId;
 
     const userData = await this.usersService.getProfilePageUserInfo(userId);
 
@@ -233,12 +233,12 @@ export class UsersController {
   })
   @ApiParam({
     name: 'user_id',
-    type: Number,
+    type: String,
     required: true,
     description: '조회하고자 하는 유저의 인덱스 값',
   })
   async getProfileOpinions(@Query() query, @Res() res) {
-    const userId = query.userId;
+    const userId = +query.userId;
 
     if (userId) {
       const userData = await this.usersService.getProfilePageUserInfo(userId);
@@ -266,12 +266,12 @@ export class UsersController {
   })
   @ApiParam({
     name: 'user_id',
-    type: Number,
+    type: String,
     required: true,
     description: '조회하고자 하는 유저의 인덱스 값',
   })
   async getProfileRecent(@Query() query, @Res() res) {
-    const userId = query.userId;
+    const userId = +query.userId;
 
     if (userId) {
       const userData = await this.usersService.getProfilePageUserInfo(userId);
