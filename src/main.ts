@@ -38,10 +38,10 @@ async function bootstrap() {
 
   app.use(
     [`/${prefix}/doc`],
-    expressBasicAuth({
-      challenge: true,
-      users: { [swaggerUser]: swaggerPassword },
-    }),
+    // expressBasicAuth({
+    //   challenge: true,
+    //   users: { [swaggerUser]: swaggerPassword },
+    // }),
   );
   app.useGlobalPipes(
     new ValidationPipe({
