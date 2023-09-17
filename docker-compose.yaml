@@ -1,0 +1,64 @@
+version: '3.9'
+
+networks:
+  folloca-net:
+    driver: bridge
+
+volumes:
+  db_data:
+  in_memory_data:
+
+services:
+  db:
+    image: mysql:latest
+    restart: 'always'
+    ports:
+      - "3306:3306"
+    container_name: folloca-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: folloca-root애찯
+      MYSQL_DATABASE: folloca_dev
+      MYSQL_USER: user
+      MYSQL_PASSWORD: folloca
+      TZ: Asia/Seoul
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/db/init:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "folloca-mysql-dev", "-uroot", "-pscratch"]
+      retries: 2
+    networks:
+      - folloca-net
+
+  redis:
+    image: redis:latest
+    restart: 'always'
+    ports:
+      - "6379:6379"
+    container_name: folloca-redis-dev
+    volumes:
+      - in_memory_data:/data
+    environment:
+      TZ: Asia/Seoul
+    networks:
+      - folloca-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - "8080:8080"
+    container_name: folloca-app-server-dev
+    networks:
+      - folloca-net
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - |
+        pm2-runtime start ecosystem.config.js --env development
