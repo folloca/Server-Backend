@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../folloca_logo.png" width="500" alt="Folloca Logo" />
+  <img src="./folloca_logo.png" width="500" alt="Folloca Logo" />
 </p>
 
 
@@ -32,7 +32,7 @@
 ## Database - [ERD](https://www.erdcloud.com/d/XYgJzzaQqemMsiprQ)
 
 <p align="center">
-  <a href="https://www.erdcloud.com/d/XYgJzzaQqemMsiprQ" target="blank"><img src="../folloca_erd.png" width="1000"/></a>
+  <a href="https://www.erdcloud.com/d/XYgJzzaQqemMsiprQ" target="blank"><img src="./folloca_erd.png" width="1000"/></a>
 </p>
 
 <br/>
