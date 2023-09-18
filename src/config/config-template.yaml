@@ -1,0 +1,148 @@
+project: folloca-server
+prefix:
+
+## 로컬
+local:
+  http:
+    host:
+    port:
+  swagger:
+    user:
+    password:
+  auth:
+    jwt_secret:
+    refresh_secret:
+    kakao:
+      client_id:
+      client_secret:
+      redirect_uri:
+    google:
+      client_id:
+      client_secret:
+      redirect_uri:
+    smtp:
+      service:
+      user:
+      password:
+  redis:
+    host:
+    port:
+    index:
+      auth:
+      admin:
+      estate:
+      linking:
+      proposal:
+      search:
+      user:
+    database:
+    username:
+    password:
+    prefix:
+  database:
+    type:
+    host:
+    port:
+    username:
+    password:
+    name:
+    logging: true
+    synchronize: true
+    autoLoadEntities: true
+    keepConnectionAlive: true
+  storage:
+    profile:
+    estate:
+    proposal:
+
+## 개발
+development:
+  http:
+    host:
+    port:
+  swagger:
+    user:
+    password:
+  auth:
+    jwt_secret:
+    refresh_secret:
+    kakao:
+      client_id:
+      client_secret:
+      redirect_uri:
+    google:
+      client_id:
+      client_secret:
+      redirect_uri:
+    smtp:
+      service:
+      user:
+      password:
+  redis:
+    host:
+    port:
+    database:
+    username:
+    password:
+    prefix:
+  database:
+    type:
+    host:
+    port:
+    username:
+    password:
+    name:
+    logging: true
+    synchronize: true
+    autoLoadEntities: true
+    keepConnectionAlive: true
+  storage:
+    profile:
+    estate:
+    proposal:
+
+## 배포
+production:
+  http:
+    host:
+    port:
+  swagger:
+    user:
+    password:
+  auth:
+    jwt_secret:
+    refresh_secret:
+    kakao:
+      client_id:
+      client_secret:
+      redirect_uri:
+    google:
+      client_id:
+      client_secret:
+      redirect_uri:
+    smtp:
+      service:
+      user:
+      password:
+  redis:
+    host:
+    port:
+    database:
+    username:
+    password:
+    prefix:
+  database:
+    type:
+    host:
+    port:
+    username:
+    password:
+    name:
+    logging: false
+    synchronize: false
+    autoLoadEntities: true
+    keepConnectionAlive: true
+  storage:
+    profile:
+    estate:
+    proposal:
